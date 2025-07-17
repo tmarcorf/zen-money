@@ -1,5 +1,5 @@
-# .NET
-/bin
+.vs/
+bin/
+obj/
 
-# Angular
-/node_modules
+node_modules/

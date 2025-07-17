@@ -1,0 +1,6 @@
+@ZenMoney.API_HostAddress = http://localhost:5160
+
+GET {{ZenMoney.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
