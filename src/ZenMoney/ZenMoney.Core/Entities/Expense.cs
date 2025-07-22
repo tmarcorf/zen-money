@@ -29,7 +29,8 @@ namespace ZenMoney.Core.Entities
         [Required]
         public decimal Amount { get; set; }
 
-        public bool? IsPaid { get; set; }
+        [Required]
+        public bool IsPaid { get; set; }
 
         public Guid UserId { get; set; }
 
