@@ -1,4 +1,7 @@
 
+using System;
+using ZenMoney.Infrastructure.IoC;
+
 namespace ZenMoney.API
 {
     public class Program
@@ -6,11 +9,13 @@ namespace ZenMoney.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var services = builder.Services;
 
-            // Add services to the container.
+            services.AddInfrastructure(builder.Configuration);
+            services.AddInfrastructureJWT(builder.Configuration);
+            services.AddInfrastructureSwagger();
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -26,7 +31,6 @@ namespace ZenMoney.API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
