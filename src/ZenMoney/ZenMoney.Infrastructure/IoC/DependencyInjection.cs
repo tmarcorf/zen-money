@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ZenMoney.Core.Entities;
+using ZenMoney.Core.Interfaces;
 using ZenMoney.Infrastructure.Data;
+using ZenMoney.Infrastructure.Data.Repositories;
 
 namespace ZenMoney.Infrastructure.IoC
 {
@@ -34,6 +36,8 @@ namespace ZenMoney.Infrastructure.IoC
             });
 
             // services goes here
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IIncomeRepository, IncomeRepository>();
 
             return services;
         }
