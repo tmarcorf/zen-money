@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZenMoney.Core.Enums;
 
-namespace ZenMoney.Application.Requests
+namespace ZenMoney.Application.Requests.Income
 {
     public class CreateIncomeRequest
     {

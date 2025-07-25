@@ -2,15 +2,14 @@
 using ZenMoney.Application.Extensions;
 using ZenMoney.Application.Interfaces;
 using ZenMoney.Application.Models.Income;
-using ZenMoney.Application.Requests;
+using ZenMoney.Application.Requests.Income;
 using ZenMoney.Core.Interfaces;
-using ZenMoney.Infrastructure.Data;
 
 namespace ZenMoney.Application.Services
 {
     public class IncomeService(
         IIncomeRepository repository,
-        ApplicationDbContext dbContext,
+        //ApplicationDbContext dbContext,
         IValidator<CreateIncomeRequest> createValidator) : IIncomeService
     {
         public async Task<IncomeModel> GetByIdAsync(Guid id)
@@ -30,6 +29,8 @@ namespace ZenMoney.Application.Services
             {
 
             }
+
+            return null;
         }
 
         public Task<IncomeModel> UpdateAsync(UpdateIncomeRequest request)

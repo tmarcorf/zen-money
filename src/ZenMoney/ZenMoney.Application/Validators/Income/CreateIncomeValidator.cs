@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ZenMoney.Application.Requests;
+using ZenMoney.Application.Requests.Income;
 using ZenMoney.Core.Entities;
 using ZenMoney.Core.Enums;
 
-namespace ZenMoney.Application.Validators
+namespace ZenMoney.Application.Validators.Income
 {
     public class CreateIncomeValidator : AbstractValidator<CreateIncomeRequest>
     {
@@ -22,7 +22,8 @@ namespace ZenMoney.Application.Validators
 
             RuleFor(x => x.Date)
                 .NotEmpty()
-                .NotEqual(DateOnly.MinValue);
+                .NotEqual(DateOnly.MinValue)
+                .WithMessage("A data da entrada está inválida");
 
             RuleFor(x => x.Description)
                 .NotEmpty()

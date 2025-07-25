@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZenMoney.Application.Models.Income;
-using ZenMoney.Application.Requests;
+using ZenMoney.Application.Requests.Income;
 
 namespace ZenMoney.Application.Interfaces
 {

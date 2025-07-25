@@ -2,7 +2,7 @@
 
 namespace ZenMoney.Application.Models.Income
 {
-    public record IncomeModel : BaseModel
+    public class IncomeModel : BaseModel
     {
         public IncomeTypeEnum Type { get; set; }
 

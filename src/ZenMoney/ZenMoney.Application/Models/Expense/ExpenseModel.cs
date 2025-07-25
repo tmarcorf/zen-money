@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZenMoney.Application.Requests
+namespace ZenMoney.Application.Models.Expense
 {
-    public class UpdateIncomeRequest : CreateIncomeRequest
+    public class ExpenseModel
     {
-        public Guid Id { get; set; }
     }
 }

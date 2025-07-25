@@ -1,6 +1,6 @@
 ﻿namespace ZenMoney.Application.Models
 {
-    public record BaseModel
+    public abstract class BaseModel
     {
         public Guid Id { get; set; }
 
