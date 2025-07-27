@@ -16,6 +16,8 @@ namespace ZenMoney.Infrastructure.Data
 
         public DbSet<Expense> Expenses { get; set; }
 
+        public DbSet<Category> Categories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
