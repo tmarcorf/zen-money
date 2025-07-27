@@ -11,7 +11,7 @@ namespace ZenMoney.Core.Interfaces
     {
         Task<T> GetByIdAsync(Guid id);
 
-        Task<IEnumerable<T>> GetAllAsync(int skip, int take);
+        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter, int skip, int take);
 
         Task<bool> ExistsAsync(Expression<Func<T, bool>> filter);
 
@@ -20,5 +20,7 @@ namespace ZenMoney.Core.Interfaces
         T Update(T entity);
 
         T Delete(T entity);
+
+        Task SaveChangesAsync();
     }
 }

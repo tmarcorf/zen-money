@@ -70,11 +70,9 @@ namespace ZenMoney.Application.Services
                 return Result<UserModel>.Failure(errors);
             }
 
-            var newUserData = request.ToEntity();
             var user = await userManager.FindByIdAsync(request.Id.ToString());
 
-            user.Update(newUserData);
-
+            user.Update(request);
             await userManager.UpdateAsync(user);
 
             return Result<UserModel>.Success(user.ToModel());

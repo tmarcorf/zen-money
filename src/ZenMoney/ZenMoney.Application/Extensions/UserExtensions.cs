@@ -60,12 +60,12 @@ namespace ZenMoney.Application.Extensions
             };
         }
 
-        public static void Update(this User user, User newUserData)
+        public static void Update(this User user, UpdateUserRequest request)
         {
-            user.Email = newUserData.Email;
-            user.FirstName = newUserData.FirstName;
-            user.LastName = newUserData.LastName;
-            user.DateOfBirth = newUserData.DateOfBirth;
+            user.Email = request.Email;
+            user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
+            user.DateOfBirth = request.DateOfBirth;
         }
     }
 }
