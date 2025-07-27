@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using ZenMoney.Core.Entities;
 using ZenMoney.Core.Interfaces;
 
@@ -19,9 +14,12 @@ namespace ZenMoney.Infrastructure.Data.Repositories
             return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(int skip, int take)
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter, int skip, int take)
         {
-            var query = dbContext.Set<T>().AsQueryable();
+            var query = dbContext
+                .Set<T>()
+                .Where(filter)
+                .AsQueryable();
 
             query = query
                 .Skip(skip)
@@ -56,6 +54,11 @@ namespace ZenMoney.Infrastructure.Data.Repositories
             dbContext.Set<T>().Remove(entity);
 
             return entity;
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await dbContext.SaveChangesAsync();
         }
     }
 }

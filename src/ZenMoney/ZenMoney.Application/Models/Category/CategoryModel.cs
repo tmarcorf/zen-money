@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZenMoney.Application.Models.Expense
+namespace ZenMoney.Application.Models.Category
 {
-    public class ExpenseModel : BaseModel
+    public class CategoryModel : BaseModel
     {
+        public string Name { get; set; }
     }
 }
