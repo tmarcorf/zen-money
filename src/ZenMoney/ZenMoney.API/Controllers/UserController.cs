@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ZenMoney.API.Responses;
 using ZenMoney.Application.Interfaces;
+using ZenMoney.Application.Models.User;
 using ZenMoney.Application.Requests.User;
 
 namespace ZenMoney.API.Controllers
@@ -8,16 +10,21 @@ namespace ZenMoney.API.Controllers
     [Route("api/user")]
     [ApiController]
     public class UserController(
-        IUserService userService) : ControllerBase
+        IUserService userService
+        ) : ControllerBase
     {
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var result = userService.GetByIdAsync(id);
+            var result = await userService.GetByIdAsync(id);
 
-            if (result == null) return NotFound();
+            if (!result.IsSuccess)
+            {
+                return BadRequest(ApiResponse<UserModel>.Failure(result.Errors));
+            }
 
-            return Ok(result);
+            return Ok(ApiResponse<UserModel>.Success(result.Data));
         }
 
         [HttpPost]
@@ -25,9 +32,39 @@ namespace ZenMoney.API.Controllers
         {
             var result = await userService.CreateAsync(request);
 
-            if (result == null) return BadRequest();
+            if (!result.IsSuccess)
+            {
+                return BadRequest(ApiResponse<UserModel>.Failure(result.Errors));
+            }
 
-            return Ok(result);
+            return Ok(ApiResponse<UserModel>.Success(result.Data));
+        }
+
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> UpdateAsync(UpdateUserRequest request)
+        {
+            var result = await userService.UpdateAsync(request);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(ApiResponse<UserModel>.Failure(result.Errors));
+            }
+
+            return Ok(ApiResponse<UserModel>.Success(result.Data));
+        }
+
+        [HttpPost("auth")]
+        public async Task<IActionResult> AuthenticateAsync(AuthUserRequest request)
+        {
+            var result = await userService.AuthenticateAsync(request);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(ApiResponse<TokenModel>.Failure(result.Errors));
+            }
+
+            return Ok(ApiResponse<TokenModel>.Success(result.Data));
         }
     }
 }
