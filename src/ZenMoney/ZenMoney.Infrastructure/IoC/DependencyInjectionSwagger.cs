@@ -9,7 +9,7 @@ namespace ZenMoney.Infrastructure.IoC
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "YouDo.API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ZenMoney.API", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {

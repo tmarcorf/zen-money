@@ -14,9 +14,6 @@ namespace ZenMoney.Core.Entities
         public ExpenseTypeEnum Type { get; set; }
 
         [Required]
-        public CategoryEnum Category { get; set; }
-
-        [Required]
         public DateOnly Date { get; set; }
 
         [Required]
@@ -31,6 +28,11 @@ namespace ZenMoney.Core.Entities
 
         [Required]
         public bool IsPaid { get; set; }
+
+        [Required]
+        public Guid CategoryId { get; set; }
+
+        public Category Category { get; set; }
 
         public Guid UserId { get; set; }
 
