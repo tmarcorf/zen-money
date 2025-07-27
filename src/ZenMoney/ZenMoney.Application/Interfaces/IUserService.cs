@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ZenMoney.Application.Models.User;
+﻿using ZenMoney.Application.Models.User;
 using ZenMoney.Application.Requests.User;
+using ZenMoney.Application.Results;
 
 namespace ZenMoney.Application.Interfaces
 {
     public interface IUserService
     {
-        Task<UserModel> GetByIdAsync(Guid id);
+        Task<Result<UserModel>> GetByIdAsync(Guid id);
 
-        Task<UserModel> CreateAsync(CreateUserRequest request);
+        Task<Result<UserModel>> CreateAsync(CreateUserRequest request);
+
+        Task<Result<UserModel>> UpdateAsync(UpdateUserRequest request);
+
+        Task<Result<TokenModel>> AuthenticateAsync(AuthUserRequest request);
     }
 }

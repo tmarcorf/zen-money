@@ -35,16 +35,37 @@ namespace ZenMoney.Application.Extensions
             };
         }
 
-        public static User ToEntity(this CreateUserRequest user)
+        public static User ToEntity(this CreateUserRequest request)
         {
             return new User
             {
-                UserName = user.Email,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                DateOfBirth = user.DateOfBirth
+                UserName = request.Email,
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                DateOfBirth = request.DateOfBirth
             };
+        }
+
+        public static User ToEntity(this UpdateUserRequest request)
+        {
+            return new User
+            {
+                Id = request.Id,
+                UserName = request.Email,
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                DateOfBirth = request.DateOfBirth
+            };
+        }
+
+        public static void Update(this User user, User newUserData)
+        {
+            user.Email = newUserData.Email;
+            user.FirstName = newUserData.FirstName;
+            user.LastName = newUserData.LastName;
+            user.DateOfBirth = newUserData.DateOfBirth;
         }
     }
 }
