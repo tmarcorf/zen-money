@@ -38,10 +38,5 @@ namespace ZenMoney.Application.Extensions
                 Description = request.Description,
             };
         }
-
-        public static void Update(this PaymentMethod entity, UpdatePaymentMethodRequest request)
-        {
-            entity.Description = request.Description;
-        }
     }
 }

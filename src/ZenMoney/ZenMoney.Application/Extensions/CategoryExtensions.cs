@@ -29,10 +29,5 @@ namespace ZenMoney.Application.Extensions
                 Name = request.Name
             };
         }
-
-        public static void Update(this Category entity, UpdateCategoryRequest request)
-        {
-            entity.Name = request.Name;
-        }
     }
 }
