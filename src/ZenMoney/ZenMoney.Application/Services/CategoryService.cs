@@ -80,8 +80,8 @@ namespace ZenMoney.Application.Services
 
             var category = await categoryRepository.GetByIdAsync(request.Id);
             category.UpdatedAt = DateTimeOffset.UtcNow;
+            category.Name = request.Name;
 
-            category.Update(request);
             categoryRepository.Update(category);
             await categoryRepository.SaveChangesAsync();
 

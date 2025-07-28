@@ -73,8 +73,8 @@ namespace ZenMoney.Application.Services
 
             var paymentMethod = await paymentMethodRepository.GetByIdAsync(request.Id);
             paymentMethod.UpdatedAt = DateTimeOffset.UtcNow;
+            paymentMethod.Description = request.Description;
 
-            paymentMethod.Update(request);
             paymentMethodRepository.Update(paymentMethod);
             await paymentMethodRepository.SaveChangesAsync();
 
