@@ -21,7 +21,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(ApiResponse<UserModel>.Failure(result.Errors));
+                return NotFound(ApiResponse<UserModel>.Failure(result.Errors, "404"));
             }
 
             return Ok(ApiResponse<UserModel>.Success(result.Data));

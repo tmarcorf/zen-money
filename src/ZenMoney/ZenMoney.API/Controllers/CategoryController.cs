@@ -25,7 +25,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(ApiResponse<CategoryModel>.Failure(result.Errors));
+                return NotFound(ApiResponse<CategoryModel>.Failure(result.Errors, "404"));
             }
 
             return Ok(ApiResponse<CategoryModel>.Success(result.Data));
@@ -67,7 +67,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(ApiResponse<CategoryModel>.Failure(result.Errors));
+                return NotFound(ApiResponse<CategoryModel>.Failure(result.Errors, "404"));
             }
 
             return Ok(ApiResponse<CategoryModel>.Success(result.Data));
