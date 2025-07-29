@@ -5,7 +5,7 @@
         private Result(T data, List<Error> errors)
         {
             Data = data;
-            IsSuccess = errors == null || errors.Count == 0 ;
+            IsSuccess = errors == null || errors.Count == 0;
             Errors = errors;
         }
 
