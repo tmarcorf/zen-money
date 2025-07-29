@@ -10,7 +10,7 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 {
     public class PaymentMethodRepository : BaseRepository<PaymentMethod>, IPaymentMethodRepository
     {
-        public PaymentMethodRepository(ApplicationDbContext dbContext) 
+        public PaymentMethodRepository(ApplicationDbContext dbContext)
             : base(dbContext)
         {
         }

@@ -18,7 +18,8 @@ namespace ZenMoney.Application.Extensions
                 Id = entity.Id,
                 Name = entity.Name,
                 CreatedAt = entity.CreatedAt,
-                UpdatedAt = entity.UpdatedAt
+                UpdatedAt = entity.UpdatedAt,
+                User = entity.User.ToModel()
             };
         }
 
@@ -26,6 +27,7 @@ namespace ZenMoney.Application.Extensions
         {
             return new Category
             {
+                UserId = request.UserId,
                 Name = request.Name
             };
         }

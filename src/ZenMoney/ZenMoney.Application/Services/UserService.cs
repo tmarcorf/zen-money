@@ -39,7 +39,7 @@ namespace ZenMoney.Application.Services
         public async Task<Result<UserModel>> CreateAsync(CreateUserRequest request)
         {
             if (request == null) ArgumentNullException.ThrowIfNull(request);
-            
+
             var validationResult = createUserValidator.Validate(request);
 
             if (!validationResult.IsValid)

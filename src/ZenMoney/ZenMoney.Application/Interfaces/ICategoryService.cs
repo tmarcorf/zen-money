@@ -11,7 +11,7 @@ namespace ZenMoney.Application.Interfaces
         Task<Result<CategoryModel>> CreateAsync(CreateCategoryRequest request);
 
         Task<Result<CategoryModel>> UpdateAsync(UpdateCategoryRequest request);
-        
+
         Task<Result<CategoryModel>> DeleteAsync(Guid id);
     }
 }
