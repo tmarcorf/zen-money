@@ -27,11 +27,6 @@ namespace ZenMoney.Application.Validators.Category
                 .WithMessage("O tamanho máximo do nome é de 50 caracteres")
                 .Must(category => !categoryRepository.ExistsAsync(c => c.Id != category.Id && c.Name == category.Name).Result)
                 .WithMessage("Já existe uma categoria cadastrada com este nome");
-
-            RuleFor(x => x.UserId)
-                .NotEmpty()
-                .Must(userId => userManager.FindByIdAsync(userId.ToString()).Result != null)
-                .WithMessage("O id do usuário é obrigatório");
         }
     }
 }
