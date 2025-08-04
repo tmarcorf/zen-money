@@ -35,6 +35,7 @@ namespace ZenMoney.Application.Extensions
         {
             return new PaymentMethod
             {
+                UserId = request.UserId,
                 Description = request.Description,
             };
         }

@@ -9,5 +9,7 @@ namespace ZenMoney.Application.Requests.PaymentMethod
     public class CreatePaymentMethodRequest
     {
         public string Description { get; set; }
+
+        public Guid UserId { get; set; }
     }
 }

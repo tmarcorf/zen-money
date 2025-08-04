@@ -22,14 +22,5 @@ namespace ZenMoney.Application.Extensions
                 User = entity.User.ToModel()
             };
         }
-
-        public static Category ToEntity(this CreateCategoryRequest request)
-        {
-            return new Category
-            {
-                UserId = request.UserId,
-                Name = request.Name
-            };
-        }
     }
 }

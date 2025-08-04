@@ -9,7 +9,5 @@ namespace ZenMoney.Application.Requests.Category
     public class CreateCategoryRequest
     {
         public string Name { get; set; }
-
-        public Guid UserId { get; set; }
     }
 }
