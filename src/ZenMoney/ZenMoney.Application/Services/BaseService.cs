@@ -9,12 +9,12 @@ using ZenMoney.Core.Entities;
 
 namespace ZenMoney.Application.Services
 {
-    public abstract class BaseService(HttpContext httpContext)
+    public class BaseService(IHttpContextAccessor httpContextAcessor)
     {
         public Guid GetUserId()
         {
             Guid userId;
-            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userIdClaim = httpContextAcessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out userId))
             {
