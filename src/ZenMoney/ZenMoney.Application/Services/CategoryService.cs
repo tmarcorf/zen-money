@@ -15,7 +15,7 @@ namespace ZenMoney.Application.Services
         ICategoryRepository categoryRepository,
         IValidator<CreateCategoryRequest> createCategoryValidator,
         IValidator<UpdateCategoryRequest> updateCategoryValidator,
-        HttpContext httpContext) : BaseService(httpContext), ICategoryService
+        IHttpContextAccessor httpContextAcessor) : BaseService(httpContextAcessor), ICategoryService
     {
         public async Task<Result<CategoryModel>> GetByIdAsync(Guid id)
         {
@@ -42,6 +42,7 @@ namespace ZenMoney.Application.Services
         {
             if (request == null) ArgumentNullException.ThrowIfNull(request);
 
+            request.UserId = GetUserId();
             var validationResult = createCategoryValidator.Validate(request);
 
             if (!validationResult.IsValid)
@@ -53,7 +54,7 @@ namespace ZenMoney.Application.Services
 
             var category = new Category();
             category.Id = Guid.NewGuid();
-            category.UserId = GetUserId();
+            category.UserId = request.UserId;
             category.Name = request.Name;
             category.CreatedAt = DateTimeOffset.UtcNow;
 

@@ -19,7 +19,6 @@ namespace ZenMoney.Application.Extensions
                 Name = entity.Name,
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt,
-                User = entity.User.ToModel()
             };
         }
     }

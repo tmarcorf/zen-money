@@ -177,7 +177,7 @@ namespace ZenMoney.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ZenMoney.Core.Entities.Expense", b =>
@@ -229,7 +229,7 @@ namespace ZenMoney.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Expenses");
+                    b.ToTable("Expenses", (string)null);
                 });
 
             modelBuilder.Entity("ZenMoney.Core.Entities.Income", b =>
@@ -265,7 +265,7 @@ namespace ZenMoney.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Incomes");
+                    b.ToTable("Incomes", (string)null);
                 });
 
             modelBuilder.Entity("ZenMoney.Core.Entities.PaymentMethod", b =>
@@ -292,7 +292,7 @@ namespace ZenMoney.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PaymentMethods");
+                    b.ToTable("PaymentMethods", (string)null);
                 });
 
             modelBuilder.Entity("ZenMoney.Core.Entities.User", b =>

@@ -24,7 +24,7 @@ namespace ZenMoney.Application.Validators.PaymentMethod
                 .WithMessage("A descrição é obrigatória")
                 .Must(request => request.Description.Length <= 50)
                 .WithMessage("O tamanho máximo da descrição é de 50 caracteres")
-                .Must(request => !paymentMethodRepository.ExistsAsync(p => p.Id != request.Id && p.Description == request.Description).Result)
+                .Must(request => !paymentMethodRepository.ExistsAsync(p => p.Id != request.Id && p.UserId == request.UserId && p.Description == request.Description).Result)
                 .WithMessage("Já existe um método de pagamento cadastrado com este nome");
         }
     }

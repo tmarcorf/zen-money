@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using ZenMoney.Application.Extensions;
 using ZenMoney.Application.Helpers;
 using ZenMoney.Application.Interfaces;
@@ -12,7 +13,8 @@ namespace ZenMoney.Application.Services
     public class PaymentMethodService(
         IPaymentMethodRepository paymentMethodRepository,
         IValidator<CreatePaymentMethodRequest> createPaymentMethodValidator,
-        IValidator<UpdatePaymentMethodRequest> updatePaymentMethodValidator) : IPaymentMethodService
+        IValidator<UpdatePaymentMethodRequest> updatePaymentMethodValidator,
+        IHttpContextAccessor httpContextAcessor) : BaseService(httpContextAcessor), IPaymentMethodService
     {
         public async Task<Result<PaymentMethodModel>> GetByIdAsync(Guid id)
         {
@@ -39,6 +41,7 @@ namespace ZenMoney.Application.Services
         {
             if (request == null) ArgumentNullException.ThrowIfNull(request);
 
+            request.UserId = GetUserId();
             var validationResult = createPaymentMethodValidator.Validate(request);
 
             if (!validationResult.IsValid)
