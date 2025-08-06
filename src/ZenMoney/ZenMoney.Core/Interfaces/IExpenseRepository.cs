@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZenMoney.Core.Entities;
 
-namespace ZenMoney.Core.Enums
+namespace ZenMoney.Core.Interfaces
 {
-    public enum PaymentMethodEnum
+    public interface IExpenseRepository : IBaseRepository<Expense>
     {
-
     }
 }

@@ -1,17 +1,12 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using ZenMoney.Application.Extensions;
 using ZenMoney.Application.Helpers;
 using ZenMoney.Application.Interfaces;
 using ZenMoney.Application.Models.Category;
-using ZenMoney.Application.Models.User;
 using ZenMoney.Application.Requests.Category;
 using ZenMoney.Application.Results;
-using ZenMoney.Application.Validators.User;
+using ZenMoney.Core.Entities;
 using ZenMoney.Core.Interfaces;
 
 namespace ZenMoney.Application.Services
@@ -19,7 +14,8 @@ namespace ZenMoney.Application.Services
     public class CategoryService(
         ICategoryRepository categoryRepository,
         IValidator<CreateCategoryRequest> createCategoryValidator,
-        IValidator<UpdateCategoryRequest> updateCategoryValidator) : ICategoryService
+        IValidator<UpdateCategoryRequest> updateCategoryValidator,
+        IHttpContextAccessor httpContextAcessor) : BaseService(httpContextAcessor), ICategoryService
     {
         public async Task<Result<CategoryModel>> GetByIdAsync(Guid id)
         {
@@ -46,6 +42,7 @@ namespace ZenMoney.Application.Services
         {
             if (request == null) ArgumentNullException.ThrowIfNull(request);
 
+            request.UserId = GetUserId();
             var validationResult = createCategoryValidator.Validate(request);
 
             if (!validationResult.IsValid)
@@ -55,8 +52,10 @@ namespace ZenMoney.Application.Services
                 return Result<CategoryModel>.Failure(errors);
             }
 
-            var category = request.ToEntity();
+            var category = new Category();
             category.Id = Guid.NewGuid();
+            category.UserId = request.UserId;
+            category.Name = request.Name;
             category.CreatedAt = DateTimeOffset.UtcNow;
 
             categoryRepository.Create(category);
@@ -79,9 +78,9 @@ namespace ZenMoney.Application.Services
             }
 
             var category = await categoryRepository.GetByIdAsync(request.Id);
+            category.Name = request.Name;
             category.UpdatedAt = DateTimeOffset.UtcNow;
 
-            category.Update(request);
             categoryRepository.Update(category);
             await categoryRepository.SaveChangesAsync();
 

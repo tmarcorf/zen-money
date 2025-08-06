@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +20,12 @@ namespace ZenMoney.Application.Validators.Category
                .Must(id => categoryRepository.ExistsAsync(x => x.Id == id).Result)
                .WithMessage("A categoria não existe");
 
-            RuleFor(category => category)
-                .NotEmpty()
+            RuleFor(request => request)
+                .Must(request => !string.IsNullOrWhiteSpace(request.Name))
                 .WithMessage("O nome é obrigatório")
-                .Must(category => category.Name.Length <= 50)
+                .Must(request => request.Name.Length <= 50)
                 .WithMessage("O tamanho máximo do nome é de 50 caracteres")
-                .Must(category => !categoryRepository.ExistsAsync(c => c.Id != category.Id && c.Name == category.Name).Result)
+                .Must(request => !categoryRepository.ExistsAsync(c => c.Id != request.Id && c.UserId == request.UserId && c.Name == request.Name).Result)
                 .WithMessage("Já existe uma categoria cadastrada com este nome");
         }
     }

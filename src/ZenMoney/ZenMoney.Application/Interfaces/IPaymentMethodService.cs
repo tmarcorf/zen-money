@@ -1,0 +1,17 @@
+﻿using ZenMoney.Application.Models.PaymentMethod;
+using ZenMoney.Application.Requests.PaymentMethod;
+using ZenMoney.Application.Results;
+
+namespace ZenMoney.Application.Interfaces
+{
+    public interface IPaymentMethodService
+    {
+        Task<Result<PaymentMethodModel>> GetByIdAsync(Guid id);
+
+        Task<Result<PaymentMethodModel>> CreateAsync(CreatePaymentMethodRequest request);
+
+        Task<Result<PaymentMethodModel>> UpdateAsync(UpdatePaymentMethodRequest request);
+
+        Task<Result<PaymentMethodModel>> DeleteAsync(Guid id);
+    }
+}

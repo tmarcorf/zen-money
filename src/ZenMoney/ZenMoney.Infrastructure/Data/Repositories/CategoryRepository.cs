@@ -10,7 +10,7 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 {
     public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
-        public CategoryRepository(ApplicationDbContext dbContext) 
+        public CategoryRepository(ApplicationDbContext dbContext)
             : base(dbContext)
         {
         }

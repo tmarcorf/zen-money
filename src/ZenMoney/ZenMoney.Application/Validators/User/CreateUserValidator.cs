@@ -15,9 +15,5 @@ namespace ZenMoney.Application.Validators.User
                 .Must(email => userManager.FindByEmailAsync(email).Result == null)
                 .WithMessage("O email informado já existe");
         }
-
-        
-
-        
     }
 }
