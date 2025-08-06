@@ -7,7 +7,7 @@ using ZenMoney.Application.Requests.User;
 
 namespace ZenMoney.API.Controllers
 {
-    [Route("api/user")]
+    [Route("api/users")]
     [ApiController]
     public class UserController(
         IUserService userService

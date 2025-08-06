@@ -11,7 +11,7 @@ using ZenMoney.Application.Services;
 
 namespace ZenMoney.API.Controllers
 {
-    [Route("api/payment-method")]
+    [Route("api/payment-methods")]
     [ApiController]
     public class PaymentMethodController(
         IPaymentMethodService paymentMethodService) : ControllerBase

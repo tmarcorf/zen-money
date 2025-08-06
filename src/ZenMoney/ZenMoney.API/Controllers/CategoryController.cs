@@ -1,21 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ZenMoney.API.Responses;
 using ZenMoney.Application.Interfaces;
 using ZenMoney.Application.Models.Category;
-using ZenMoney.Application.Models.User;
 using ZenMoney.Application.Requests.Category;
-using ZenMoney.Application.Requests.User;
-using ZenMoney.Application.Services;
 
 namespace ZenMoney.API.Controllers
 {
-    [Route("api/category")]
+    [Route("api/categories")]
     [ApiController]
     public class CategoryController(
-        ICategoryService categoryService
-        ) : ControllerBase
+        ICategoryService categoryService) : ControllerBase
     {
         [Authorize]
         [HttpGet]
