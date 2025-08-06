@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace ZenMoney.Application.Validators.Income
 {
     public class CreateIncomeValidator : AbstractValidator<CreateIncomeRequest>
     {
-        public CreateIncomeValidator()
+        public CreateIncomeValidator(UserManager<Core.Entities.User> userManager)
         {
             RuleFor(x => x.Type)
                 .NotEmpty()
@@ -36,6 +37,12 @@ namespace ZenMoney.Application.Validators.Income
                 .NotEmpty()
                 .NotEqual(decimal.Zero)
                 .WithMessage("O valor da entrada é obrigatório");
+
+            RuleFor(x => x.UserId)
+                .NotEmpty()
+                .WithMessage("O Id do usuário é obrigatório")
+                .Must(userId => userManager.FindByIdAsync(userId.ToString()).Result != null)
+                .WithMessage("O usuário informado não existe");
         }
 
         private bool TypeIsValid(IncomeTypeEnum type)

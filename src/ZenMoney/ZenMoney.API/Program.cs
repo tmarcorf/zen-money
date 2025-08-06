@@ -16,6 +16,7 @@ namespace ZenMoney.API
             services.AddInfrastructureSwagger();
 
             builder.Services.AddControllers();
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 

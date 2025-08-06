@@ -170,7 +170,12 @@ namespace ZenMoney.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Categories");
                 });
@@ -201,8 +206,8 @@ namespace ZenMoney.Infrastructure.Migrations
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
-                    b.Property<int>("PaymentMethod")
-                        .HasColumnType("int");
+                    b.Property<Guid>("PaymentMethodId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -216,6 +221,8 @@ namespace ZenMoney.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("UserId");
 
@@ -256,6 +263,33 @@ namespace ZenMoney.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Incomes");
+                });
+
+            modelBuilder.Entity("ZenMoney.Core.Entities.PaymentMethod", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PaymentMethods");
                 });
 
             modelBuilder.Entity("ZenMoney.Core.Entities.User", b =>
@@ -389,11 +423,28 @@ namespace ZenMoney.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ZenMoney.Core.Entities.Category", b =>
+                {
+                    b.HasOne("ZenMoney.Core.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ZenMoney.Core.Entities.Expense", b =>
                 {
                     b.HasOne("ZenMoney.Core.Entities.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ZenMoney.Core.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -405,6 +456,8 @@ namespace ZenMoney.Infrastructure.Migrations
 
                     b.Navigation("Category");
 
+                    b.Navigation("PaymentMethod");
+
                     b.Navigation("User");
                 });
 
@@ -412,6 +465,17 @@ namespace ZenMoney.Infrastructure.Migrations
                 {
                     b.HasOne("ZenMoney.Core.Entities.User", "User")
                         .WithMany("Incomes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ZenMoney.Core.Entities.PaymentMethod", b =>
+                {
+                    b.HasOne("ZenMoney.Core.Entities.User", "User")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

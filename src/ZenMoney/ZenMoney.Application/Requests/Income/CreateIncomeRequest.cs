@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ZenMoney.Core.Enums;
 
@@ -16,5 +17,8 @@ namespace ZenMoney.Application.Requests.Income
         public string Description { get; set; }
 
         public decimal Amount { get; set; }
+
+        [JsonIgnore]
+        public Guid UserId { get; set; }
     }
 }

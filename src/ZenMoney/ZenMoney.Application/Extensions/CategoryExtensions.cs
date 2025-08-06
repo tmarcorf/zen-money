@@ -18,21 +18,8 @@ namespace ZenMoney.Application.Extensions
                 Id = entity.Id,
                 Name = entity.Name,
                 CreatedAt = entity.CreatedAt,
-                UpdatedAt = entity.UpdatedAt
+                UpdatedAt = entity.UpdatedAt,
             };
-        }
-
-        public static Category ToEntity(this CreateCategoryRequest request)
-        {
-            return new Category
-            {
-                Name = request.Name
-            };
-        }
-
-        public static void Update(this Category entity, UpdateCategoryRequest request)
-        {
-            entity.Name = request.Name;
         }
     }
 }

@@ -5,17 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using ZenMoney.Application.Models.Income;
 using ZenMoney.Application.Requests.Income;
+using ZenMoney.Application.Results;
 
 namespace ZenMoney.Application.Interfaces
 {
     public interface IIncomeService
     {
-        Task<IncomeModel> GetByIdAsync(Guid id);
+        Task<Result<IncomeModel>> GetByIdAsync(Guid id);
 
-        Task<IncomeModel> CreateAsync(CreateIncomeRequest request);
+        Task<Result<IncomeModel>> CreateAsync(CreateIncomeRequest request);
 
-        Task<IncomeModel> UpdateAsync(UpdateIncomeRequest request);
+        Task<Result<IncomeModel>> UpdateAsync(UpdateIncomeRequest request);
 
-        Task<IncomeModel> DeleteAsync(Guid id);
+        Task<Result<IncomeModel>> DeleteAsync(Guid id);
     }
 }

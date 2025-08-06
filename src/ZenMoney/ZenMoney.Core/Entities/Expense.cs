@@ -21,9 +21,6 @@ namespace ZenMoney.Core.Entities
         public string Description { get; set; }
 
         [Required]
-        public PaymentMethodEnum PaymentMethod { get; set; }
-
-        [Required]
         public decimal Amount { get; set; }
 
         [Required]
@@ -34,6 +31,12 @@ namespace ZenMoney.Core.Entities
 
         public Category Category { get; set; }
 
+        [Required]
+        public Guid PaymentMethodId { get; set; }
+
+        public PaymentMethod PaymentMethod { get; set; }
+
+        [Required]
         public Guid UserId { get; set; }
 
         public User User { get; set; }

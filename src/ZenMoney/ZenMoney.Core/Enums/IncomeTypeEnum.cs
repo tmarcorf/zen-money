@@ -8,7 +8,7 @@ namespace ZenMoney.Core.Enums
 {
     public enum IncomeTypeEnum
     {
-        FIXED = 0,
-        VARIABLE = 1,
+        FIXED = 1,
+        VARIABLE = 2,
     }
 }
