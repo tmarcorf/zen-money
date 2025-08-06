@@ -32,7 +32,7 @@ namespace ZenMoney.Core.Entities
         public Category Category { get; set; }
 
         [Required]
-        public Guid PaymentMehtodId { get; set; }
+        public Guid PaymentMethodId { get; set; }
 
         public PaymentMethod PaymentMethod { get; set; }
 

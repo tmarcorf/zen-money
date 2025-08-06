@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Models.PaymentMethod;
-using ZenMoney.Application.Models.User;
 using ZenMoney.Core.Enums;
 
-namespace ZenMoney.Application.Models.Expense
+namespace ZenMoney.Application.Requests.Expense
 {
-    public class ExpenseModel : BaseModel
+    public class CreateExpenseRequest
     {
         public ExpenseTypeEnum Type { get; set; }
 
@@ -25,10 +24,9 @@ namespace ZenMoney.Application.Models.Expense
 
         public Guid CategoryId { get; set; }
 
-        public CategoryModel Category { get; set; }
-
         public Guid PaymentMethodId { get; set; }
 
-        public PaymentMethodModel PaymentMethod { get; set; }
+        [JsonIgnore]
+        public Guid UserId { get; set; }
     }
 }
