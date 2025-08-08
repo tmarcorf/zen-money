@@ -1,0 +1,45 @@
+<div class="d-flex flex-column justify-content-between p-3 text-white bg-dark vh-100">
+    <div class="p-1 d-flex flex-column">
+        <h1 mat-title>
+            <a style="text-decoration: none;" class="text-white" routerLink="/dashboard">
+                <b>ZenMoney</b>
+            </a>
+        </h1>
+    </div>
+
+    <div class="d-flex flex-column mt-4 flex-grow-1">
+        <button class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/dashboard">
+            <i class="fas fa-chart-bar"></i>
+            Dashboard
+        </button>
+        <button class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/expenses">
+            <i class="fa-solid fa-receipt"></i>
+            Gastos
+        </button>
+        <button class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/incomes">
+            <i class="fa-solid fa-wallet"></i>
+            Entradas
+        </button>
+        <button class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/categories">
+            <i class="fa-solid fa-list"></i>    
+            Categorias
+        </button>
+        <button class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/payment-methods">
+            <i class="fa-solid fa-money-bill"></i>
+            Formas de pagamento
+        </button>
+        <button class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/reports">
+            <i class="fa-solid fa-scroll"></i>
+            Relatórios
+        </button>
+    </div>
+
+    <div class="d-flex">
+        <button class="p-4 text-white" mat-button routerLink="/login">
+            <i class="fa-solid fa-user"></i>
+            Login
+        </button>
+    </div>
+</div>
+
+
