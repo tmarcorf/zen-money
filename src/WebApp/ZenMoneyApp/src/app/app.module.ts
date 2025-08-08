@@ -19,6 +19,8 @@ import { PaymentMethodComponent } from './components/payment-method/payment-meth
 import { ReportComponent } from './components/report/report.component';
 import { MatButtonModule, MatButton } from '@angular/material/button';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import { MatCardModule } from '@angular/material/card';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -43,7 +45,9 @@ import {MatSidenavModule} from '@angular/material/sidenav';
     MatToolbarModule,
     MatButtonModule,
     MatButton,
-    MatSidenavModule
+    MatSidenavModule,
+    MatCardModule,
+    ReactiveFormsModule
   ],
   providers: [
     provideAnimationsAsync()
