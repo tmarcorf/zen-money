@@ -2,33 +2,32 @@
     <div class="p-1 ms-3 d-flex align-items-center">
         <span class="me-2 mb-3 material-icons">paid</span>
         <h1><b>ZenMoney</b></h1>
-        
     </div>
 
     <div *ngIf="userService.isLoggedIn$ | async" class="d-flex flex-column mt-1 flex-grow-1">
         <mat-divider class="bg-white"></mat-divider>
         <button class="p-4 mt-3 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/dashboard">
-            <i class="fas fa-chart-bar"></i>
+            <span class="me-2 mb-1 material-icons">dashboard</span>
             Dashboard
         </button>
         <button class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/expenses">
-            <i class="fa-solid fa-receipt"></i>
+            <span class="me-2 mb-1 material-icons">receipt</span>
             Gastos
         </button>
         <button class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/incomes">
-            <i class="fa-solid fa-wallet"></i>
+            <span class="me-2 mb-1 material-icons">wallet</span>
             Entradas
         </button>
         <button class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/categories">
-            <i class="fa-solid fa-list"></i>    
+            <span class="me-2 mb-1 material-icons">category</span>
             Categorias
         </button>
         <button class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/payment-methods">
-            <i class="fa-solid fa-money-bill"></i>
+            <span class="me-2 mb-1 material-icons">payments</span>
             Formas de pagamento
         </button>
         <button class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/reports">
-            <i class="fa-solid fa-scroll"></i>
+            <span class="me-2 mb-1 material-icons">bar_chart</span>
             Relatórios
         </button>
     </div>
