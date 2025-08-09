@@ -125,6 +125,7 @@ namespace ZenMoney.Application.Services
 
             var userTokenDto = new TokenModel
             {
+                FirstName = user.FirstName,
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 Expiration = expiration
             };

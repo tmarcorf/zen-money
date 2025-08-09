@@ -21,6 +21,8 @@ import { MatButtonModule, MatButton } from '@angular/material/button';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import {MatDividerModule} from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -47,7 +49,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatButton,
     MatSidenavModule,
     MatCardModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule,
+    MatDividerModule
   ],
   providers: [
     provideAnimationsAsync()

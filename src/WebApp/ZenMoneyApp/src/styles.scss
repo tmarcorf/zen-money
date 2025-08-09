@@ -37,14 +37,26 @@ $ZenMoneyApp-theme: mat.define-light-theme((
 
 /* You can add global styles to this file, and also import other style files */
 
-html, body {
+* {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+html, body {
   height: 100%;
   margin: 0;
-  overflow-x: hidden; /* previne rolagem horizontal */
+  overflow-x: hidden; 
   overflow-y: auto;
+}
+
+.form-item {
+  width: 100%;
+  margin-bottom: 5px;
 }
 
 .border-red {
   border: 1px solid red;
+}
+
+.main-content {
+  background-color: #ECEFF1;
 }

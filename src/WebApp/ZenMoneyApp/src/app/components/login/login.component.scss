@@ -1,25 +1,16 @@
 .login-form {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100%;
-  padding: 0 16px;
 }
 
 .login-card {
   width: 100%;
-  max-width: 400px; /* limite máximo */
+  max-width: 450px;
   padding: 24px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.15);
   border-radius: 8px;
 }
 
-.full-width {
-  width: 100%;
-  margin-bottom: 16px;
-}
-
 .button-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
