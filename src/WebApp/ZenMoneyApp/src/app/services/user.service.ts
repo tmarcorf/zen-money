@@ -31,10 +31,6 @@ export class UserService {
         var expirationDate = new Date(this.storageService.get(EXP_DATE));
         var now = new Date();
 
-        console.log("data expiração", expirationDate.toString())
-        console.log("data atual", now.toString())
-        console.log("Está logado", now < expirationDate);
-
         return now < expirationDate;
     }
 
