@@ -1,14 +1,13 @@
 <div class="d-flex flex-column justify-content-between p-3 text-white bg-dark vh-100">
-    <div class="p-1 d-flex flex-column">
-        <h1 mat-title>
-            <a style="text-decoration: none;" class="text-white" routerLink="/dashboard">
-                <b>ZenMoney</b>
-            </a>
-        </h1>
+    <div class="p-1 ms-3 d-flex align-items-center">
+        <span class="me-2 mb-3 material-icons">paid</span>
+        <h1><b>ZenMoney</b></h1>
+        
     </div>
 
-    <div class="d-flex flex-column mt-4 flex-grow-1">
-        <button class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/dashboard">
+    <div *ngIf="userService.isLoggedIn$ | async" class="d-flex flex-column mt-1 flex-grow-1">
+        <mat-divider class="bg-white"></mat-divider>
+        <button class="p-4 mt-3 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/dashboard">
             <i class="fas fa-chart-bar"></i>
             Dashboard
         </button>
@@ -34,11 +33,22 @@
         </button>
     </div>
 
-    <div class="d-flex">
-        <button class="p-4 text-white" mat-button routerLink="/login">
+    <div class="d-flex justify-content-between">
+        <button *ngIf="!(userService.isLoggedIn$ | async)" class="p-4 text-white" mat-button routerLink="/login">
             <i class="fa-solid fa-user"></i>
             Login
         </button>
+
+        <div *ngIf="userService.isLoggedIn$ | async" class="d-flex flex-grow-1 justify-content-between align-items-center">
+            <div class="d-flex flex-grow-1 align-items-center">
+                <span class="material-icons">person</span>
+                <p class="p-1 mt-3"><b>{{userService.getFirstName()}}</b></p>
+            </div>
+            <button  class="p-4 text-white" mat-button (click)="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Sair
+            </button>
+        </div>
     </div>
 </div>
 

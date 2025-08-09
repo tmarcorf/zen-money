@@ -19,6 +19,16 @@ namespace ZenMoney.API
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("ZenMoneyApp",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:4200");
+                        policy.AllowAnyMethod();
+                        policy.AllowAnyHeader();
+                    });
+            });
 
             var app = builder.Build();
 
@@ -30,9 +40,9 @@ namespace ZenMoney.API
             }
 
             app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseCors("ZenMoneyApp");
             app.MapControllers();
 
             app.Run();
