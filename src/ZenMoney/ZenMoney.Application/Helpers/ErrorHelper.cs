@@ -26,7 +26,7 @@ namespace ZenMoney.Application.Helpers
         {
             return new List<Error>
             {
-                new Error("Email / Password", "O email ou senha estão inválidos")
+                new Error("Email / Password", "O e-mail ou senha estão incorretos")
             };
         }
     }
