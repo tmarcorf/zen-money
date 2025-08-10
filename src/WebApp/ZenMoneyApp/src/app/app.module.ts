@@ -30,7 +30,9 @@ import { LoadingComponent } from './components/loading/loading.component';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import { DateAdapter, MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 
 export const MY_DATE_FORMATS = {
   parse: {
@@ -78,7 +80,10 @@ export const MY_DATE_FORMATS = {
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatTableModule,
+    MatPaginator,
+    MatPaginatorModule,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },

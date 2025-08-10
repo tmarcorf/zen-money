@@ -57,6 +57,7 @@ namespace ZenMoney.Application.Services
             category.UserId = request.UserId;
             category.Name = request.Name;
             category.CreatedAt = DateTimeOffset.UtcNow;
+            category.UpdatedAt = DateTimeOffset.UtcNow;
 
             categoryRepository.Create(category);
             await categoryRepository.SaveChangesAsync();
