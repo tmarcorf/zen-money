@@ -21,7 +21,7 @@ import { MatButtonModule, MatButton } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MatDividerModule } from '@angular/material/divider';
 import { HomeComponent } from './components/home/home.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -46,54 +46,48 @@ export const MY_DATE_FORMATS = {
   },
 };
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    LayoutComponent,
-    DashboardComponent,
-    IncomeComponent,
-    ExpenseComponent,
-    CategoryComponent,
-    PaymentMethodComponent,
-    ReportComponent,
-    HomeComponent,
-    LoadingComponent,
-    CreateAccountComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    MatSlideToggleModule,
-    MatInputModule,
-    MatFormFieldModule,
-    FormsModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatButton,
-    MatSidenavModule,
-    MatCardModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    MatDividerModule,
-    MatProgressSpinnerModule,
-    MatProgressBarModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatTableModule,
-    MatPaginator,
-    MatPaginatorModule,
-  ],
-  providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
-    provideAnimationsAsync(),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: LoadingInterceptor,
-      multi: true
-    }
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        LoginComponent,
+        LayoutComponent,
+        DashboardComponent,
+        IncomeComponent,
+        ExpenseComponent,
+        CategoryComponent,
+        PaymentMethodComponent,
+        ReportComponent,
+        HomeComponent,
+        LoadingComponent,
+        CreateAccountComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        MatSlideToggleModule,
+        MatInputModule,
+        MatFormFieldModule,
+        FormsModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatButton,
+        MatSidenavModule,
+        MatCardModule,
+        ReactiveFormsModule,
+        MatDividerModule,
+        MatProgressSpinnerModule,
+        MatProgressBarModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatTableModule,
+        MatPaginator,
+        MatPaginatorModule], providers: [
+        { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+        provideAnimationsAsync(),
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: LoadingInterceptor,
+            multi: true
+        },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }
