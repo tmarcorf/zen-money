@@ -10,10 +10,11 @@ import { passwordMatchValidator } from '../../utils/custom.validators';
 import { CreateUserRequest } from '../../requests/user/create-user.request';
 
 @Component({
-  selector: 'app-create-account',
-  templateUrl: './create-account.component.html',
-  styleUrl: './create-account.component.scss',
-  providers: [provideNativeDateAdapter()]
+    selector: 'app-create-account',
+    templateUrl: './create-account.component.html',
+    styleUrl: './create-account.component.scss',
+    providers: [provideNativeDateAdapter()],
+    standalone: false
 })
 export class CreateAccountComponent {
   form: FormGroup = new FormGroup({
