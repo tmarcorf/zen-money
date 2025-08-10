@@ -1,22 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { AuthUserRequest } from '../../requests/user/authUserRequest';
+import { AuthUserRequest } from '../../requests/user/auth-user.request';
 import { StorageService } from '../../services/storage.service';
 import { TOKEN_KEY, EXP_DATE, USER_NAME } from '../../constants';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
   constructor(
     private userService: UserService,
     private storageService: StorageService,
+    private notificationService: NotificationService,
     private router: Router) { }
+
+  ngOnInit(): void {
+    if (this.userService.isLoggedIn()) {
+      this.router.navigate(['/home']);
+    }
+  }
 
   form: FormGroup = new FormGroup({
     email: new FormControl(''),
@@ -27,6 +35,11 @@ export class LoginComponent {
     const email = this.form.get('email')?.value;
     const password = this.form.get('password')?.value;
 
+    if (this.areCredentialsInvalid(email, password)) {
+      this.notificationService.error("Informe um e-mail e senha válidos");
+      return;
+    }
+
     let request: AuthUserRequest = {
       email: email,
       password: password
@@ -34,18 +47,21 @@ export class LoginComponent {
 
     this.userService.login(request).subscribe({
       next: (response) => {
-        console.log("Login efetuado com sucesso!");
-        
         this.storageService.set(TOKEN_KEY, response.data.token);
         this.storageService.set(EXP_DATE, response.data.expiration);
         this.storageService.set(USER_NAME, response.data.firstName);
+        this.notificationService.success("Login efetuado com sucesso");
         this.userService.updateLoginState();
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/home']);
       },
       error: (response) => {
-        console.error('Erro ao fazer login:', response.errors[0].message);
+        this.notificationService.errors(response.error.errors);
       }
     })
   }
 
+  areCredentialsInvalid(email: string, password: string): boolean {
+    return email == null || email == ''||
+          password == null || password == '';
+  }
 }

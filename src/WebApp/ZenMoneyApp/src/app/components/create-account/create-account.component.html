@@ -1,0 +1,88 @@
+<div class="login-form d-flex justify-content-center align-items-center">
+  <mat-card class="login-card">
+    <mat-card-title class="d-flex justify-content-center">Criar conta</mat-card-title>
+    <mat-card-content class="mt-3">
+      <form [formGroup]="form">
+        <mat-form-field appearance="outline" class="form-item">
+          <mat-label>Nome</mat-label>
+          <input type="text" matInput formControlName="firstName">
+
+          <mat-error *ngIf="form.get('firstName')?.hasError('required')">
+            O nome é obrigatório
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-item">
+          <mat-label>Sobrenome</mat-label>
+          <input type="text" matInput formControlName="lastName">
+
+          <mat-error *ngIf="form.get('lastName')?.hasError('required')">
+            O sobrenome é obrigatório
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Inserir datepicker -->
+
+        <mat-form-field appearance="outline" class="form-item">
+            <mat-label>Data de nascimento</mat-label>
+            <input matInput [matDatepicker]="picker" placeholder="DD/MM/AAAA" formControlName="dateOfBirth">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+
+            <mat-error *ngIf="form.get('dateOfBirth')?.hasError('required')">
+                A data de nascimento é obrigatória
+            </mat-error>
+            <mat-error *ngIf="form.get('dateOfBirth')?.hasError('invalidFormat')">
+                Formato inválido (use DD/MM/YYYY)
+            </mat-error>
+            <mat-error *ngIf="form.get('dateOfBirth')?.hasError('invalidDate')">
+                Data inválida (verifique dia/mês)
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-item">
+          <mat-label>E-mail</mat-label>
+          <input type="email" matInput formControlName="email">
+
+          <mat-error *ngIf="form.get('email')?.hasError('required')">
+            O e-mail é obrigatório
+          </mat-error>
+          <mat-error *ngIf="form.get('email')?.hasError('email')">
+            E-mail inválido
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-item">
+          <mat-label>Senha</mat-label>
+          <input type="password" matInput formControlName="password">
+
+          <mat-error *ngIf="form.get('password')?.hasError('required')">
+            A senha é obrigatória
+          </mat-error>
+          <mat-error *ngIf="form.get('password')?.hasError('passwordMismatch')">
+            As senhas não são iguais
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-item">
+          <mat-label>Confirmar senha</mat-label>
+          <input type="password" matInput formControlName="confirmPassword">
+
+          <mat-error *ngIf="form.get('confirmPassword')?.hasError('required')">
+            A confirmação da senha é obrigatória
+          </mat-error>
+          <mat-error *ngIf="form.get('confirmPassword')?.hasError('passwordMismatch')">
+            As senhas não são iguais
+          </mat-error>
+        </mat-form-field>
+
+        <div class="button-container">
+          <button mat-raised-button color="primary" (click)="submit()">
+            <span class="pe-2 material-icons">person_add</span>
+            Criar conta
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

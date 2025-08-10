@@ -59,4 +59,48 @@ html, body {
 
 .main-content {
   background-color: #ECEFF1;
+  position: relative;
+}
+
+.no-underscore {
+  text-decoration: none;
+}
+
+.user-name {
+  font-size: medium;
+}
+
+// Loading
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+// MatSnackBar
+
+/* Sucesso */
+::ng-deep .snackbar-success {
+  background-color: #4caf50 !important; /* verde */
+  color: #fff !important;
+}
+
+/* Erro */
+::ng-deep .snackbar-error {
+  background-color: #e65100 !important; /* laranja forte */
+  color: #fff !important;
+}
+
+/* Botão "Ok" */
+.snackbar-success .mat-mdc-button,
+.snackbar-error .mat-mdc-button {
+  color: #fff !important;
 }

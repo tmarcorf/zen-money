@@ -8,17 +8,29 @@ import { ExpenseComponent } from './components/expense/expense.component';
 import { CategoryComponent } from './components/category/category.component';
 import { PaymentMethodComponent } from './components/payment-method/payment-method.component';
 import { ReportComponent } from './components/report/report.component';
+import { HomeComponent } from './components/home/home.component';
+import { CreateAccountComponent } from './components/create-account/create-account.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: DashboardComponent,
-    title: 'ZenMoney | Dashboard'
+    component: HomeComponent,
+    title: 'ZenMoney | Home'
+  },
+  {
+    path: 'home',
+    component: HomeComponent,
+    title: 'ZenMoney | Home'
   },
   {
     path: 'login',
     component: LoginComponent,
     title: 'ZenMoney | Login'
+  },
+  {
+    path: 'create-account',
+    component: CreateAccountComponent,
+    title: 'ZenMoney | Criar conta'
   },
   {
     path: 'dashboard',
