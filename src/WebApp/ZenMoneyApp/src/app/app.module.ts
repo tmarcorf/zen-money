@@ -33,6 +33,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 
 export const MY_DATE_FORMATS = {
   parse: {
@@ -58,9 +59,10 @@ export const MY_DATE_FORMATS = {
         ReportComponent,
         HomeComponent,
         LoadingComponent,
-        CreateAccountComponent
+        CreateAccountComponent,
     ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
+    bootstrap: [AppComponent], 
+    imports: [BrowserModule,
         AppRoutingModule,
         MatSlideToggleModule,
         MatInputModule,
@@ -80,7 +82,9 @@ export const MY_DATE_FORMATS = {
         MatNativeDateModule,
         MatTableModule,
         MatPaginator,
-        MatPaginatorModule], providers: [
+        MatPaginatorModule,
+        MatSortModule
+      ], providers: [
         { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
         provideAnimationsAsync(),
         {
