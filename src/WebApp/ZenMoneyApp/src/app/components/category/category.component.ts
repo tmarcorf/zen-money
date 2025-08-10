@@ -6,26 +6,26 @@ import { MatPaginator } from '@angular/material/paginator';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 const CATEGORY_DATA: CategoryModel[] = [
-  { name: 'Electronics', createdAt: '2025-01-15', updatedAt: '2025-02-10' },
-  { name: 'Books', createdAt: '2025-02-05', updatedAt: '2025-02-15' },
-  { name: 'Clothing', createdAt: '2025-03-01', updatedAt: '2025-03-12' },
-  { name: 'Home & Kitchen', createdAt: '2025-01-20', updatedAt: '2025-02-08' },
-  { name: 'Sports', createdAt: '2025-02-18', updatedAt: '2025-03-05' },
-  { name: 'Toys', createdAt: '2025-03-10', updatedAt: '2025-03-25' },
-  { name: 'Beauty', createdAt: '2025-01-25', updatedAt: '2025-02-20' },
-  { name: 'Garden', createdAt: '2025-02-12', updatedAt: '2025-03-02' },
-  { name: 'Automotive', createdAt: '2025-01-30', updatedAt: '2025-02-25' },
-  { name: 'Health', createdAt: '2025-03-04', updatedAt: '2025-03-18' },
-  { name: 'Jewelry', createdAt: '2025-02-01', updatedAt: '2025-02-14' },
-  { name: 'Pet Supplies', createdAt: '2025-03-06', updatedAt: '2025-03-22' },
-  { name: 'Music', createdAt: '2025-01-18', updatedAt: '2025-02-05' },
-  { name: 'Movies', createdAt: '2025-02-08', updatedAt: '2025-02-19' },
-  { name: 'Games', createdAt: '2025-03-01', updatedAt: '2025-03-15' },
-  { name: 'Office Supplies', createdAt: '2025-01-22', updatedAt: '2025-02-11' },
-  { name: 'Shoes', createdAt: '2025-02-14', updatedAt: '2025-03-01' },
-  { name: 'Furniture', createdAt: '2025-01-27', updatedAt: '2025-02-17' },
-  { name: 'Crafts', createdAt: '2025-03-09', updatedAt: '2025-03-24' },
-  { name: 'Bags', createdAt: '2025-02-03', updatedAt: '2025-02-21' }
+  { name: 'Electronics', createdAt: '15/01/2025', updatedAt: '10/02/2025' },
+  { name: 'Books', createdAt: '05/02/2025', updatedAt: '15/02/2025' },
+  { name: 'Clothing', createdAt: '01/03/2025', updatedAt: '12/03/2025' },
+  { name: 'Home & Kitchen', createdAt: '20/01/2025', updatedAt: '08/02/2025' },
+  { name: 'Sports', createdAt: '18/02/2025', updatedAt: '05/03/2025' },
+  { name: 'Toys', createdAt: '10/03/2025', updatedAt: '25/03/2025' },
+  { name: 'Beauty', createdAt: '25/01/2025', updatedAt: '20/02/2025' },
+  { name: 'Garden', createdAt: '12/02/2025', updatedAt: '02/03/2025' },
+  { name: 'Automotive', createdAt: '30/01/2025', updatedAt: '25/02/2025' },
+  { name: 'Health', createdAt: '04/03/2025', updatedAt: '18/03/2025' },
+  { name: 'Jewelry', createdAt: '01/02/2025', updatedAt: '14/02/2025' },
+  { name: 'Pet Supplies', createdAt: '06/03/2025', updatedAt: '22/03/2025' },
+  { name: 'Music', createdAt: '18/01/2025', updatedAt: '05/02/2025' },
+  { name: 'Movies', createdAt: '08/02/2025', updatedAt: '19/02/2025' },
+  { name: 'Games', createdAt: '01/03/2025', updatedAt: '15/03/2025' },
+  { name: 'Office Supplies', createdAt: '22/01/2025', updatedAt: '11/02/2025' },
+  { name: 'Shoes', createdAt: '14/02/2025', updatedAt: '01/03/2025' },
+  { name: 'Furniture', createdAt: '27/01/2025', updatedAt: '17/02/2025' },
+  { name: 'Crafts', createdAt: '09/03/2025', updatedAt: '24/03/2025' },
+  { name: 'Bags', createdAt: '03/02/2025', updatedAt: '21/02/2025' }
 ];
 
 @Component({
@@ -35,27 +35,20 @@ const CATEGORY_DATA: CategoryModel[] = [
     standalone: false
 })
 export class CategoryComponent implements AfterViewInit {
-  private _liveAnnouncer = inject(LiveAnnouncer);
   displayedColumns: string[] = ['name', 'createdAt', 'updatedAt'];
   dataSource = new MatTableDataSource<CategoryModel>(CATEGORY_DATA);
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+   @ViewChild(MatPaginator) paginator!: MatPaginator;
+   @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
-  announceSortChange(sortState: Sort) {
-    // This example uses English messages. If your application supports
-    // multiple language, you would internationalize these strings.
-    // Furthermore, you can customize the message to add additional
-    // details about the values being sorted.
-    if (sortState.direction) {
-      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
-    } else {
-      this._liveAnnouncer.announce('Sorting cleared');
-    }
+  onRowClicked(row: CategoryModel) {
+    console.log("Linha clicada: ");
+    console.log(row);
   }
+  
 }
