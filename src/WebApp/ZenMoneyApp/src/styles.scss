@@ -104,3 +104,23 @@ html, body {
 .snackbar-error .mat-mdc-button {
   color: #fff !important;
 }
+
+// Tables
+
+.table-container {
+  max-height: 600px;   /* Altura máxima */
+  overflow-y: auto;    /* Cria a barra de rolagem vertical */
+}
+
+table {
+  width: 100%;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  border-color: black;
+  cursor: pointer;
+}
+
+th.mat-sort-header-sorted {
+  color: black;
+}
