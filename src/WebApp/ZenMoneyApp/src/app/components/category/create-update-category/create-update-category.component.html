@@ -1,0 +1,23 @@
+<div class="d-flex flex-column">
+    <mat-card-header class="w-100 justify-content-between">
+        <mat-card-title>Nova Categoria</mat-card-title>
+        <button class="mb-2" mat-icon-button>
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-card-header>
+
+    <form [formGroup]="form">
+        <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Nome</mat-label>
+            <input type="text" matInput formControlName="name">
+        </mat-form-field>
+
+        <div class="pe-4 button-container justify-content-end">
+            <button class=" ms-2" mat-raised-button color="primary" (click)="submit()">
+                <span class="pe-1 material-icons">check</span>
+                Salvar
+            </button>
+        </div>
+    </form>
+</div>
+

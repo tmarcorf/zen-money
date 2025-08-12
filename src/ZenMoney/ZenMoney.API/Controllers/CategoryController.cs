@@ -27,6 +27,20 @@ namespace ZenMoney.API.Controllers
         }
 
         [Authorize]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllAsync([FromBody] SearchCategoryRequest request)
+        {
+            var result = await categoryService.GetAllAsync(request);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound(ApiResponse<List<CategoryModel>>.Failure(result.Errors, "404"));
+            }
+
+            return Ok(ApiResponse<List<CategoryModel>>.Success(result.Data));
+        }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateAsync(CreateCategoryRequest request)
         {

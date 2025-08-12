@@ -21,5 +21,12 @@ namespace ZenMoney.Application.Extensions
                 UpdatedAt = entity.UpdatedAt,
             };
         }
+
+        public static List<CategoryModel> ToModels(this IEnumerable<Category> entities)
+        {
+            return entities
+                .Select(x => x.ToModel())
+                .ToList();
+        }
     }
 }

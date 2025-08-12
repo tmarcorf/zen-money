@@ -34,6 +34,10 @@ import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { CreateUpdateCategoryComponent } from './components/category/create-update-category/create-update-category.component';
+
 
 export const MY_DATE_FORMATS = {
   parse: {
@@ -60,9 +64,11 @@ export const MY_DATE_FORMATS = {
         HomeComponent,
         LoadingComponent,
         CreateAccountComponent,
+        CreateUpdateCategoryComponent,
     ],
     bootstrap: [AppComponent], 
-    imports: [BrowserModule,
+    imports: [
+      BrowserModule,
         AppRoutingModule,
         MatSlideToggleModule,
         MatInputModule,
@@ -83,8 +89,10 @@ export const MY_DATE_FORMATS = {
         MatTableModule,
         MatPaginator,
         MatPaginatorModule,
-        MatSortModule
-      ], providers: [
+        MatSortModule,
+        NgxMaskDirective,
+      ], 
+      providers: [
         { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
         provideAnimationsAsync(),
         {
@@ -92,6 +100,12 @@ export const MY_DATE_FORMATS = {
             useClass: LoadingInterceptor,
             multi: true
         },
-        provideHttpClient(withInterceptorsFromDi())
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: AuthInterceptor,
+          multi: true
+        },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideNgxMask()
     ] })
 export class AppModule { }
