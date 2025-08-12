@@ -1,7 +1,7 @@
 <div class="d-flex flex-column">
     <mat-card-header class="w-100 justify-content-between">
-        <mat-card-title>Nova Categoria</mat-card-title>
-        <button class="mb-2" mat-icon-button>
+        <mat-card-title>{{isNewCategory ? 'Nova Categoria' : 'Editar Categoria'}}</mat-card-title>
+        <button class="mb-2" mat-icon-button (click)="closeDialog()">
             <mat-icon>close</mat-icon>
         </button>
     </mat-card-header>
@@ -12,8 +12,13 @@
             <input type="text" matInput formControlName="name">
         </mat-form-field>
 
-        <div class="pe-4 button-container justify-content-end">
-            <button class=" ms-2" mat-raised-button color="primary" (click)="submit()">
+        <div class="button-container justify-content-end" [ngClass]="{'justify-content-between': !isNewCategory}">
+            <button *ngIf="!isNewCategory" class="ms-4" mat-raised-button color="warn">
+                <span class="material-icons">delete</span>
+                Remover
+            </button>
+            
+            <button class="me-4" mat-raised-button color="primary" (click)="submit()">
                 <span class="pe-1 material-icons">check</span>
                 Salvar
             </button>

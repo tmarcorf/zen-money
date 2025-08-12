@@ -5,18 +5,25 @@ using ZenMoney.Core.Interfaces;
 
 namespace ZenMoney.Infrastructure.Data.Repositories
 {
-    public class BaseRepository<T>(ApplicationDbContext dbContext) : IBaseRepository<T> where T : BaseEntity
+    public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
+        protected readonly ApplicationDbContext DbContext;
+
+        public BaseRepository(ApplicationDbContext dbContext)
+        {
+            DbContext = dbContext;
+        }
+
         public async Task<T> GetByIdAsync(Guid id)
         {
-            var query = dbContext.Set<T>().AsQueryable();
+            var query = DbContext.Set<T>().AsQueryable();
 
             return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter, int skip, int take)
         {
-            var query = dbContext
+            var query = DbContext
                 .Set<T>()
                 .Where(filter)
                 .AsQueryable();
@@ -30,40 +37,40 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 
         public async Task<bool> ExistsAsync(Expression<Func<T, bool>> filter)
         {
-            var query = dbContext.Set<T>().AsQueryable();
+            var query = DbContext.Set<T>().AsQueryable();
 
             return await query.AnyAsync(filter);
         }
 
         public T Create(T entity)
         {
-            dbContext.Set<T>().Add(entity);
+            DbContext.Set<T>().Add(entity);
 
             return entity;
         }
 
         public T Update(T entity)
         {
-            dbContext.Set<T>().Update(entity);
+            DbContext.Set<T>().Update(entity);
 
             return entity;
         }
 
         public T Delete(T entity)
         {
-            dbContext.Set<T>().Remove(entity);
+            DbContext.Set<T>().Remove(entity);
 
             return entity;
         }
 
         public async Task<int> TotalCountAsync()
         {
-            return await dbContext.Set<T>().CountAsync();
+            return await DbContext.Set<T>().CountAsync();
         }
 
         public async Task SaveChangesAsync()
         {
-            await dbContext.SaveChangesAsync();
+            await DbContext.SaveChangesAsync();
         }
     }
 }

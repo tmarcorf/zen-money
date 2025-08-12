@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,13 @@ namespace ZenMoney.Infrastructure.Data.Repositories
         public CategoryRepository(ApplicationDbContext dbContext)
             : base(dbContext)
         {
+        }
+
+        public async Task<int> CountAsync(Guid userId)
+        {
+            return await DbContext.Categories
+                .Where(c => c.UserId == userId)
+                .CountAsync();
         }
     }
 }
