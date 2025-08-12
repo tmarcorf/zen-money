@@ -35,7 +35,9 @@ export class UserService {
     }
 
     private checkInitialLoginState(): boolean {
-        var expirationDate = new Date(this.storageService.get(EXP_DATE));
+        const dataMinima: Date = new Date(1000, 0, 1);
+        var dateString = this.storageService.get(EXP_DATE) != '' ? this.storageService.get(EXP_DATE) : dataMinima.toISOString() ;
+        var expirationDate = new Date(dateString);
         var now = new Date();
 
         return now < expirationDate;

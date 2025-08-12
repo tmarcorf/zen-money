@@ -19,12 +19,13 @@ import { CategoryModel } from '../../responses/category/category-model';
 export class CategoryComponent implements AfterViewInit, OnInit {
   displayedColumns: string[] = ['name', 'createdAt', 'updatedAt'];
   dataSource = new MatTableDataSource<CategoryModel>();
+  isNewCategoryDialog: boolean = false;
 
   form: FormGroup = new FormGroup({
     name: new FormControl(''),
   });
 
-  totalItems = 0; // Para o paginator
+  totalItems = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -39,14 +40,12 @@ export class CategoryComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    // Eventos do paginator e sort
     this.paginator.page.subscribe(() => this.loadData());
     this.sort.sortChange.subscribe(() => {
-      this.paginator.pageIndex = 0; // Reseta para página 1 quando muda a ordem
+      this.paginator.pageIndex = 0;
       this.loadData();
     });
 
-    // Carrega os dados iniciais
     this.loadData();
   }
 
@@ -73,19 +72,42 @@ export class CategoryComponent implements AfterViewInit, OnInit {
     });
   }
 
-  onRowClicked(row: CategoryModel) {
-    
-  }
+  update(row: CategoryModel) {
+    this.isNewCategoryDialog = false;
 
-  applyFilter(): void {
-    this.paginator.pageIndex = 0; // Reseta para página 1
-    this.loadData();
-  }
-
-  openDialog(): void {
     const dialogRef = this.dialog.open(CreateUpdateCategoryComponent, {
       width: '400px',
       height: '215px',
+      autoFocus: false,
+      data: {
+        row: row, 
+        isNewCategoryDialog: this.isNewCategoryDialog
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadData();
+      }
+    });
+  }
+
+  applyFilter(): void {
+    this.paginator.pageIndex = 0;
+    this.loadData();
+  }
+
+  onAdd(): void {
+    this.isNewCategoryDialog = true
+
+    const dialogRef = this.dialog.open(CreateUpdateCategoryComponent, {
+      width: '400px',
+      height: '215px',
+      autoFocus: false,
+      data: {
+        row: null, 
+        isNewCategoryDialog: this.isNewCategoryDialog
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {

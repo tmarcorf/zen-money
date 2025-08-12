@@ -2,7 +2,7 @@
 {
     public class Result<T>
     {
-        private Result(T data, List<Error> errors)
+        protected Result(T data, List<Error> errors)
         {
             Data = data;
             IsSuccess = errors == null || errors.Count == 0;
@@ -10,8 +10,6 @@
         }
 
         public T Data { get; }
-
-        public int TotalCount { get; set; }
 
         public bool IsSuccess { get; }
 

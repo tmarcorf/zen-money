@@ -9,5 +9,6 @@ namespace ZenMoney.Core.Interfaces
 {
     public interface ICategoryRepository : IBaseRepository<Category>
     {
+        Task<int> CountAsync(Guid userId);
     }
 }

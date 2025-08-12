@@ -8,7 +8,7 @@
         <div class="row">
             <div>
                 <mat-card-actions class="justify-content-between">
-                    <button class="ms-2" mat-raised-button color="primary" (click)="openDialog()">
+                    <button class="ms-2" mat-raised-button color="primary" (click)="onAdd()">
                         <span class="pe-1 material-icons">add</span>
                         Adicionar
                     </button>
@@ -47,7 +47,7 @@
                     </ng-container>
 
                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row (click)="onRowClicked(row)" *matRowDef="let row; columns: displayedColumns;"></tr>
+                    <tr mat-row (click)="update(row)" *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
             </div>
             <mat-paginator class="mt-2"

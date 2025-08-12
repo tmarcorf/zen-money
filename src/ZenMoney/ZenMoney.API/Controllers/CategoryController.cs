@@ -28,16 +28,16 @@ namespace ZenMoney.API.Controllers
 
         [Authorize]
         [HttpGet("all")]
-        public async Task<IActionResult> GetAllAsync([FromBody] SearchCategoryRequest request)
+        public async Task<IActionResult> ListPaginatedAsync([FromQuery] SearchCategoryRequest request)
         {
-            var result = await categoryService.GetAllAsync(request);
+            var result = await categoryService.ListPaginatedAsync(request);
 
             if (!result.IsSuccess)
             {
                 return NotFound(ApiResponse<List<CategoryModel>>.Failure(result.Errors, "404"));
             }
 
-            return Ok(ApiResponse<List<CategoryModel>>.Success(result.Data));
+            return Ok(ApiResponse<List<CategoryModel>>.Success(result.Data, totalCount: result.TotalCount));
         }
 
         [Authorize]
