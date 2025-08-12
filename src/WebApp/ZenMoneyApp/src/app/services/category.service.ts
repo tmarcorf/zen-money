@@ -7,11 +7,14 @@ import { CategoryModel } from '../responses/category/category-model';
 import { ApiResponse } from '../responses/api-response';
 import { apiRoute } from '../constants';
 import { SearchCategoryRequest } from '../requests/category/search-category.request';
+import { CreateCategoryRequest } from '../requests/category/create-category.request';
+import { UpdateCategoryRequest } from '../requests/category/update-category.request';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoryService {
+    categoriesRoute = '/api/categories';
     allCategoriesRoute = '/api/categories/all';
 
     constructor(
@@ -28,8 +31,26 @@ export class CategoryService {
                     offset: request.offset ?? 0,
                     take: request.take ?? 10,
                     name: request.name ?? '',
-                    sortField: request.sortField ?? '',
-                    sortDirection: request.sortDirection ?? ''
+                    sortField: request.sortField?.toString() ?? '',
+                    sortDirection: request.sortDirection?.toString() ?? ''
+                }
+            }
+        );
+    }
+
+    create(request: CreateCategoryRequest): Observable<ApiResponse<CategoryModel>> {
+        return this.http.post<ApiResponse<CategoryModel>>(`${apiRoute}${this.categoriesRoute}`, request);
+    }
+
+    update(request: UpdateCategoryRequest): Observable<ApiResponse<CategoryModel>> {
+        return this.http.put<ApiResponse<CategoryModel>>(`${apiRoute}${this.categoriesRoute}`, request);
+    }
+
+    delete(id: string): Observable<ApiResponse<CategoryModel>> {
+        return this.http.delete<ApiResponse<CategoryModel>>(`${apiRoute}${this.categoriesRoute}`,
+            {
+                params: {
+                    id: id
                 }
             }
         );
