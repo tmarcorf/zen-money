@@ -56,6 +56,11 @@ namespace ZenMoney.Infrastructure.Data.Repositories
             return entity;
         }
 
+        public async Task<int> TotalCountAsync()
+        {
+            return await dbContext.Set<T>().CountAsync();
+        }
+
         public async Task SaveChangesAsync()
         {
             await dbContext.SaveChangesAsync();

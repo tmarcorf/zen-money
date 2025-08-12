@@ -11,6 +11,8 @@
 
         public T Data { get; }
 
+        public int TotalCount { get; set; }
+
         public bool IsSuccess { get; }
 
         public List<Error> Errors { get; }

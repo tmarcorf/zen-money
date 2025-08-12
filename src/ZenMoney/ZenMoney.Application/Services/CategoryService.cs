@@ -38,6 +38,23 @@ namespace ZenMoney.Application.Services
             return Result<CategoryModel>.Success(category.ToModel());
         }
 
+        public async Task<Result<List<CategoryModel>>> GetAllAsync(SearchCategoryRequest request)
+        {
+            var userId = GetUserId();
+
+            var name = request.Name.Trim() ?? string.Empty;
+
+            var categories = await categoryRepository.GetAllAsync(
+                x => x.UserId == userId && x.Name.Contains(name), 
+                request.Offset, 
+                request.Take);
+
+            var result = Result<List<CategoryModel>>.Success(categories.ToModels());
+            result.TotalCount = await categoryRepository.TotalCountAsync();
+
+            return result;
+        }
+
         public async Task<Result<CategoryModel>> CreateAsync(CreateCategoryRequest request)
         {
             if (request == null) ArgumentNullException.ThrowIfNull(request);
@@ -111,5 +128,7 @@ namespace ZenMoney.Application.Services
 
             return Result<CategoryModel>.Success(category.ToModel());
         }
+
+        
     }
 }

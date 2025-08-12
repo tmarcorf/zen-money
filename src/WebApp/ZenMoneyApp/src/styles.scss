@@ -107,11 +107,16 @@ html, body {
   color: #fff !important;
 }
 
+.button-container {
+  display: flex;
+  justify-content: space-between;
+}
+
 // Tables
 
 .table-container {
-  max-height: 600px;   /* Altura máxima */
-  overflow-y: auto;    /* Cria a barra de rolagem vertical */
+  max-height: 600px; 
+  overflow-y: auto;
 }
 
 table {
@@ -120,6 +125,7 @@ table {
 
 .mat-mdc-row:hover .mat-mdc-cell {
   border-color: black;
+  font-weight: bold;
   cursor: pointer;
 }
 
@@ -140,6 +146,26 @@ th.mat-sort-header-sorted {
 .mat-mdc-header-row {
   position: sticky;
   top: 0;
-  background-color: white; /* fundo fixo para não aparecer sobreposto */
-  z-index: 1; /* para ficar acima das linhas */
+  background-color: white;
+  z-index: 1; 
+}
+
+.mat-mdc-table {
+  table-layout: fixed; /* Impede redimensionamento automático */
+  width: 100%;
+}
+
+.mat-mdc-header-cell,
+.mat-mdc-cell {
+  white-space: nowrap;     /* Evita quebra de linha */
+  overflow: hidden;        /* Oculta texto excedente */
+  text-overflow: ellipsis; /* Mostra "..." se ultrapassar largura */
+}
+
+// Cards
+
+.card {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15) !important;
+  border-radius: 8px !important;
+  padding: 24px !important;
 }

@@ -8,6 +8,8 @@ namespace ZenMoney.Application.Interfaces
     {
         Task<Result<CategoryModel>> GetByIdAsync(Guid id);
 
+        Task<Result<List<CategoryModel>>> GetAllAsync(SearchCategoryRequest request);
+
         Task<Result<CategoryModel>> CreateAsync(CreateCategoryRequest request);
 
         Task<Result<CategoryModel>> UpdateAsync(UpdateCategoryRequest request);

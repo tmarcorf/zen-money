@@ -70,8 +70,6 @@ export class CreateAccountComponent {
       dateOfBirth: dateOfBirth
     };
 
-    console.log(request.dateOfBirth);
-
     this.userService.create(request).subscribe({
       next: (response) => {
         var userName = response.data.firstName;
@@ -82,8 +80,6 @@ export class CreateAccountComponent {
         this.notificationService.errors(response.error.errors);
       }
     });
-
-    
   }
 
   isFormValid(): boolean {
@@ -93,5 +89,16 @@ export class CreateAccountComponent {
     }
     
     return true;
+  }
+
+  formatDate(event: any) {
+    let value = event.target.value.replace(/\D/g, '');
+    if (value.length > 2) {
+      value = value.substring(0, 2) + '/' + value.substring(2);
+    }
+    if (value.length > 5) {
+      value = value.substring(0, 5) + '/' + value.substring(5, 9);
+    }
+    event.target.value = value;
   }
 }
