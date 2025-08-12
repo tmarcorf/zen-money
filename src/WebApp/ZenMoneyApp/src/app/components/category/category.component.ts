@@ -9,6 +9,8 @@ import { CreateUpdateCategoryComponent } from './create-update-category/create-u
 import { FormControl, FormGroup } from '@angular/forms';
 import { SearchCategoryRequest } from '../../requests/category/search-category.request';
 import { CategoryModel } from '../../responses/category/category-model';
+import { SortField } from '../../enums/sort-field.enum';
+import { SortDirection } from '../../enums/sort-direction.enum';
 
 @Component({
   selector: 'app-category',
@@ -40,25 +42,43 @@ export class CategoryComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    this.paginator.page.subscribe(() => this.loadData());
+    this.paginator.page.subscribe(() => this.updateDataSource());
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;
-      this.loadData();
+      this.updateDataSource();
     });
 
-    this.loadData();
+    this.updateDataSource();
   }
 
-  loadData(): void {
+  updateDataSource(): void {
     const pageIndex = this.paginator?.pageIndex ?? 0;
     const pageSize = this.paginator?.pageSize ?? 10;
+    let sortField: SortField | null = null;
+    let sortDirection: SortDirection | null = null;
+
+    if (this.sort) {
+      if (this.sort?.active == 'name') {
+        sortField = SortField.Name;
+      } else if(this.sort?.active == 'createdAt') {
+        sortField = SortField.CreatedAt;
+      } else if(this.sort?.active == 'updatedAt') {
+        sortField = SortField.UpdatedAt;
+      }
+
+      if (this.sort?.direction == 'asc') {
+        sortDirection = SortDirection.Asc;
+      } else if(this.sort?.direction == 'desc') {
+        sortDirection = SortDirection.Desc;
+      }
+    }
 
     const request: SearchCategoryRequest = {
       name: this.form.get('name')?.value ?? '',
       offset: pageIndex * pageSize,
       take: pageSize,
-      sortField: this.sort?.active ?? '',
-      sortDirection: this.sort?.direction ?? ''
+      sortField: sortField,
+      sortDirection: sortDirection
     };
 
     this.categoryService.getAll(request).subscribe({
@@ -85,19 +105,17 @@ export class CategoryComponent implements AfterViewInit, OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadData();
-      }
+    dialogRef.afterClosed().subscribe(() => {
+      this.updateDataSource();
     });
   }
 
   applyFilter(): void {
     this.paginator.pageIndex = 0;
-    this.loadData();
+    this.updateDataSource();
   }
 
-  onAdd(): void {
+  create(): void {
     this.isNewCategoryDialog = true
 
     const dialogRef = this.dialog.open(CreateUpdateCategoryComponent, {
@@ -110,10 +128,8 @@ export class CategoryComponent implements AfterViewInit, OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadData();
-      }
+    dialogRef.afterClosed().subscribe(() => {
+      this.updateDataSource();
     });
   }
 }

@@ -1,6 +1,7 @@
 ﻿using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Requests.Category;
 using ZenMoney.Application.Results;
+using ZenMoney.Core.Search;
 
 namespace ZenMoney.Application.Interfaces
 {

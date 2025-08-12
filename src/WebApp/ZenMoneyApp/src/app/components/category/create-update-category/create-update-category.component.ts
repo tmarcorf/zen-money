@@ -2,6 +2,10 @@ import { AfterViewInit, Component, ElementRef, Inject, ViewChild } from '@angula
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CategoryModel } from '../../../responses/category/category-model';
+import { CreateCategoryRequest } from '../../../requests/category/create-category.request';
+import { CategoryService } from '../../../services/category.service';
+import { NotificationService } from '../../../services/notification.service';
+import { UpdateCategoryRequest } from '../../../requests/category/update-category.request';
 
 @Component({
   selector: 'app-create-update-category',
@@ -18,6 +22,8 @@ export class CreateUpdateCategoryComponent implements AfterViewInit {
   });
 
   constructor(
+    private categoryService: CategoryService,
+    private notificationService: NotificationService,
     public dialogRef: MatDialogRef<CreateUpdateCategoryComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {row: CategoryModel, isNewCategoryDialog: boolean}){
       this.selectedCategory = data.row;
@@ -35,6 +41,57 @@ export class CreateUpdateCategoryComponent implements AfterViewInit {
   }
 
   submit() {
+    if (this.isNewCategory) {
+      this.create();
+    } else {
+      this.update();
+    }
+  }
 
+  create() {
+    var request: CreateCategoryRequest = {
+        name: this.form.get('name')?.value
+      };
+
+      this.categoryService.create(request).subscribe({
+        next: (response) => {
+          this.notificationService.success(`Categoria ${response.data.name} criada com sucesso`);
+          this.dialogRef.close();
+        },
+        error: (response) => {
+          this.notificationService.errors(response.error.errors);
+        }
+      })
+  }
+
+  update() {
+    var request: UpdateCategoryRequest = {
+        id: this.data.row.id,
+        name: this.form.get('name')?.value
+      };
+
+      this.categoryService.update(request).subscribe({
+        next: (response) => {
+          this.notificationService.success(`Categoria ${response.data.name} atualizada com sucesso`);
+          this.dialogRef.close();
+        },
+        error: (response) => {
+          this.notificationService.errors(response.error.errors);
+        }
+      })
+  }
+
+  delete() {
+    var id = this.data.row.id;
+
+    this.categoryService.delete(id).subscribe({
+        next: (response) => {
+          this.notificationService.success(`Categoria ${response.data.name} removida com sucesso`);
+          this.dialogRef.close();
+        },
+        error: (response) => {
+          this.notificationService.errors(response.error.errors);
+        }
+      })
   }
 }

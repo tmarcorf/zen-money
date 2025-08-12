@@ -8,6 +8,7 @@ using ZenMoney.Application.Requests.Category;
 using ZenMoney.Application.Results;
 using ZenMoney.Core.Entities;
 using ZenMoney.Core.Interfaces;
+using ZenMoney.Core.Search;
 
 namespace ZenMoney.Application.Services
 {
@@ -42,14 +43,9 @@ namespace ZenMoney.Application.Services
         {
             var userId = GetUserId();
 
-            var name = request.Name != null ? request.Name.Trim() : string.Empty;
-
-            var categories = await categoryRepository.GetAllAsync(
-                x => x.UserId == userId && x.Name.Contains(name), 
-                request.Offset, 
-                request.Take);
-
+            var categories = await categoryRepository.ListPaginatedAsync(request, userId);
             var count = await categoryRepository.CountAsync(userId);
+
             return PaginatedResult<List<CategoryModel>>.Success(categories.ToModels(), count);
         }
 
@@ -84,6 +80,7 @@ namespace ZenMoney.Application.Services
         {
             if (request == null) ArgumentNullException.ThrowIfNull(request);
 
+            request.UserId = GetUserId();
             var validationResult = updateCategoryValidator.Validate(request);
 
             if (!validationResult.IsValid)

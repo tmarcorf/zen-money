@@ -4,6 +4,7 @@ using ZenMoney.API.Responses;
 using ZenMoney.Application.Interfaces;
 using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Requests.Category;
+using ZenMoney.Core.Search;
 
 namespace ZenMoney.API.Controllers
 {

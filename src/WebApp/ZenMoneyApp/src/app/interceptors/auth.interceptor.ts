@@ -37,7 +37,14 @@ export class AuthInterceptor implements HttpInterceptor {
         if (error.status === 401) {
           this.resetSession();
         } else if(error.status === 0) {
-          this.notificationService.error('Não foi possível conectar-se ao servidor. Tente novamente.');
+          this.userService.updateLoginState();
+
+          if (this.userService.isLoggedIn()) {
+            this.notificationService.error('Não foi possível conectar-se ao servidor. Tente novamente.');
+          } else {
+            this.resetSession();
+          }
+          
         }
         return throwError(() => error);
       })

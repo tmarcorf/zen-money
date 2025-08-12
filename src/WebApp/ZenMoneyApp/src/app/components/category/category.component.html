@@ -8,13 +8,13 @@
         <div class="row">
             <div>
                 <mat-card-actions class="justify-content-between">
-                    <button class="ms-2" mat-raised-button color="primary" (click)="onAdd()">
+                    <button class="ms-2" mat-raised-button color="primary" (click)="create()">
                         <span class="pe-1 material-icons">add</span>
                         Adicionar
                     </button>
 
                     <form [formGroup]="form">
-                        <mat-form-field appearance="outline">
+                        <mat-form-field class="me-1" appearance="outline">
                             <mat-label>Nome</mat-label>
                             <input matInput formControlName="name" (keyup.enter)="applyFilter()">
                             <button mat-icon-button matSuffix (click)="applyFilter()">
@@ -30,18 +30,18 @@
             <div class="table-container mat-elevation-z1">
                 <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 demo-table">
                     <ng-container matColumnDef="name">
-                        <th class="width" mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
-                        <td class="width" mat-cell *matCellDef="let element">{{element.name}}</td>
+                        <th class="name-width" mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+                        <td class="name-width" mat-cell *matCellDef="let element">{{element.name}}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="createdAt">
-                        <th class="width" mat-header-cell *matHeaderCellDef mat-sort-header>Data de criação</th>
-                        <td class="width" mat-cell *matCellDef="let element">{{element.createdAt | date: 'dd/MM/yyyy'}}</td>
+                        <th class="date-width" mat-header-cell *matHeaderCellDef mat-sort-header>Data de criação</th>
+                        <td class="date-width" mat-cell *matCellDef="let element">{{element.createdAt | date: 'dd/MM/yyyy'}}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="updatedAt">
-                        <th class="width" mat-header-cell *matHeaderCellDef mat-sort-header>Data de atualização</th>
-                        <td class="width" mat-cell *matCellDef="let element">
+                        <th class="date-width" mat-header-cell *matHeaderCellDef mat-sort-header>Data de atualização</th>
+                        <td class="date-width" mat-cell *matCellDef="let element">
                             {{element.updatedAt | date: 'dd/MM/yyyy'}}
                         </td>
                     </ng-container>

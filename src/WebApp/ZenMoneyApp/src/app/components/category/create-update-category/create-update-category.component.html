@@ -1,6 +1,6 @@
 <div class="d-flex flex-column">
     <mat-card-header class="w-100 justify-content-between">
-        <mat-card-title>{{isNewCategory ? 'Nova Categoria' : 'Editar Categoria'}}</mat-card-title>
+        <mat-card-title class="ms-2">{{isNewCategory ? 'Nova Categoria' : 'Editar Categoria'}}</mat-card-title>
         <button class="mb-2" mat-icon-button (click)="closeDialog()">
             <mat-icon>close</mat-icon>
         </button>
@@ -13,7 +13,7 @@
         </mat-form-field>
 
         <div class="button-container justify-content-end" [ngClass]="{'justify-content-between': !isNewCategory}">
-            <button *ngIf="!isNewCategory" class="ms-4" mat-raised-button color="warn">
+            <button *ngIf="!isNewCategory" class="ms-4" mat-raised-button color="warn" (click)="delete()">
                 <span class="material-icons">delete</span>
                 Remover
             </button>
