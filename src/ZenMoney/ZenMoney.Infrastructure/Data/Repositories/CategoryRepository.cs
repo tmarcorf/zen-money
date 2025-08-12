@@ -26,7 +26,6 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 
             var query = DbContext.Categories
                 .Where(c => c.UserId == userId && c.Name.Contains(name));
-                
 
             if (request.SortField == SortFieldEnum.Name)
             {
