@@ -10,7 +10,7 @@ namespace ZenMoney.Application.Validators.PaymentMethod
         public CreatePaymentMethodValidator(UserManager<Core.Entities.User> userManager, IPaymentMethodRepository paymentMethodRepository)
         {
             RuleFor(request => request)
-                .NotEmpty()
+                .Must(request => !string.IsNullOrWhiteSpace(request.Description))
                 .WithMessage("A descrição é obrigatória")
                 .Must(request => request.Description.Length <= 50)
                 .WithMessage("O tamanho máximo da descrição é de 50 caracteres")

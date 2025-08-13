@@ -37,6 +37,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { CreateUpdateCategoryComponent } from './components/category/create-update-category/create-update-category.component';
+import { CreateUpdatePaymentMethodComponent } from './components/payment-method/create-update-payment-method/create-update-payment-method.component';
 
 
 export const MY_DATE_FORMATS = {
@@ -65,6 +66,7 @@ export const MY_DATE_FORMATS = {
         LoadingComponent,
         CreateAccountComponent,
         CreateUpdateCategoryComponent,
+        CreateUpdatePaymentMethodComponent,
     ],
     bootstrap: [AppComponent], 
     imports: [

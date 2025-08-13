@@ -66,6 +66,7 @@ namespace ZenMoney.Application.Services
             var paymentMethod = request.ToEntity();
             paymentMethod.Id = Guid.NewGuid();
             paymentMethod.CreatedAt = DateTimeOffset.UtcNow;
+            paymentMethod.UpdatedAt = DateTimeOffset.UtcNow;
 
             paymentMethodRepository.Create(paymentMethod);
             await paymentMethodRepository.SaveChangesAsync();

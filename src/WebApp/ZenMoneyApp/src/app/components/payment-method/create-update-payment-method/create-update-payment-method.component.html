@@ -1,0 +1,28 @@
+<div class="d-flex flex-column">
+    <mat-card-header class="w-100 justify-content-between">
+        <mat-card-title class="ms-2">{{isNewPaymentMethod ? 'Nova Forma de Pagamento' : 'Editar Forma de Pagamento'}}</mat-card-title>
+        <button class="mb-2 p-0" mat-icon-button (click)="closeDialog()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-card-header>
+
+    <form [formGroup]="form">
+        <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Descrição</mat-label>
+            <input type="text" matInput formControlName="description">
+        </mat-form-field>
+
+        <div class="button-container justify-content-end" [ngClass]="{'justify-content-between': !isNewPaymentMethod}">
+            <button *ngIf="!isNewPaymentMethod" class="ms-4" mat-raised-button color="warn" (click)="delete()">
+                <span class="material-icons">delete</span>
+                Remover
+            </button>
+            
+            <button class="me-4" mat-raised-button color="primary" (click)="submit()">
+                <span class="pe-1 material-icons">check</span>
+                Salvar
+            </button>
+        </div>
+    </form>
+</div>
+
