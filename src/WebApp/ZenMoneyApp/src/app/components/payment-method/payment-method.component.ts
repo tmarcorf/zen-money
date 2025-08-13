@@ -10,6 +10,7 @@ import { PaymentMethodModel } from '../../responses/payment-method/payment-metho
 import { SortField } from '../../enums/sort-field.enum';
 import { SortDirection } from '../../enums/sort-direction.enum';
 import { SearchPaymentMethodRequest } from '../../requests/payment-method/search-payment-method.request';
+import { CreateUpdatePaymentMethodComponent } from './create-update-payment-method/create-update-payment-method.component';
 
 @Component({
     selector: 'app-payment-method',
@@ -20,7 +21,7 @@ import { SearchPaymentMethodRequest } from '../../requests/payment-method/search
 export class PaymentMethodComponent {
     displayedColumns: string[] = ['description', 'createdAt', 'updatedAt'];
     dataSource = new MatTableDataSource<PaymentMethodModel>();
-    isNewCategoryDialog: boolean = false;
+    isNewPaymentMethodDialog: boolean = false;
 
     form: FormGroup = new FormGroup({
         description: new FormControl(''),
@@ -98,41 +99,39 @@ export class PaymentMethodComponent {
         this.updateDataSource();
     }
 
-    update(row: PaymentMethodModel) {
-        // this.isNewCategoryDialog = false;
-    
-        // const dialogRef = this.dialog.open(CreateUpdateCategoryComponent, {
-        //   width: '400px',
-        //   height: '215px',
-        //   autoFocus: false,
-        //   data: {
-        //     row: row, 
-        //     isNewCategoryDialog: this.isNewCategoryDialog
-        //   }
-        // });
-    
-        // dialogRef.afterClosed().subscribe(() => {
-        //   this.updateDataSource();
-        // });
-      }
-    
-    
-    
     create(): void {
-        // this.isNewCategoryDialog = true
+        this.isNewPaymentMethodDialog = true
     
-        // const dialogRef = this.dialog.open(CreateUpdateCategoryComponent, {
-        //   width: '400px',
-        //   height: '215px',
-        //   autoFocus: false,
-        //   data: {
-        //     row: null, 
-        //     isNewCategoryDialog: this.isNewCategoryDialog
-        //   }
-        // });
+        const dialogRef = this.dialog.open(CreateUpdatePaymentMethodComponent, {
+          width: '400px',
+          height: '215px',
+          autoFocus: false,
+          data: {
+            row: null, 
+            isNewPaymentMethodDialog: this.isNewPaymentMethodDialog
+          }
+        });
     
-        // dialogRef.afterClosed().subscribe(() => {
-        //   this.updateDataSource();
-        // });
+        dialogRef.afterClosed().subscribe(() => {
+          this.updateDataSource();
+        });
     }
+
+    update(row: PaymentMethodModel) {
+        this.isNewPaymentMethodDialog = false;
+    
+        const dialogRef = this.dialog.open(CreateUpdatePaymentMethodComponent, {
+          width: '400px',
+          height: '215px',
+          autoFocus: false,
+          data: {
+            row: row, 
+            isNewPaymentMethodDialog: this.isNewPaymentMethodDialog
+          }
+        });
+    
+        dialogRef.afterClosed().subscribe(() => {
+          this.updateDataSource();
+        });
+      }
 }

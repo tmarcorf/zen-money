@@ -5,12 +5,14 @@ import { PaymentMethodModel } from "../responses/payment-method/payment-method.m
 import { ApiResponse } from "../responses/api-response";
 import { Observable } from "rxjs";
 import { apiRoute } from "../constants";
+import { CreatePaymentMethodRequest } from "../requests/payment-method/create-payment-method.request";
+import { UpdatePaymentMethodRequest } from "../requests/payment-method/update-payment-method.request";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaymentMethodService {
-    paymentMethodRoute = '/api/payment-methods';
+    paymentMethodsRoute = '/api/payment-methods';
     allPaymentMethodsRoute = '/api/payment-methods/list-paginated';
 
     constructor(
@@ -27,6 +29,24 @@ export class PaymentMethodService {
                     description: request.description ?? '',
                     sortField: request.sortField?.toString() ?? '',
                     sortDirection: request.sortDirection?.toString() ?? ''
+                }
+            }
+        );
+    }
+
+    create(request: CreatePaymentMethodRequest): Observable<ApiResponse<PaymentMethodModel>> {
+        return this.http.post<ApiResponse<PaymentMethodModel>>(`${apiRoute}${this.paymentMethodsRoute}`, request);
+    }
+
+    update(request: UpdatePaymentMethodRequest): Observable<ApiResponse<PaymentMethodModel>> {
+        return this.http.put<ApiResponse<PaymentMethodModel>>(`${apiRoute}${this.paymentMethodsRoute}`, request);
+    }
+
+    delete(id: string): Observable<ApiResponse<PaymentMethodModel>> {
+        return this.http.delete<ApiResponse<PaymentMethodModel>>(`${apiRoute}${this.paymentMethodsRoute}`,
+            {
+                params: {
+                    id: id
                 }
             }
         );
