@@ -1,8 +1,8 @@
 <div class="row pe-3">
-    <mat-card class="card" appearance="outlined">
+    <mat-card class="card p-0" appearance="outlined">
         <mat-card-header>
-            <mat-card-title title="explicação sobre o conceito">Categorias</mat-card-title>
-            <mat-card-subtitle>Categorias usadas para separar os gastos</mat-card-subtitle>
+            <mat-card-title>Categorias</mat-card-title>
+            <mat-card-subtitle>Defina categorias para separar e analisar seus gastos de forma mais eficiente.</mat-card-subtitle>
         </mat-card-header>
 
         <div class="row">
@@ -13,11 +13,11 @@
                         Adicionar
                     </button>
 
-                    <form [formGroup]="form">
+                    <form [formGroup]="form" (ngSubmit)="applyFilter()">
                         <mat-form-field class="me-1" appearance="outline">
                             <mat-label>Nome</mat-label>
-                            <input matInput formControlName="name" (keyup.enter)="applyFilter()">
-                            <button mat-icon-button matSuffix (click)="applyFilter()">
+                            <input matInput formControlName="name">
+                            <button type="submit" mat-icon-button matSuffix>
                                 <mat-icon>search</mat-icon>
                             </button>
                         </mat-form-field>

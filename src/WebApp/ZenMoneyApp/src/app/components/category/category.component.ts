@@ -18,7 +18,7 @@ import { SortDirection } from '../../enums/sort-direction.enum';
   styleUrl: './category.component.scss',
   standalone: false
 })
-export class CategoryComponent implements AfterViewInit, OnInit {
+export class CategoryComponent implements AfterViewInit {
   displayedColumns: string[] = ['name', 'createdAt', 'updatedAt'];
   dataSource = new MatTableDataSource<CategoryModel>();
   isNewCategoryDialog: boolean = false;
@@ -39,14 +39,16 @@ export class CategoryComponent implements AfterViewInit, OnInit {
     private notificationService: NotificationService
   ) {}
 
-  ngOnInit(): void {}
-
   ngAfterViewInit(): void {
     this.paginator.page.subscribe(() => this.updateDataSource());
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;
       this.updateDataSource();
     });
+
+    this.sort.active = 'createdAt';
+    this.sort.direction = 'desc';
+    this.sort.sortChange.emit({ active: this.sort.active, direction: this.sort.direction });
 
     this.updateDataSource();
   }
@@ -81,7 +83,7 @@ export class CategoryComponent implements AfterViewInit, OnInit {
       sortDirection: sortDirection
     };
 
-    this.categoryService.getAll(request).subscribe({
+    this.categoryService.listPaginated(request).subscribe({
       next: (response) => {
         this.dataSource.data = response.data;
         this.totalItems = response.totalCount ?? 0;

@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Http;
 using ZenMoney.Application.Extensions;
 using ZenMoney.Application.Helpers;
 using ZenMoney.Application.Interfaces;
+using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Models.PaymentMethod;
 using ZenMoney.Application.Requests.PaymentMethod;
 using ZenMoney.Application.Results;
 using ZenMoney.Core.Interfaces;
+using ZenMoney.Core.Search;
 
 namespace ZenMoney.Application.Services
 {
@@ -35,6 +37,16 @@ namespace ZenMoney.Application.Services
             }
 
             return Result<PaymentMethodModel>.Success(paymentMethod.ToModel());
+        }
+
+        public async Task<PaginatedResult<List<PaymentMethodModel>>> ListPaginatedAsync(SearchPaymentMethodRequest request)
+        {
+            var userId = GetUserId();
+
+            var paymentMethods = await paymentMethodRepository.ListPaginatedAsync(request, userId);
+            var count = await paymentMethodRepository.CountAsync(userId);
+
+            return PaginatedResult<List<PaymentMethodModel>>.Success(paymentMethods.ToModels(), count);
         }
 
         public async Task<Result<PaymentMethodModel>> CreateAsync(CreatePaymentMethodRequest request)

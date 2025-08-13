@@ -1,1 +1,62 @@
-<p>payment-method works!</p>
+<div class="row pe-3">
+    <mat-card class="card p-0" appearance="outlined">
+        <mat-card-header>
+            <mat-card-title>Formas de Pagamento</mat-card-title>
+            <mat-card-subtitle>Defina as formas de pagamento para controlar de onde o dinheiro sai.</mat-card-subtitle>
+        </mat-card-header>
+
+        <div class="row">
+            <div>
+                <mat-card-actions class="justify-content-between">
+                    <button class="ms-2" mat-raised-button color="primary" (click)="create()">
+                        <span class="pe-1 material-icons">add</span>
+                        Adicionar
+                    </button>
+
+                    <form [formGroup]="form" (ngSubmit)="applyFilter()">
+                        <mat-form-field class="me-1" appearance="outline">
+                            <mat-label>Descrição</mat-label>
+                            <input matInput formControlName="description">
+                            <button type="submit" mat-icon-button matSuffix>
+                                <mat-icon>search</mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </form>
+                </mat-card-actions>
+            </div>
+        </div>
+
+        <mat-card-content>
+            <div class="table-container mat-elevation-z1">
+                <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 demo-table">
+                    <ng-container matColumnDef="description">
+                        <th class="description-width" mat-header-cell *matHeaderCellDef mat-sort-header>Descrição</th>
+                        <td class="description-width" mat-cell *matCellDef="let element">{{element.description}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="createdAt">
+                        <th class="date-width" mat-header-cell *matHeaderCellDef mat-sort-header>Data de criação</th>
+                        <td class="date-width" mat-cell *matCellDef="let element">{{element.createdAt | date: 'dd/MM/yyyy'}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="updatedAt">
+                        <th class="date-width" mat-header-cell *matHeaderCellDef mat-sort-header>Data de atualização</th>
+                        <td class="date-width" mat-cell *matCellDef="let element">
+                            {{element.updatedAt | date: 'dd/MM/yyyy'}}
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row (click)="update(row)" *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </div>
+            <mat-paginator class="mt-2"
+                [length]="totalItems"
+                [pageSize]="10" 
+                [pageSizeOptions]="[5, 10, 20]" 
+                showFirstLastButtons
+                aria-label="Select page of periodic elements">
+            </mat-paginator>
+        </mat-card-content>
+    </mat-card>
+</div>

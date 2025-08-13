@@ -21,7 +21,7 @@ namespace ZenMoney.Core.Interfaces
 
         T Delete(T entity);
 
-        Task<int> TotalCountAsync();
+        Task<int> CountAsync(Guid userId);
 
         Task SaveChangesAsync();
     }

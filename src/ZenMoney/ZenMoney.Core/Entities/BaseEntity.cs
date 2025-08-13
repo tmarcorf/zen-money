@@ -15,5 +15,10 @@ namespace ZenMoney.Core.Entities
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
+
+        [Required]
+        public Guid UserId { get; set; }
+
+        public User User { get; set; }
     }
 }
