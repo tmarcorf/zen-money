@@ -35,10 +35,5 @@ namespace ZenMoney.Core.Entities
         public Guid PaymentMethodId { get; set; }
 
         public PaymentMethod PaymentMethod { get; set; }
-
-        [Required]
-        public Guid UserId { get; set; }
-
-        public User User { get; set; }
     }
 }

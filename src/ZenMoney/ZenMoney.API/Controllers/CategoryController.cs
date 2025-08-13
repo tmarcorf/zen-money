@@ -28,7 +28,7 @@ namespace ZenMoney.API.Controllers
         }
 
         [Authorize]
-        [HttpGet("all")]
+        [HttpGet("list-paginated")]
         public async Task<IActionResult> ListPaginatedAsync([FromQuery] SearchCategoryRequest request)
         {
             var result = await categoryService.ListPaginatedAsync(request);

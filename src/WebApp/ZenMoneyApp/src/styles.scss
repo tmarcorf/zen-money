@@ -109,7 +109,7 @@ html, body {
 // Tables
 
 .table-container {
-  max-height: 550px; 
+  max-height: 630px; 
   overflow-y: auto;
 }
 
@@ -121,6 +121,8 @@ table {
   border-color: black;
   font-weight: bold;
   cursor: pointer;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
 }
 
 th.mat-sort-header-sorted {
@@ -145,15 +147,15 @@ th.mat-sort-header-sorted {
 }
 
 .mat-mdc-table {
-  table-layout: fixed; /* Impede redimensionamento automático */
+  table-layout: fixed;
   width: 100%;
 }
 
 .mat-mdc-header-cell,
 .mat-mdc-cell {
-  white-space: nowrap;     /* Evita quebra de linha */
-  overflow: hidden;        /* Oculta texto excedente */
-  text-overflow: ellipsis; /* Mostra "..." se ultrapassar largura */
+  white-space: nowrap;     
+  overflow: hidden;        
+  text-overflow: ellipsis; 
 }
 
 // Cards
@@ -161,5 +163,4 @@ th.mat-sort-header-sorted {
 .card {
   box-shadow: 0 2px 10px rgba(0,0,0,0.15) !important;
   border-radius: 8px !important;
-  padding: 24px !important;
 }

@@ -8,8 +8,9 @@ namespace ZenMoney.Core.Enums
 {
     public enum SortFieldEnum
     {
-        Name = 0,
-        CreatedAt = 1,
-        UpdatedAt = 2
+        CreatedAt = 0,
+        UpdatedAt = 1,
+        Name = 2,
+        Description = 3,
     }
 }

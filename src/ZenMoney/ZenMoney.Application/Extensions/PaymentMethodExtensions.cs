@@ -23,6 +23,13 @@ namespace ZenMoney.Application.Extensions
             };
         }
 
+        public static List<PaymentMethodModel> ToModels(this IEnumerable<PaymentMethod> entities)
+        {
+            return entities
+                .Select(x => x.ToModel())
+                .ToList();
+        }
+
         public static PaymentMethod ToEntity(this PaymentMethodModel model)
         {
             return new PaymentMethod

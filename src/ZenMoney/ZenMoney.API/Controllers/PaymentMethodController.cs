@@ -8,6 +8,7 @@ using ZenMoney.Application.Models.PaymentMethod;
 using ZenMoney.Application.Requests.Category;
 using ZenMoney.Application.Requests.PaymentMethod;
 using ZenMoney.Application.Services;
+using ZenMoney.Core.Search;
 
 namespace ZenMoney.API.Controllers
 {
@@ -28,6 +29,20 @@ namespace ZenMoney.API.Controllers
             }
 
             return Ok(ApiResponse<PaymentMethodModel>.Success(result.Data));
+        }
+
+        [Authorize]
+        [HttpGet("list-paginated")]
+        public async Task<IActionResult> ListPaginatedAsync([FromQuery] SearchPaymentMethodRequest request)
+        {
+            var result = await paymentMethodService.ListPaginatedAsync(request);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound(ApiResponse<List<PaymentMethodModel>>.Failure(result.Errors, "404"));
+            }
+
+            return Ok(ApiResponse<List<PaymentMethodModel>>.Success(result.Data, totalCount: result.TotalCount));
         }
 
         [Authorize]

@@ -15,15 +15,13 @@ import { UpdateCategoryRequest } from '../requests/category/update-category.requ
 })
 export class CategoryService {
     categoriesRoute = '/api/categories';
-    allCategoriesRoute = '/api/categories/all';
+    allCategoriesRoute = '/api/categories/list-paginated';
 
     constructor(
-        private http: HttpClient,
-        private storageService: StorageService,
-        private router: Router
+        private http: HttpClient
     ) {}
 
-    getAll(request: SearchCategoryRequest): Observable<ApiResponse<CategoryModel[]>> {
+    listPaginated(request: SearchCategoryRequest): Observable<ApiResponse<CategoryModel[]>> {
         return this.http.get<ApiResponse<CategoryModel[]>>(
             `${apiRoute}${this.allCategoriesRoute}`,
             { 
