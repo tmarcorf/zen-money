@@ -9,6 +9,7 @@ using ZenMoney.Application.Requests.Income;
 using ZenMoney.Application.Results;
 using ZenMoney.Core.Entities;
 using ZenMoney.Core.Interfaces;
+using ZenMoney.Core.Search;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZenMoney.Application.Services
@@ -38,6 +39,16 @@ namespace ZenMoney.Application.Services
             }
 
             return Result<IncomeModel>.Success(income.ToModel());
+        }
+
+        public async Task<PaginatedResult<List<IncomeModel>>> ListPaginatedAsync(SearchIncomeRequest request)
+        {
+            var userId = GetUserId();
+
+            var incomes = await incomeRepository.ListPaginatedAsync(request, userId);
+            var count = await incomeRepository.CountAsync(userId);
+
+            return PaginatedResult<List<IncomeModel>>.Success(incomes.ToModels(), count);
         }
 
         public async Task<Result<IncomeModel>> CreateAsync(CreateIncomeRequest request)

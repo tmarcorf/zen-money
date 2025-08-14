@@ -47,7 +47,7 @@ namespace ZenMoney.Application.Validators.Income
 
         private bool TypeIsValid(IncomeTypeEnum type)
         {
-            return type == IncomeTypeEnum.FIXED || type == IncomeTypeEnum.VARIABLE;
+            return type == IncomeTypeEnum.Fixed || type == IncomeTypeEnum.Variable;
         }
     }
 }

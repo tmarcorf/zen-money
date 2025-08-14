@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using ZenMoney.API.Responses;
 using ZenMoney.Application.Interfaces;
+using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Models.Income;
 using ZenMoney.Application.Requests.Income;
+using ZenMoney.Application.Services;
+using ZenMoney.Core.Search;
 
 namespace ZenMoney.API.Controllers
 {
@@ -24,6 +27,20 @@ namespace ZenMoney.API.Controllers
             }
 
             return Ok(ApiResponse<IncomeModel>.Success(result.Data));
+        }
+
+        [Authorize]
+        [HttpGet("list-paginated")]
+        public async Task<IActionResult> ListPaginatedAsync([FromQuery] SearchIncomeRequest request)
+        {
+            var result = await incomeService.ListPaginatedAsync(request);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound(ApiResponse<List<IncomeModel>>.Failure(result.Errors, "404"));
+            }
+
+            return Ok(ApiResponse<List<IncomeModel>>.Success(result.Data, totalCount: result.TotalCount));
         }
 
         [Authorize]

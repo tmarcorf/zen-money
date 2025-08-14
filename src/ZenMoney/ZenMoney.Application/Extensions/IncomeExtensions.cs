@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Models.Income;
 using ZenMoney.Core.Entities;
 
@@ -22,6 +23,13 @@ namespace ZenMoney.Application.Extensions
                 Description = income.Description,
                 Amount = income.Amount,
             };
+        }
+
+        public static List<IncomeModel> ToModels(this IEnumerable<Income> entities)
+        {
+            return entities
+                .Select(x => x.ToModel())
+                .ToList();
         }
 
         public static Income ToEntity(this IncomeModel income)

@@ -60,4 +60,8 @@ export class UserService {
     public getFirstName(): string {
         return this.storageService.get(USER_NAME);
     }
+
+    validateToken(): Observable<ApiResponse<boolean>> {
+        return this.http.get<ApiResponse<boolean>>(``);
+    }
 }

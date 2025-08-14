@@ -3,4 +3,8 @@ export enum SortField {
     UpdatedAt = 'UpdatedAt',
     Name = 'Name',
     Description = 'Description',
+    Date = 'Date',
+    Type = 'Type',
+    Amount = 'Amount',
+    IsPaid = 'IsPaid'
 }

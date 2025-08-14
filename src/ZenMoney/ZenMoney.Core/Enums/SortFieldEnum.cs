@@ -12,5 +12,9 @@ namespace ZenMoney.Core.Enums
         UpdatedAt = 1,
         Name = 2,
         Description = 3,
+        Date = 4,
+        Type = 5,
+        Amount = 6,
+        IsPaid = 7,
     }
 }

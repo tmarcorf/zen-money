@@ -38,6 +38,11 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { CreateUpdateCategoryComponent } from './components/category/create-update-category/create-update-category.component';
 import { CreateUpdatePaymentMethodComponent } from './components/payment-method/create-update-payment-method/create-update-payment-method.component';
+import { MatSelectModule } from '@angular/material/select';
+import { TranslateIncomeTypePipe } from './pipes/translate-income-type.pipe';
+import { TranslateIncomeTypeTablePipe } from './pipes/translate-income-type-table.pipe';
+import { FormtCurrencyPipe } from './pipes/format-currency.pipe';
+import { CreateUpdateIncomeComponent } from './components/income/create-update-income/create-update-income.component';
 
 
 export const MY_DATE_FORMATS = {
@@ -52,7 +57,8 @@ export const MY_DATE_FORMATS = {
   },
 };
 
-@NgModule({ declarations: [
+@NgModule({ 
+  declarations: [
         AppComponent,
         LoginComponent,
         LayoutComponent,
@@ -67,6 +73,10 @@ export const MY_DATE_FORMATS = {
         CreateAccountComponent,
         CreateUpdateCategoryComponent,
         CreateUpdatePaymentMethodComponent,
+        TranslateIncomeTypePipe,
+        TranslateIncomeTypeTablePipe,
+        FormtCurrencyPipe,
+        CreateUpdateIncomeComponent,
     ],
     bootstrap: [AppComponent], 
     imports: [
@@ -93,6 +103,7 @@ export const MY_DATE_FORMATS = {
         MatPaginatorModule,
         MatSortModule,
         NgxMaskDirective,
+        MatSelectModule,
       ], 
       providers: [
         { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
@@ -109,5 +120,11 @@ export const MY_DATE_FORMATS = {
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideNgxMask()
-    ] })
+    ],
+    exports: [
+      TranslateIncomeTypePipe,
+      TranslateIncomeTypeTablePipe,
+      FormtCurrencyPipe
+    ]
+  })
 export class AppModule { }
