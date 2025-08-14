@@ -1,4 +1,4 @@
-import { AbstractControl, ValidatorFn } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatDateFormats } from '@angular/material/core';
 
 export function dateFormatValidator(): ValidatorFn {
@@ -36,6 +36,16 @@ export function dateFormatValidator(): ValidatorFn {
     }
 
     return null;
+  };
+}
+
+export function validDateValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+    if (!value) return null; // 'required' já cuida do vazio
+
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? { invalidDate: true } : null;
   };
 }
 

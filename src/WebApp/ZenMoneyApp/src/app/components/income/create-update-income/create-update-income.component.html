@@ -10,15 +10,25 @@
         <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
             <mat-label>Tipo</mat-label>
             <mat-select formControlName="type">
-                <mat-option *ngFor="let type of incomeTypes" [value]="selectedType">
+                <mat-option *ngFor="let type of incomeTypes" [value]="type">
                     {{type | translateIncomeType}}
                 </mat-option>
             </mat-select>
+            <mat-error *ngIf="form.get('type')?.hasError('required')">
+                O tipo é obrigatório.
+            </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
             <mat-label>Descrição</mat-label>
             <input type="text" matInput formControlName="description">
+            <mat-error *ngIf="form.get('description')?.hasError('required')">
+                A descrição é obrigatória.
+            </mat-error>
+
+            <mat-error *ngIf="form.get('description')?.hasError('maxlength')">
+                A descrição pode ter no máximo 100 caracteres.
+            </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
@@ -26,12 +36,23 @@
             <input matInput [matDatepicker]="picker" placeholder="DD/MM/AAAA" formControlName="date" (input)="formatDate($event)">
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
+
+            <mat-error *ngIf="form.get('date')?.hasError('required')">
+                A data é obrigatória.
+            </mat-error>
+            <mat-error *ngIf="form.get('date')?.hasError('invalidDate')">
+                Data inválida.
+            </mat-error>
         </mat-form-field>
 
         <mat-form-field floatLabel="always" appearance="outline" class="form-item pe-4 ps-4">
             <mat-label>Valor</mat-label>
             <span matTextPrefix>R$&nbsp;</span>
             <input matInput type="text" class="right-align" placeholder="0,00" formControlName="amount" (input)="onAmountInput($event)"/>
+
+            <mat-error *ngIf="form.get('amount')?.hasError('required')">
+                O valor é obrigatório.
+            </mat-error>
         </mat-form-field>
 
         <div class="button-container justify-content-end" [ngClass]="{'justify-content-between': !isNewIncome}">
