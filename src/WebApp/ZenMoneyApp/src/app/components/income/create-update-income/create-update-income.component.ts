@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { IncomeModel } from '../../../responses/income/income.model';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IncomeService } from '../../../services/income.service';
 import { NotificationService } from '../../../services/notification.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -8,6 +8,7 @@ import { UpdateIncomeRequest } from '../../../requests/income/update-income.requ
 import { CreateIncomeRequest } from '../../../requests/income/create-income.request';
 import { IncomeTypeEnum } from '../../../enums/income-type.enum';
 import moment from 'moment';
+import { validDateValidator } from '../../../utils/date.formats';
 
 @Component({
   selector: 'app-create-update-income',
@@ -22,10 +23,18 @@ export class CreateUpdateIncomeComponent {
   selectedType = IncomeTypeEnum.Fixed;
 
   form: FormGroup = new FormGroup({
-      type: new FormControl(''),
-      description: new FormControl(''),
-      date: new FormControl(''),
-      amount: new FormControl('')
+    type: new FormControl('', Validators.required),
+    description: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(100)
+    ]),
+    date: new FormControl('', [
+      Validators.required,
+      validDateValidator()
+    ]),
+    amount: new FormControl('', [
+      Validators.required,
+    ])
   });
 
   constructor(
@@ -56,8 +65,6 @@ export class CreateUpdateIncomeComponent {
 
   formatToBRL(value: number | string): string {
     if (value === null || value === undefined) return '';
-
-    // Converte para número (se vier como string com vírgula/ponto)
     let numericValue = typeof value === 'number'
       ? value
       : parseFloat(value.toString().replace(/\./g, '').replace(',', '.'));
@@ -73,14 +80,9 @@ export class CreateUpdateIncomeComponent {
   onAmountInput(event: Event) {
     const input = event.target as HTMLInputElement;
     let value = input.value;
-
-    // Remove tudo que não seja número
     value = value.replace(/\D/g, '');
-
-    // Converte para decimal (últimos dois dígitos são os centavos)
     const numericValue = parseFloat(value) / 100;
 
-    // Atualiza o campo formatado
     this.form.get('amount')?.setValue(this.formatToBRL(numericValue), { emitEvent: false });
   }
 
@@ -89,6 +91,12 @@ export class CreateUpdateIncomeComponent {
   }
 
   submit() {
+    this.form.markAllAsTouched();
+
+    if (this.form.invalid) {
+      return;
+    }
+
     if (this.isNewIncome) {
       this.create();
     } else {
@@ -184,6 +192,6 @@ export class CreateUpdateIncomeComponent {
   getAmountAsFloat() {
     let amount = this.form.get('amount')?.value.replace(/\./g, '').replace(',', '.');
 
-    return parseFloat(amount);
+    return amount != '' ? parseFloat(amount) : 0;
   }
 }
