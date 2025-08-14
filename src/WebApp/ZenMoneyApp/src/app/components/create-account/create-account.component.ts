@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../../services/user.service';
-import { StorageService } from '../../services/storage.service';
 import { NotificationService } from '../../services/notification.service';
 import { Router } from '@angular/router';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -45,7 +44,6 @@ export class CreateAccountComponent {
   
   constructor(
       private userService: UserService,
-      private storageService: StorageService,
       private notificationService: NotificationService,
       private router: Router) { }
 

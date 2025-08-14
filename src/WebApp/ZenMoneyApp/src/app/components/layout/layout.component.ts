@@ -12,10 +12,12 @@ import { Subscription } from 'rxjs';
 })
 export class LayoutComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
+  isLoginClick = false;
   private subscription?: Subscription;
 
   constructor(
     public userService: UserService,
+    private router: Router
   ) { }
   
   ngOnInit(): void {

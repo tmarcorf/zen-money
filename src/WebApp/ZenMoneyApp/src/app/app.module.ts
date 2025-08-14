@@ -30,7 +30,7 @@ import { LoadingComponent } from './components/loading/loading.component';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -41,21 +41,10 @@ import { CreateUpdatePaymentMethodComponent } from './components/payment-method/
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateIncomeTypePipe } from './pipes/translate-income-type.pipe';
 import { TranslateIncomeTypeTablePipe } from './pipes/translate-income-type-table.pipe';
-import { FormtCurrencyPipe } from './pipes/format-currency.pipe';
+import { CurrencyBrPipe  } from './pipes/currency-br.pipe';
 import { CreateUpdateIncomeComponent } from './components/income/create-update-income/create-update-income.component';
-
-
-export const MY_DATE_FORMATS = {
-  parse: {
-    dateInput: 'DD/MM/YYYY',
-  },
-  display: {
-    dateInput: 'DD/MM/YYYY',
-    monthYearLabel: 'MMM YYYY',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM YYYY',
-  },
-};
+import { APP_DATE_FORMATS } from './utils/date.formats';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
 
 @NgModule({ 
   declarations: [
@@ -75,7 +64,7 @@ export const MY_DATE_FORMATS = {
         CreateUpdatePaymentMethodComponent,
         TranslateIncomeTypePipe,
         TranslateIncomeTypeTablePipe,
-        FormtCurrencyPipe,
+        CurrencyBrPipe ,
         CreateUpdateIncomeComponent,
     ],
     bootstrap: [AppComponent], 
@@ -107,6 +96,8 @@ export const MY_DATE_FORMATS = {
       ], 
       providers: [
         { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+        { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+        { provide: MAT_DATE_FORMATS, useValue: APP_DATE_FORMATS },
         provideAnimationsAsync(),
         {
             provide: HTTP_INTERCEPTORS,
@@ -124,7 +115,7 @@ export const MY_DATE_FORMATS = {
     exports: [
       TranslateIncomeTypePipe,
       TranslateIncomeTypeTablePipe,
-      FormtCurrencyPipe
+      CurrencyBrPipe
     ]
   })
 export class AppModule { }

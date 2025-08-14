@@ -96,6 +96,11 @@ namespace ZenMoney.Application.Services
             return GenerateToken(user);
         }
 
+        public async Task SignOutAsync()
+        {
+            await signInManager.SignOutAsync();
+        }
+
         #region PRIVATE METHODS
 
         private Result<TokenModel> GenerateToken(User user)
