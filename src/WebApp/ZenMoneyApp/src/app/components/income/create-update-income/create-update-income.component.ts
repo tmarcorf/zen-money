@@ -7,6 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UpdateIncomeRequest } from '../../../requests/income/update-income.request';
 import { CreateIncomeRequest } from '../../../requests/income/create-income.request';
 import { IncomeTypeEnum } from '../../../enums/income-type.enum';
+import moment from 'moment';
 
 @Component({
   selector: 'app-create-update-income',
@@ -37,12 +38,50 @@ export class CreateUpdateIncomeComponent {
     }
 
   ngAfterViewInit(): void {
-    if(this.selectedIncome) {
-      this.form.get('type')?.setValue(this.selectedIncome.type);
+    if (this.selectedIncome) {
+      this.selectedType = this.data.row != null
+        ? (this.data.row.type == 1 ? IncomeTypeEnum.Fixed : IncomeTypeEnum.Variable)
+        : IncomeTypeEnum.Fixed;
+
+      const dateObj = moment(this.data.row.date, 'YYYY-MM-DD').toDate();
+
+      this.form.get('type')?.setValue(this.selectedType);
       this.form.get('description')?.setValue(this.selectedIncome.description);
-      this.form.get('date')?.setValue(this.selectedIncome.date);
-      this.form.get('amount')?.setValue(this.selectedIncome.amount);
+      this.form.get('date')?.setValue(dateObj);
+
+      // Formata valor vindo do backend
+      this.form.get('amount')?.setValue(this.formatToBRL(this.selectedIncome.amount));
     }
+  }
+
+  formatToBRL(value: number | string): string {
+    if (value === null || value === undefined) return '';
+
+    // Converte para número (se vier como string com vírgula/ponto)
+    let numericValue = typeof value === 'number'
+      ? value
+      : parseFloat(value.toString().replace(/\./g, '').replace(',', '.'));
+
+    if (isNaN(numericValue)) return '';
+
+    return numericValue.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
+  onAmountInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    // Remove tudo que não seja número
+    value = value.replace(/\D/g, '');
+
+    // Converte para decimal (últimos dois dígitos são os centavos)
+    const numericValue = parseFloat(value) / 100;
+
+    // Atualiza o campo formatado
+    this.form.get('amount')?.setValue(this.formatToBRL(numericValue), { emitEvent: false });
   }
 
   closeDialog() {
@@ -64,7 +103,7 @@ export class CreateUpdateIncomeComponent {
       type: this.form.get('type')?.value == 'Fixed' ? 1 : 2,
       description: this.form.get('description')?.value,
       date: date,
-      amount: this.form.get('amount')?.value
+      amount: this.getAmountAsFloat()
     };
     
     this.incomeService.create(request).subscribe({
@@ -86,7 +125,7 @@ export class CreateUpdateIncomeComponent {
         type: this.form.get('type')?.value == 'Fixed' ? 1 : 2,
         description: this.form.get('description')?.value,
         date: date,
-        amount: this.form.get('amount')?.value
+        amount: this.getAmountAsFloat()
       };
 
       this.incomeService.update(request).subscribe({
@@ -123,5 +162,28 @@ export class CreateUpdateIncomeComponent {
       value = value.substring(0, 5) + '/' + value.substring(5, 9);
     }
     event.target.value = value;
+  }
+
+  formatAmount(event: any): void {
+    // Remove tudo que não for número
+    let value = event.target.value.replace(/\D/g, '');
+
+    // Converte para número com duas casas decimais
+    let numericValue = (parseInt(value, 10) / 100).toFixed(2);
+
+    // Formata no padrão brasileiro
+    const formatted = new Intl.NumberFormat('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(Number(numericValue));
+
+    // Atualiza o valor no campo
+    this.form.get('amount')?.setValue(formatted, { emitEvent: false });
+  }
+
+  getAmountAsFloat() {
+    let amount = this.form.get('amount')?.value.replace(/\./g, '').replace(',', '.');
+
+    return parseFloat(amount);
   }
 }

@@ -35,10 +35,16 @@
     </div>
 
     <div class="d-flex justify-content-between">
-        <button *ngIf="!(userService.isLoggedIn$ | async)" class="p-4 text-white" mat-button routerLink="/login">
-            <i class="fa-solid fa-user"></i>
-            Login
-        </button>
+        <div class="d-flex flex-grow-1 justify-content-between" *ngIf="!(userService.isLoggedIn$ | async)">
+            <button  class="p-4 text-white" mat-button routerLink="/create-account">
+                <span class="pe-2 material-icons">person_add</span>
+                Criar conta
+            </button>
+            <button  class="p-4 text-white" mat-button routerLink="/login">
+                <span class="pe-2 material-icons">person</span>
+                Login
+            </button>
+        </div>
 
         <div *ngIf="userService.isLoggedIn$ | async" class="d-flex flex-grow-1 justify-content-between align-items-center">
             <div class="d-flex flex-grow-1 align-items-center">
