@@ -66,5 +66,12 @@ namespace ZenMoney.API.Controllers
 
             return Ok(ApiResponse<TokenModel>.Success(result.Data));
         }
+
+        [Authorize]
+        [HttpGet("validate")]
+        public IActionResult ValidateToken()
+        {
+            return Ok(ApiResponse<bool>.Success(true, "Token válido"));
+        }
     }
 }

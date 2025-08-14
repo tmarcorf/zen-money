@@ -125,8 +125,6 @@ table {
   font-weight: bold;
   cursor: pointer;
   color: $primary-color;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
 }
 
 th.mat-sort-header-sorted {
@@ -167,4 +165,10 @@ th.mat-sort-header-sorted {
 .card {
   box-shadow: 0 2px 10px rgba(0,0,0,0.15) !important;
   border-radius: 8px !important;
+}
+
+// Inputs
+
+.right-align {
+  text-align: right;
 }

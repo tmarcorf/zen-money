@@ -27,6 +27,10 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.storageService.get(TOKEN_KEY);
 
+    if (!token) {
+      return next.handle(req);
+    }
+
     // Sempre envia a requisição, com ou sem token
     const cloned = token
       ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })

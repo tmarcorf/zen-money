@@ -13,13 +13,6 @@ namespace ZenMoney.Infrastructure.Data.Repositories
         {
         }
 
-        public async Task<int> CountAsync(Guid userId)
-        {
-            return await DbContext.Categories
-                .Where(c => c.UserId == userId)
-                .CountAsync();
-        }
-
         public async Task<List<Category>> ListPaginatedAsync(SearchCategoryRequest request, Guid userId)
         {
             var name = request.Name != null ? request.Name.Trim() : string.Empty;

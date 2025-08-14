@@ -1,0 +1,49 @@
+<div class="d-flex flex-column">
+    <mat-card-header class="w-100 justify-content-between">
+        <mat-card-title class="ms-2">{{isNewIncome ? 'Nova Entrada' : 'Editar Entrada'}}</mat-card-title>
+        <button class="mb-2 p-0" mat-icon-button (click)="closeDialog()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-card-header>
+
+    <form [formGroup]="form">
+        <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="type" [ngModel]="selectedType">
+                <mat-option *ngFor="let type of incomeTypes" [value]="(data.isNewIncomeDialog ? selectedType : data.row.type)">
+                    {{type | translateIncomeType}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Descrição</mat-label>
+            <input type="text" matInput formControlName="description">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Data</mat-label>
+            <input matInput [matDatepicker]="picker" placeholder="DD/MM/AAAA" formControlName="date" (input)="formatDate($event)">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field floatLabel="always" appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Valor</mat-label>
+            <input matInput type="number" class="right-align" placeholder="0" formControlName="amount"/>
+            <span matTextPrefix>R$&nbsp;</span>
+        </mat-form-field>
+
+        <div class="button-container justify-content-end" [ngClass]="{'justify-content-between': !isNewIncome}">
+            <button *ngIf="!isNewIncome" class="ms-4" mat-raised-button color="warn" (click)="delete()">
+                <span class="material-icons">delete</span>
+                Remover
+            </button>
+            
+            <button class="me-4" mat-raised-button color="primary" (click)="submit()">
+                <span class="pe-1 material-icons">check</span>
+                Salvar
+            </button>
+        </div>
+    </form>
+</div>
