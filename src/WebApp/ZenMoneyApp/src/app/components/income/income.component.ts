@@ -12,6 +12,7 @@ import { SortDirection } from '../../enums/sort-direction.enum';
 import { SearchIncomeRequest } from '../../requests/income/search-income.request';
 import { IncomeTypeEnum } from '../../enums/income-type.enum';
 import { CreateUpdateIncomeComponent } from './create-update-income/create-update-income.component';
+import moment from 'moment';
 
 @Component({
     selector: 'app-income',
@@ -82,14 +83,11 @@ export class IncomeComponent {
         sortDirection = SortDirection.Desc;
       }
     }
-
-    let startDate = this.form.get('startDate')?.value != '' ? new Date(this.form.get('startDate')?.value as Date).toISOString().split('T')[0] : undefined;
-    let endDate = this.form.get('endDate')?.value != '' ? new Date(this.form.get('endDate')?.value as Date).toISOString().split('T')[0] : undefined;
-
+    
     const request: SearchIncomeRequest = {
         type: this.form.get('type')?.value ?? '',
-        startDate: startDate,
-        endDate: endDate,
+        startDate: this.getDateToSearch(this.form.get('startDate')?.value),
+        endDate: this.getDateToSearch(this.form.get('endDate')?.value),
         description: this.form.get('description')?.value ?? '',
         offset: pageIndex * pageSize,
         take: pageSize,
@@ -158,5 +156,11 @@ export class IncomeComponent {
       value = value.substring(0, 5) + '/' + value.substring(5, 9);
     }
     event.target.value = value;
+  }
+
+  getDateToSearch(date: any): string {
+    return date != '' && date != null 
+      ? new Date(date as Date).toISOString().split('T')[0] 
+      : '';
   }
 }
