@@ -10,24 +10,34 @@ export class NotificationService {
   private horizontalPosition: MatSnackBarHorizontalPosition = 'right';
   private verticalPosition: MatSnackBarVerticalPosition = 'top';
 
-  success(message: string) {
-    const config = new MatSnackBarConfig();
-    config.panelClass = ['snackbar-success'];
-    config.duration = 4500;
-    config.horizontalPosition = this.horizontalPosition;
-    config.verticalPosition = this.verticalPosition;
+  private getBaseConfig(): MatSnackBarConfig {
+    return {
+      duration: 4500,
+      horizontalPosition: this.horizontalPosition,
+      verticalPosition: this.verticalPosition,
+    };
+  }
 
-    this._snackBar.open(message, 'OK', config);
+  success(message: string) {
+    this._snackBar.open(message, 'OK', {
+      duration: 4500,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: ['snackbar-success'],
+      // Força a aplicação da classe no container principal
+      politeness: 'polite'
+    });
   }
 
   error(message: string) {
-    const config = new MatSnackBarConfig();
-    config.panelClass = ['snackbar-error'];
-    config.duration = 4500;
-    config.horizontalPosition = this.horizontalPosition;
-    config.verticalPosition = this.verticalPosition;
-
-    this._snackBar.open(message, 'OK', config);
+    this._snackBar.open(message, 'OK', {
+      duration: 4500,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: ['snackbar-error'],
+      // Força a aplicação da classe no container principal
+      politeness: 'assertive'
+    });
   }
 
   errors(errors: Error[]) {

@@ -45,6 +45,8 @@ import { CurrencyBrPipe  } from './pipes/currency-br.pipe';
 import { CreateUpdateIncomeComponent } from './components/income/create-update-income/create-update-income.component';
 import { APP_DATE_FORMATS } from './utils/date.formats';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { CreateUpdateExpenseComponent } from './components/expense/create-update-expense/create-update-expense.component';
+import { TranslateExpenseTypePipe } from './pipes/translate-expense-type.pipe';
 
 @NgModule({ 
   declarations: [
@@ -66,6 +68,8 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
         TranslateIncomeTypeTablePipe,
         CurrencyBrPipe ,
         CreateUpdateIncomeComponent,
+        CreateUpdateExpenseComponent,
+        TranslateExpenseTypePipe,
     ],
     bootstrap: [AppComponent], 
     imports: [
@@ -115,7 +119,8 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
     exports: [
       TranslateIncomeTypePipe,
       TranslateIncomeTypeTablePipe,
-      CurrencyBrPipe
+      CurrencyBrPipe,
+      TranslateExpenseTypePipe
     ]
   })
 export class AppModule { }

@@ -6,5 +6,7 @@ export enum SortField {
     Date = 'Date',
     Type = 'Type',
     Amount = 'Amount',
-    IsPaid = 'IsPaid'
+    IsPaid = 'IsPaid',
+    Category = 'Category',
+    PaymentMethod = 'PaymentMethod',
 }

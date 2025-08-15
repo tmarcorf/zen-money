@@ -54,7 +54,7 @@ namespace ZenMoney.Application.Validators.Expense
 
         private bool TypeIsValid(ExpenseTypeEnum type)
         {
-            return type.Equals(ExpenseTypeEnum.FIXED) || type.Equals(ExpenseTypeEnum.VARIABLE);
+            return type.Equals(ExpenseTypeEnum.Fixed) || type.Equals(ExpenseTypeEnum.Variable);
         }
     }
 }

@@ -16,5 +16,7 @@ namespace ZenMoney.Core.Enums
         Type = 5,
         Amount = 6,
         IsPaid = 7,
+        Category = 8,
+        PaymentMethod = 9,
     }
 }

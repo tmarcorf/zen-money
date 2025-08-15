@@ -33,7 +33,15 @@
 
 /* You can add global styles to this file, and also import other style files */
 
+$success-color: #3f51b5;
+$error-color: #f44336;
+$warning-color: #ff9800;
+$info-color: #2196f3;
+$primary-color: #6200ea;
+
+
 $primary-color: #3f51b5;
+$warning-color: #f44336;
 $backgroud-color: #ECEFF1;
 
 * {
@@ -86,16 +94,22 @@ html, body {
 
 // MatSnackBar
 
-/* Sucesso */
-::ng-deep .snackbar-success {
-  background-color: #4caf50 !important; /* verde */
-  color: #fff !important;
-}
-
-/* Erro */
-::ng-deep .snackbar-error {
-  background-color: #e65100 !important; /* laranja forte */
-  color: #fff !important;
+:root {
+  // Para snackbars de sucesso
+  .snackbar-success {
+    --mdc-snackbar-container-color: #{$success-color};
+    --mdc-snackbar-supporting-text-color: white;
+    --mat-snack-bar-button-color: white;
+    --mdc-text-button-label-text-color: white;
+  }
+  
+  // Para snackbars de erro  
+  .snackbar-error {
+    --mdc-snackbar-container-color: #{$error-color};
+    --mdc-snackbar-supporting-text-color: white;
+    --mat-snack-bar-button-color: white;
+    --mdc-text-button-label-text-color: white;
+  }
 }
 
 /* Botão "Ok" */
@@ -125,6 +139,14 @@ table {
   font-weight: bold;
   cursor: pointer;
   color: $primary-color;
+}
+
+.text-is-paid {
+  color: $primary-color;
+}
+
+.text-is-not-paid {
+  color: $warning-color;
 }
 
 th.mat-sort-header-sorted {
