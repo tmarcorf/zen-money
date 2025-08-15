@@ -46,7 +46,7 @@ export class PaymentMethodComponent {
           this.updateDataSource();
         });
     
-        this.sort.active = 'createdAt';
+        this.sort.active = 'updatedAt';
         this.sort.direction = 'desc';
         this.sort.sortChange.emit({ active: this.sort.active, direction: this.sort.direction });
         
