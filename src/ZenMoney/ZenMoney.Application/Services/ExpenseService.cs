@@ -15,6 +15,7 @@ using ZenMoney.Application.Requests.Expense;
 using ZenMoney.Application.Results;
 using ZenMoney.Core.Entities;
 using ZenMoney.Core.Interfaces;
+using ZenMoney.Core.Search;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZenMoney.Application.Services
@@ -44,6 +45,16 @@ namespace ZenMoney.Application.Services
             }
 
             return Result<ExpenseModel>.Success(expense.ToModel());
+        }
+
+        public async Task<PaginatedResult<List<ExpenseModel>>> ListPaginatedAsync(SearchExpenseRequest request)
+        {
+            var userId = GetUserId();
+
+            var expenses = await expenseRepository.ListPaginatedAsync(request, userId);
+            var count = await expenseRepository.CountAsync(userId);
+
+            return PaginatedResult<List<ExpenseModel>>.Success(expenses.ToModels(), count);
         }
 
         public async Task<Result<ExpenseModel>> CreateAsync(CreateExpenseRequest request)

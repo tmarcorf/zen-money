@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZenMoney.Application.Models.Expense;
+using ZenMoney.Application.Models.Income;
 using ZenMoney.Core.Entities;
 
 namespace ZenMoney.Application.Extensions
@@ -23,8 +24,17 @@ namespace ZenMoney.Application.Extensions
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt,
                 CategoryId = entity.CategoryId,
-                PaymentMethodId = entity.PaymentMethodId
+                Category = entity.Category != null ? entity.Category.ToModel() : null,
+                PaymentMethodId = entity.PaymentMethodId,
+                PaymentMethod = entity.PaymentMethod != null ? entity.PaymentMethod.ToModel() : null
             };
+        }
+
+        public static List<ExpenseModel> ToModels(this IEnumerable<Expense> entities)
+        {
+            return entities
+                .Select(x => x.ToModel())
+                .ToList();
         }
     }
 }

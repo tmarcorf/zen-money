@@ -1,0 +1,116 @@
+<div class="d-flex flex-column">
+    <mat-card-header class="w-100 justify-content-between">
+        <mat-card-title class="ms-2">{{isNewExpense ? 'Novo Gasto' : 'Editar Gasto'}}</mat-card-title>
+        <button class="mb-2 p-0" mat-icon-button (click)="closeDialog()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-card-header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="type">
+                <mat-option *ngFor="let type of expenseTypes" [value]="type">
+                    {{type | translateExpenseType}}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('type')?.hasError('required')">
+                O tipo é obrigatório.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Categoria</mat-label>
+            <mat-select formControlName="category">
+                <mat-option *ngFor="let category of categories" [value]="category.id">
+                    {{category.name}}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('type')?.hasError('required')">
+                A categoria é obrigatório.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Descrição</mat-label>
+            <input type="text" matInput formControlName="description">
+            <mat-error *ngIf="form.get('description')?.hasError('required')">
+                A descrição é obrigatória.
+            </mat-error>
+
+            <mat-error *ngIf="form.get('description')?.hasError('maxlength')">
+                A descrição pode ter no máximo 100 caracteres.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Data</mat-label>
+            <input matInput [matDatepicker]="picker" placeholder="DD/MM/AAAA" formControlName="date" (input)="formatDate($event)">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+
+            <mat-error *ngIf="form.get('date')?.hasError('required')">
+                A data é obrigatória.
+            </mat-error>
+            <mat-error *ngIf="form.get('date')?.hasError('invalidDate')">
+                Data inválida.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Forma de pagamento</mat-label>
+            <mat-select formControlName="paymentMethod">
+                <mat-option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod.id">
+                    {{paymentMethod.description}}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('type')?.hasError('required')">
+                A categoria é obrigatório.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field floatLabel="always" appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Valor</mat-label>
+            <span matTextPrefix>R$&nbsp;</span>
+            <input matInput type="text" class="right-align" placeholder="0,00" formControlName="amount" (input)="onAmountInput($event)"/>
+
+            <mat-error *ngIf="form.get('amount')?.hasError('required')">
+                O valor é obrigatório.
+            </mat-error>
+        </mat-form-field>
+
+        <!-- <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
+            <mat-label>Status do Pagamento</mat-label>
+            <mat-checkbox 
+                matInput
+                color="primary" 
+                formControlName="isPaid">
+                {{ isPaid ? 'Pago' : 'Pendente' }}
+            </mat-checkbox>
+            <mat-hint>Marque se o pagamento foi realizado</mat-hint>
+        </mat-form-field> -->
+
+        <div class="form-item pe-4 ps-4 checkbox-container">
+            <mat-checkbox 
+                formControlName="isPaid"
+                color="primary"
+                [ngClass]="form.get('isPaid')?.value ? 'paid' : 'unpaid'">
+                {{ form.get('isPaid')?.value ? 'Pago' : 'Pendente' }}
+            </mat-checkbox>
+            <div class="checkbox-hint">Marque se o pagamento foi realizado</div>
+        </div>
+
+
+        <div class="button-container justify-content-end" [ngClass]="{'justify-content-between': !isNewExpense}">
+            <button type="button" *ngIf="!isNewExpense" class="ms-4" mat-raised-button color="warn" (click)="delete()">
+                <span class="material-icons">delete</span>
+                Remover
+            </button>
+            
+            <button type="submit" class="me-4" mat-raised-button color="primary">
+                <span class="pe-1 material-icons">check</span>
+                Salvar
+            </button>
+        </div>
+    </form>
+</div>

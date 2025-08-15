@@ -12,7 +12,6 @@ import { SortDirection } from '../../enums/sort-direction.enum';
 import { SearchIncomeRequest } from '../../requests/income/search-income.request';
 import { IncomeTypeEnum } from '../../enums/income-type.enum';
 import { CreateUpdateIncomeComponent } from './create-update-income/create-update-income.component';
-import moment from 'moment';
 
 @Component({
     selector: 'app-income',
@@ -25,6 +24,8 @@ export class IncomeComponent {
     dataSource = new MatTableDataSource<IncomeModel>();
     isNewIncomeDialog: boolean = false;
     incomeTypes = Object.values(IncomeTypeEnum);
+    dialogWidth = '400px';
+    dialogHeight = '463px';
     
     totalItems = 0;
 
@@ -83,7 +84,7 @@ export class IncomeComponent {
         sortDirection = SortDirection.Desc;
       }
     }
-    
+
     const request: SearchIncomeRequest = {
         type: this.form.get('type')?.value ?? '',
         startDate: this.getDateToSearch(this.form.get('startDate')?.value),
@@ -115,8 +116,8 @@ export class IncomeComponent {
     this.isNewIncomeDialog = true
 
     const dialogRef = this.dialog.open(CreateUpdateIncomeComponent, {
-      width: '400px',
-      height: '460px',
+      width: this.dialogWidth,
+      height: this.dialogHeight,
       autoFocus: false,
       data: {
         row: null, 
@@ -133,8 +134,8 @@ export class IncomeComponent {
     this.isNewIncomeDialog = false;
 
     const dialogRef = this.dialog.open(CreateUpdateIncomeComponent, {
-      width: '400px',
-      height: '460px',
+      width: this.dialogWidth,
+      height: this.dialogHeight,
       autoFocus: false,
       data: {
         row: row, 

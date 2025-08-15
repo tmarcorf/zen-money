@@ -5,7 +5,6 @@ import { ApiResponse } from "../responses/api-response";
 import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { apiRoute } from "../constants";
-import { CreateCategoryRequest } from "../requests/category/create-category.request";
 import { CreateIncomeRequest } from "../requests/income/create-income.request";
 import { UpdateIncomeRequest } from "../requests/income/update-income.request";
 
