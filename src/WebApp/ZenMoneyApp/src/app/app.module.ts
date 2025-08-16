@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 import { MatInputModule } from '@angular/material/input';
@@ -48,6 +48,11 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { CreateUpdateExpenseComponent } from './components/expense/create-update-expense/create-update-expense.component';
 import { TranslateExpenseTypePipe } from './pipes/translate-expense-type.pipe';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import 'moment/locale/pt-br';
+import * as moment from 'moment';
+
+moment.locale('pt-br');
+
 @NgModule({ 
   declarations: [
         AppComponent,
@@ -100,6 +105,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
         MatAutocompleteModule
       ], 
       providers: [
+        { provide: LOCALE_ID, useValue: 'pt-BR' },
         { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
         { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
         { provide: MAT_DATE_FORMATS, useValue: APP_DATE_FORMATS },

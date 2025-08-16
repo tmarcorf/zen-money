@@ -11,6 +11,8 @@ namespace ZenMoney.Application.Interfaces
 
         Task<PaginatedResult<List<PaymentMethodModel>>> ListPaginatedAsync(SearchPaymentMethodRequest request);
 
+        Task<Result<List<PaymentMethodModel>>> ListByDescriptionAsync(string description);
+
         Task<Result<PaymentMethodModel>> CreateAsync(CreatePaymentMethodRequest request);
 
         Task<Result<PaymentMethodModel>> UpdateAsync(UpdatePaymentMethodRequest request);

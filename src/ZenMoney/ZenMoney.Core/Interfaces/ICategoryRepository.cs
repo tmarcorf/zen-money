@@ -13,5 +13,7 @@ namespace ZenMoney.Core.Interfaces
         Task<List<Category>> ListPaginatedAsync(SearchCategoryRequest request, Guid userId);
 
         Task<List<Category>> ListByNameAsync(string name, Guid userId);
+
+        Task<bool> IsBeingUsed(Guid categoryId, Guid userId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens.Experimental;
 using ZenMoney.Application.Extensions;
 using ZenMoney.Application.Helpers;
 using ZenMoney.Application.Interfaces;
@@ -7,6 +8,7 @@ using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Models.PaymentMethod;
 using ZenMoney.Application.Requests.PaymentMethod;
 using ZenMoney.Application.Results;
+using ZenMoney.Core.Entities;
 using ZenMoney.Core.Interfaces;
 using ZenMoney.Core.Search;
 
@@ -16,6 +18,7 @@ namespace ZenMoney.Application.Services
         IPaymentMethodRepository paymentMethodRepository,
         IValidator<CreatePaymentMethodRequest> createPaymentMethodValidator,
         IValidator<UpdatePaymentMethodRequest> updatePaymentMethodValidator,
+        IValidator<PaymentMethod> deletePaymentMethodValidator,
         IHttpContextAccessor httpContextAcessor) : BaseService(httpContextAcessor), IPaymentMethodService
     {
         public async Task<Result<PaymentMethodModel>> GetByIdAsync(Guid id)
@@ -47,6 +50,15 @@ namespace ZenMoney.Application.Services
             var count = await paymentMethodRepository.CountAsync(userId);
 
             return PaginatedResult<List<PaymentMethodModel>>.Success(paymentMethods.ToModels(), count);
+        }
+
+        public async Task<Result<List<PaymentMethodModel>>> ListByDescriptionAsync(string description)
+        {
+            var userId = GetUserId();
+
+            var paymentMethods = await paymentMethodRepository.ListByDescriptionAsync(description, userId);
+
+            return Result<List<PaymentMethodModel>>.Success(paymentMethods.ToModels());
         }
 
         public async Task<Result<PaymentMethodModel>> CreateAsync(CreatePaymentMethodRequest request)
@@ -111,6 +123,15 @@ namespace ZenMoney.Application.Services
             if (paymentMethod == null)
             {
                 var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
+
+                return Result<PaymentMethodModel>.Failure(errors);
+            }
+
+            var validationResult = deletePaymentMethodValidator.Validate(paymentMethod);
+
+            if(!validationResult.IsValid)
+            {
+                var errors = ErrorHelper.GetErrors(validationResult);
 
                 return Result<PaymentMethodModel>.Failure(errors);
             }

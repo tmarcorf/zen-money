@@ -4,6 +4,9 @@
   "newProjectRoot": "projects",
   "projects": {
     "ZenMoneyApp": {
+      "i18n": {
+        "sourceLocale": "pt-BR"
+      },
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -110,6 +113,7 @@
         }
       }
     }
+    
   },
   "cli": {
     "analytics": false
