@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { ExpenseModel } from '../../../responses/expense/expense-model';
 import { ExpenseTypeEnum } from '../../../enums/expense-type.enum';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -11,6 +11,8 @@ import { CreateExpenseRequest } from '../../../requests/expense/create-expense.r
 import { UpdateExpenseRequest } from '../../../requests/expense/update-expense.request';
 import { CategoryModel } from '../../../responses/category/category-model';
 import { PaymentMethodModel } from '../../../responses/payment-method/payment-method.model';
+import { CategoryService } from '../../../services/category.service';
+import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-create-update-expense',
@@ -18,47 +20,18 @@ import { PaymentMethodModel } from '../../../responses/payment-method/payment-me
   templateUrl: './create-update-expense.component.html',
   styleUrl: './create-update-expense.component.scss'
 })
-export class CreateUpdateExpenseComponent {
+export class CreateUpdateExpenseComponent implements OnInit, OnDestroy {
   isNewExpense: boolean = false;
   selectedExpense?: ExpenseModel;
   expenseTypes = Object.values(ExpenseTypeEnum);
   selectedType = ExpenseTypeEnum.Fixed;
   isPaid: boolean = true;
   isDisabled: boolean = false;
+  categoryFilter = '';
+  filteredCategories: CategoryModel[] = [];
+  private searchTerms = new Subject<string>();
+  categoryControl = new FormControl('');
 
-
-  categories: CategoryModel[] = [
-    {
-        id: "cat-550e8400-e29b-41d4-a716-446655440001",
-        name: "Alimentação",
-        createdAt: "2024-01-15T10:30:00.000Z",
-        updatedAt: "2024-01-15T10:30:00.000Z"
-    },
-    {
-        id: "cat-550e8400-e29b-41d4-a716-446655440002",
-        name: "Transporte",
-        createdAt: "2024-02-20T14:45:30.000Z",
-        updatedAt: "2024-03-10T09:20:15.000Z"
-    },
-    {
-        id: "cat-550e8400-e29b-41d4-a716-446655440003",
-        name: "Saúde",
-        createdAt: "2024-03-05T08:15:20.000Z",
-        updatedAt: "2024-03-05T08:15:20.000Z"
-    },
-    {
-        id: "cat-550e8400-e29b-41d4-a716-446655440004",
-        name: "Lazer",
-        createdAt: "2024-04-12T16:40:55.000Z",
-        updatedAt: "2024-05-08T11:25:30.000Z"
-    },
-    {
-        id: "cat-550e8400-e29b-41d4-a716-446655440005",
-        name: "Moradia",
-        createdAt: "2024-05-18T09:10:45.000Z",
-        updatedAt: "2024-05-18T09:10:45.000Z"
-    }
-  ];
   paymentMethods: PaymentMethodModel[] = [
     {
         id: "pm-550e8400-e29b-41d4-a716-446655440001",
@@ -107,34 +80,56 @@ export class CreateUpdateExpenseComponent {
     amount: new FormControl('', [
       Validators.required,
     ]),
-    isPaid: new FormControl(''),
+    isActive: new FormControl(''),
+    searchCategory: new FormControl(''),
   });
 
   constructor(
     private expenseService: ExpenseService,
     private notificationService: NotificationService,
+    private categoryService: CategoryService,
     public dialogRef: MatDialogRef<CreateUpdateExpenseComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {row: ExpenseModel, isNewExpenseDialog: boolean}){
       this.selectedExpense = data.row;
       this.isNewExpense = data.isNewExpenseDialog;
     }
 
+  ngOnInit(): void {
+    
+    this.categoryControl.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap(value => this.categoryService.listByName(value ?? ''))
+      )
+      .subscribe(response => {
+        this.filteredCategories = response.data;
+      });
+  }
+
+  onCategorySelected(event: any) {
+    console.log('Categoria selecionada:', event.option.value);
+  }
+
+  ngOnDestroy() {
+    this.searchTerms.complete();
+  }
+
   ngAfterViewInit(): void {
     if (this.selectedExpense) {
       this.selectedType = this.data.row != null
         ? (this.data.row.type == 1 ? ExpenseTypeEnum.Fixed : ExpenseTypeEnum.Variable)
         : ExpenseTypeEnum.Fixed;
-
+      // debugger;
       const dateObj = moment(this.data.row.date, 'YYYY-MM-DD').toDate();
 
       this.form.get('type')?.setValue(this.selectedType);
+      this.form.get('category')?.setValue(this.selectedExpense.category)
       this.form.get('description')?.setValue(this.selectedExpense.description);
       this.form.get('date')?.setValue(dateObj);
-
-      // Formata valor vindo do backend
+      this.form.get('paymentMethod')?.setValue(this.selectedExpense.paymentMethod);
       this.form.get('amount')?.setValue(this.formatToBRL(this.selectedExpense.amount));
-
-      this.isPaid = this.data.row.isPaid;
+      this.form.get('isActive')?.setValue(this.data.row.isPaid);
     }
   }
 
@@ -278,5 +273,15 @@ export class CreateUpdateExpenseComponent {
     let amount = this.form.get('amount')?.value.replace(/\./g, '').replace(',', '.');
 
     return amount != '' ? parseFloat(amount) : 0;
+  }
+
+  filterCategories() {
+    // this.searchTerms.next('ali');
+
+    let searchTerm = this.form.get('searchCategory')?.value ?? '';
+
+    this.categoryService.listByName(searchTerm).subscribe(response => {
+      this.filteredCategories = response.data;
+    });
   }
 }

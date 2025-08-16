@@ -11,6 +11,8 @@ namespace ZenMoney.Application.Interfaces
 
         Task<PaginatedResult<List<CategoryModel>>> ListPaginatedAsync(SearchCategoryRequest request);
 
+        Task<Result<List<CategoryModel>>> ListByNameAsync(string name);
+
         Task<Result<CategoryModel>> CreateAsync(CreateCategoryRequest request);
 
         Task<Result<CategoryModel>> UpdateAsync(UpdateCategoryRequest request);

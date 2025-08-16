@@ -141,11 +141,11 @@ table {
   color: $primary-color;
 }
 
-.text-is-paid {
+.is-paid {
   color: $primary-color;
 }
 
-.text-is-not-paid {
+.is-not-paid {
   color: $warning-color;
 }
 
@@ -193,4 +193,8 @@ th.mat-sort-header-sorted {
 
 .right-align {
   text-align: right;
+}
+
+td {
+  border-right: 1px solid black;
 }

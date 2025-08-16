@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { apiRoute, EXP_DATE, USER_NAME } from '../constants';
+import { apiRoute, EXP_DATE, USER_NAME, ZM_USER_EMAIL } from '../constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AuthUserRequest } from '../requests/user/auth-user.request';
 import { ApiResponse } from '../responses/api-response';
@@ -59,6 +59,10 @@ export class UserService {
 
     public getFirstName(): string {
         return this.storageService.get(USER_NAME);
+    }
+
+    public getEmail(): string {
+        return this.storageService.get(ZM_USER_EMAIL);
     }
 
     validateToken(): Observable<ApiResponse<boolean>> {

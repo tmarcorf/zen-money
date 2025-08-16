@@ -47,7 +47,7 @@ import { APP_DATE_FORMATS } from './utils/date.formats';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { CreateUpdateExpenseComponent } from './components/expense/create-update-expense/create-update-expense.component';
 import { TranslateExpenseTypePipe } from './pipes/translate-expense-type.pipe';
-
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 @NgModule({ 
   declarations: [
         AppComponent,
@@ -97,6 +97,7 @@ import { TranslateExpenseTypePipe } from './pipes/translate-expense-type.pipe';
         MatSortModule,
         NgxMaskDirective,
         MatSelectModule,
+        MatAutocompleteModule
       ], 
       providers: [
         { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },

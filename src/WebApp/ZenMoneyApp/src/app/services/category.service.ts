@@ -16,6 +16,7 @@ import { UpdateCategoryRequest } from '../requests/category/update-category.requ
 export class CategoryService {
     categoriesRoute = '/api/categories';
     allCategoriesRoute = '/api/categories/list-paginated';
+    listByNameRoute = '/api/categories/list-name';
 
     constructor(
         private http: HttpClient
@@ -31,6 +32,17 @@ export class CategoryService {
                     name: request.name ?? '',
                     sortField: request.sortField?.toString() ?? '',
                     sortDirection: request.sortDirection?.toString() ?? ''
+                }
+            }
+        );
+    }
+
+    listByName(name: string): Observable<ApiResponse<CategoryModel[]>> {
+        return this.http.get<ApiResponse<CategoryModel[]>>(
+            `${apiRoute}${this.listByNameRoute}`,
+            { 
+                params: {
+                    name: name
                 }
             }
         );

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using ZenMoney.Core.Entities;
 using ZenMoney.Core.Enums;
 using ZenMoney.Core.Interfaces;
@@ -44,6 +45,17 @@ namespace ZenMoney.Infrastructure.Data.Repositories
             query = query
                 .Skip(request.Offset)
                 .Take(request.Take);
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<List<Category>> ListByNameAsync(string name, Guid userId)
+        {
+            var cleanName = !string.IsNullOrWhiteSpace(name) ? name.Trim() : string.Empty;
+
+            var query = DbContext.Categories
+                .Where(c => c.UserId == userId && c.Name.Contains(cleanName))
+                .OrderBy(c => c.Name);
 
             return await query.ToListAsync();
         }

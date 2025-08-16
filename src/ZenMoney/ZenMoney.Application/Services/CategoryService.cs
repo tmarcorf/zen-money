@@ -49,6 +49,15 @@ namespace ZenMoney.Application.Services
             return PaginatedResult<List<CategoryModel>>.Success(categories.ToModels(), count);
         }
 
+        public async Task<Result<List<CategoryModel>>> ListByNameAsync(string name)
+        {
+            var userId = GetUserId();
+
+            var categories = await categoryRepository.ListByNameAsync(name, userId);
+
+            return Result<List<CategoryModel>>.Success(categories.ToModels());
+        }
+
         public async Task<Result<CategoryModel>> CreateAsync(CreateCategoryRequest request)
         {
             if (request == null) ArgumentNullException.ThrowIfNull(request);
