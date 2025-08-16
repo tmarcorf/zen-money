@@ -47,7 +47,7 @@ namespace ZenMoney.Application.Services
             var userId = GetUserId();
 
             var paymentMethods = await paymentMethodRepository.ListPaginatedAsync(request, userId);
-            var count = await paymentMethodRepository.CountAsync(userId);
+            var count = await paymentMethodRepository.CountPaginatedAsync(request, userId);
 
             return PaginatedResult<List<PaymentMethodModel>>.Success(paymentMethods.ToModels(), count);
         }

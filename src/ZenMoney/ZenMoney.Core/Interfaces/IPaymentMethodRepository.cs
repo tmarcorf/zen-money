@@ -9,6 +9,8 @@ namespace ZenMoney.Core.Interfaces
 
         Task<List<PaymentMethod>> ListByDescriptionAsync(string description, Guid userId);
 
+        Task<int> CountPaginatedAsync(SearchPaymentMethodRequest request, Guid userId);
+
         Task<bool> IsBeingUsed(Guid paymentMethodId, Guid userId);
     }
 }

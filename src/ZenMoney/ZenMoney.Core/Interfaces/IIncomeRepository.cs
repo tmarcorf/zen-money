@@ -6,5 +6,7 @@ namespace ZenMoney.Core.Interfaces
     public interface IIncomeRepository : IBaseRepository<Income>
     {
         Task<List<Income>> ListPaginatedAsync(SearchIncomeRequest request, Guid userId);
+
+        Task<int> CountPaginatedAsync(SearchIncomeRequest request, Guid userId);
     }
 }
