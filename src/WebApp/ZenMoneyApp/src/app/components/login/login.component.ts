@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
@@ -14,6 +14,8 @@ import { NotificationService } from '../../services/notification.service';
     standalone: false
 })
 export class LoginComponent implements OnInit {
+  hide = signal(true);
+
 
   constructor(
     private userService: UserService,
@@ -65,5 +67,10 @@ export class LoginComponent implements OnInit {
   areCredentialsInvalid(email: string, password: string): boolean {
     return email == null || email == ''||
           password == null || password == '';
+  }
+
+  hideOrShowPassword(event: MouseEvent) {
+    this.hide.set(!this.hide());
+    event.stopPropagation();
   }
 }
