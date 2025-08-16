@@ -46,7 +46,7 @@ namespace ZenMoney.Application.Services
             var userId = GetUserId();
 
             var incomes = await incomeRepository.ListPaginatedAsync(request, userId);
-            var count = await incomeRepository.CountAsync(userId);
+            var count = await incomeRepository.CountPaginatedAsync(request, userId);
 
             return PaginatedResult<List<IncomeModel>>.Success(incomes.ToModels(), count);
         }

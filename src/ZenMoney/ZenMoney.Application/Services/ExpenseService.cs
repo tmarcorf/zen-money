@@ -52,7 +52,7 @@ namespace ZenMoney.Application.Services
             var userId = GetUserId();
 
             var expenses = await expenseRepository.ListPaginatedAsync(request, userId);
-            var count = await expenseRepository.CountAsync(userId);
+            var count = await expenseRepository.CountPaginatedAsync(request, userId);
 
             return PaginatedResult<List<ExpenseModel>>.Success(expenses.ToModels(), count);
         }

@@ -21,6 +21,24 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 
         public async Task<List<Expense>> ListPaginatedAsync(SearchExpenseRequest request, Guid userId)
         {
+            var query = GetSearchQuery(request, userId);
+
+            query = query
+                .Skip(request.Offset)
+                .Take(request.Take);
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<int> CountPaginatedAsync(SearchExpenseRequest request, Guid userId)
+        {
+            var query = GetSearchQuery(request, userId);
+
+            return await query.CountAsync();
+        }
+
+        private IQueryable<Expense> GetSearchQuery(SearchExpenseRequest request, Guid userId)
+        {
             var description = request.Description != null ? request.Description.Trim() : string.Empty;
 
             var query = DbContext.Expenses
@@ -92,11 +110,7 @@ namespace ZenMoney.Infrastructure.Data.Repositories
                     : query.OrderByDescending(e => e.IsPaid);
             }
 
-            query = query
-                .Skip(request.Offset)
-                .Take(request.Take);
-
-            return await query.ToListAsync();
+            return query;
         }
     }
 }

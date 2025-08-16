@@ -11,5 +11,7 @@ namespace ZenMoney.Core.Interfaces
     public interface IExpenseRepository : IBaseRepository<Expense>
     {
         Task<List<Expense>> ListPaginatedAsync(SearchExpenseRequest request, Guid userId);
+
+        Task<int> CountPaginatedAsync(SearchExpenseRequest request, Guid userId);
     }
 }
