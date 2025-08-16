@@ -25,7 +25,7 @@ export class ExpenseComponent {
     isNewExpenseDialog: boolean = false;
     incomeTypes = Object.values(ExpenseTypeEnum);
     dialogWidth = '400px';
-    dialogHeight = '770px';
+    dialogHeight = '673px';
     
     totalItems = 0;
 

@@ -2,7 +2,7 @@
     <mat-card class="card p-0" appearance="outlined">
         <mat-card-header>
             <mat-card-title>Gastos</mat-card-title>
-            <mat-card-subtitle>Controle seu dinheiro registrando seus gastos diariamente.</mat-card-subtitle>
+            <mat-card-subtitle>Controle seu dinheiro registrando seus gastos diários.</mat-card-subtitle>
         </mat-card-header>
 
         <div class="row">
@@ -85,7 +85,10 @@
 
                     <ng-container matColumnDef="isPaid">
                         <th class="is-paid-width" mat-header-cell *matHeaderCellDef mat-sort-header>Foi pago ?</th>
-                        <td class="is-paid-width" [ngClass]="{'text-is-paid': element.isPaid, 'text-is-not-paid': !element.isPaid}" mat-cell *matCellDef="let element">{{(element.isPaid) ? 'Sim' : 'Não'}}</td>
+                        <td class="is-paid-width" [ngClass]="{'is-paid': element.isPaid, 'is-not-paid': !element.isPaid}" mat-cell *matCellDef="let element">
+                            <span *ngIf="!element.isPaid" class="material-icons">close</span>
+                            <span *ngIf="element.isPaid" class="material-icons">check</span>
+                        </td>
                     </ng-container>
 
                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

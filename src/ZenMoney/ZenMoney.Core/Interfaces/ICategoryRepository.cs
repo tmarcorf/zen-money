@@ -10,8 +10,8 @@ namespace ZenMoney.Core.Interfaces
 {
     public interface ICategoryRepository : IBaseRepository<Category>
     {
-        
-
         Task<List<Category>> ListPaginatedAsync(SearchCategoryRequest request, Guid userId);
+
+        Task<List<Category>> ListByNameAsync(string name, Guid userId);
     }
 }

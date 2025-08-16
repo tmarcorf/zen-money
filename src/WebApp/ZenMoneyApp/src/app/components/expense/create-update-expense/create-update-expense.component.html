@@ -21,14 +21,19 @@
 
         <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
             <mat-label>Categoria</mat-label>
-            <mat-select formControlName="category">
-                <mat-option *ngFor="let category of categories" [value]="category.id">
-                    {{category.name}}
+            <input
+                type="text"
+                matInput
+                [formControl]="categoryControl"
+                [matAutocomplete]="auto"
+                placeholder="Pesquisar categoria..."
+            />
+
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCategorySelected($event)">
+                <mat-option *ngFor="let category of filteredCategories" [value]="category.name">
+                {{ category.name }}
                 </mat-option>
-            </mat-select>
-            <mat-error *ngIf="form.get('type')?.hasError('required')">
-                A categoria é obrigatório.
-            </mat-error>
+            </mat-autocomplete>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
@@ -79,27 +84,14 @@
             </mat-error>
         </mat-form-field>
 
-        <!-- <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
-            <mat-label>Status do Pagamento</mat-label>
-            <mat-checkbox 
-                matInput
-                color="primary" 
-                formControlName="isPaid">
-                {{ isPaid ? 'Pago' : 'Pendente' }}
-            </mat-checkbox>
-            <mat-hint>Marque se o pagamento foi realizado</mat-hint>
-        </mat-form-field> -->
-
-        <div class="form-item pe-4 ps-4 checkbox-container">
-            <mat-checkbox 
-                formControlName="isPaid"
-                color="primary"
-                [ngClass]="form.get('isPaid')?.value ? 'paid' : 'unpaid'">
-                {{ form.get('isPaid')?.value ? 'Pago' : 'Pendente' }}
-            </mat-checkbox>
-            <div class="checkbox-hint">Marque se o pagamento foi realizado</div>
-        </div>
-
+        <p>
+            <mat-slide-toggle
+                [color]="form.get('isActive')?.value ? 'primary' : 'warn'"
+                formControlName="isActive"
+                class="form-item pe-4 ps-4 pb-2">
+                Pago
+            </mat-slide-toggle>
+        </p>
 
         <div class="button-container justify-content-end" [ngClass]="{'justify-content-between': !isNewExpense}">
             <button type="button" *ngIf="!isNewExpense" class="ms-4" mat-raised-button color="warn" (click)="delete()">

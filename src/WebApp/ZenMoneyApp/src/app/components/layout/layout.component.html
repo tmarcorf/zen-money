@@ -50,6 +50,7 @@
             <div class="d-flex flex-grow-1 align-items-center">
                 <span class="material-icons">person</span>
                 <p class="user-name p-1 mt-3">Olá, <b>{{userService.getFirstName()}}</b></p>
+                <p class="p-1 mt-3">{{userService.getEmail()}}</p>
             </div>
             <button  class="p-4 text-white" mat-button (click)="logout()">
                 <i class="fa-solid fa-right-from-bracket"></i>
