@@ -10,8 +10,19 @@
 
         <mat-form-field appearance="outline" class="form-item">
           <mat-label>Senha</mat-label>
-          <input type="password" matInput formControlName="password">
-        </mat-form-field>
+          <input matInput [type]="hide() ? 'password' : 'text'" formControlName="password"/>
+          <button
+            type="button"
+            mat-icon-button
+            matSuffix
+            title="Esconder a senha"
+            (click)="hideOrShowPassword($event)"
+            [attr.aria-label]="'Esconder senha'"
+            [attr.aria-pressed]="hide()"
+          >
+            <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+      </mat-form-field>
 
         <div class="button-container justify-content-end">
           <button type="submit" mat-raised-button color="primary">
