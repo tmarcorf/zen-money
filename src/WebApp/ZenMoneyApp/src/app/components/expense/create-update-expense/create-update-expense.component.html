@@ -24,13 +24,16 @@
             <input
                 type="text"
                 matInput
-                [formControl]="categoryControl"
-                [matAutocomplete]="auto"
-                placeholder="Pesquisar categoria..."
+                [formControl]="categoryFormControl"
+                [matAutocomplete]="categoryAuto"
+                placeholder="Pesquisar..."
+                (click)="onCategoryClick()"
             />
-
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCategorySelected($event)">
-                <mat-option *ngFor="let category of filteredCategories" [value]="category.name">
+            <mat-error *ngIf="categoryFormControl.hasError('required') && categoryFormControl.touched">
+                A Categoria é obrigatória.
+            </mat-error>
+            <mat-autocomplete #categoryAuto="matAutocomplete" [displayWith]="displayCategory" (optionSelected)="onCategorySelected($event)">
+                <mat-option *ngFor="let category of filteredCategories" [value]="category">
                 {{ category.name }}
                 </mat-option>
             </mat-autocomplete>
@@ -41,10 +44,6 @@
             <input type="text" matInput formControlName="description">
             <mat-error *ngIf="form.get('description')?.hasError('required')">
                 A descrição é obrigatória.
-            </mat-error>
-
-            <mat-error *ngIf="form.get('description')?.hasError('maxlength')">
-                A descrição pode ter no máximo 100 caracteres.
             </mat-error>
         </mat-form-field>
 
@@ -64,14 +63,26 @@
 
         <mat-form-field appearance="outline" class="form-item pe-4 ps-4">
             <mat-label>Forma de pagamento</mat-label>
-            <mat-select formControlName="paymentMethod">
-                <mat-option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod.id">
-                    {{paymentMethod.description}}
-                </mat-option>
-            </mat-select>
-            <mat-error *ngIf="form.get('type')?.hasError('required')">
-                A categoria é obrigatório.
+            <input
+                type="text"
+                matInput
+                [formControl]="paymentMethodFormControl"
+                [matAutocomplete]="paymentAuto"
+                placeholder="Pesquisar..."
+                (click)="onPaymentMethodClick()"
+            />
+            <mat-error *ngIf="paymentMethodFormControl.hasError('required') && paymentMethodFormControl.touched">
+                A Forma de pagamento é obrigatória.
             </mat-error>
+            <mat-autocomplete 
+                #paymentAuto="matAutocomplete" 
+                [displayWith]="displayPaymentMethod" 
+                (optionSelected)="onPaymentMethodSelected($event)">
+                
+                <mat-option *ngFor="let paymentMethod of filteredPaymentMethods" [value]="paymentMethod">
+                    {{ paymentMethod.description }}
+                </mat-option>
+            </mat-autocomplete>
         </mat-form-field>
 
         <mat-form-field floatLabel="always" appearance="outline" class="form-item pe-4 ps-4">

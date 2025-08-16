@@ -49,6 +49,17 @@ export function validDateValidator(): ValidatorFn {
   };
 }
 
+export function formatDate(event: any) {
+  let value = event.target.value.replace(/\D/g, '');
+  if (value.length > 2) {
+    value = value.substring(0, 2) + '/' + value.substring(2);
+  }
+  if (value.length > 5) {
+    value = value.substring(0, 5) + '/' + value.substring(5, 9);
+  }
+  event.target.value = value;
+}
+
 export const APP_DATE_FORMATS: MatDateFormats = {
   parse: {
     dateInput: 'DD/MM/YYYY',

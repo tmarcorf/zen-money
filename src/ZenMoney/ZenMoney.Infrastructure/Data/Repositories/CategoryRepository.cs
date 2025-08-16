@@ -59,5 +59,10 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async Task<bool> IsBeingUsed(Guid categoryId, Guid userId)
+        {
+            return await DbContext.Expenses.AnyAsync(e => e.UserId == userId && e.CategoryId == categoryId);
+        }
     }
 }

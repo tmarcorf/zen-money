@@ -46,6 +46,20 @@ namespace ZenMoney.API.Controllers
         }
 
         [Authorize]
+        [HttpGet("list-description")]
+        public async Task<IActionResult> ListByDescriptionAsync(string? description)
+        {
+            var result = await paymentMethodService.ListByDescriptionAsync(description);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound(ApiResponse<List<PaymentMethodModel>>.Failure(result.Errors, "404"));
+            }
+
+            return Ok(ApiResponse<List<PaymentMethodModel>>.Success(result.Data));
+        }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateAsync(CreatePaymentMethodRequest request)
         {

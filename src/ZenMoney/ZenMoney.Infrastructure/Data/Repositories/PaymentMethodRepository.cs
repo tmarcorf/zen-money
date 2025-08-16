@@ -52,5 +52,21 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async Task<List<PaymentMethod>> ListByDescriptionAsync(string description, Guid userId)
+        {
+            var cleanDescription = !string.IsNullOrWhiteSpace(description) ? description.Trim() : string.Empty;
+
+            var query = DbContext.PaymentMethods
+                .Where(p => p.UserId == userId && p.Description.Contains(cleanDescription))
+                .OrderBy(p => p.Description);
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<bool> IsBeingUsed(Guid paymentMethodId, Guid userId)
+        {
+            return await DbContext.Expenses.AnyAsync(e => e.UserId == userId && e.PaymentMethodId == paymentMethodId);
+        }
     }
 }

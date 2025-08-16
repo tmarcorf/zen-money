@@ -14,6 +14,7 @@ import { UpdatePaymentMethodRequest } from "../requests/payment-method/update-pa
 export class PaymentMethodService {
     paymentMethodsRoute = '/api/payment-methods';
     allPaymentMethodsRoute = '/api/payment-methods/list-paginated';
+    listByDescriptionRoute = '/api/payment-methods/list-description';
 
     constructor(
         private http: HttpClient
@@ -33,6 +34,17 @@ export class PaymentMethodService {
             }
         );
     }
+
+    listByDescription(description: string): Observable<ApiResponse<PaymentMethodModel[]>> {
+            return this.http.get<ApiResponse<PaymentMethodModel[]>>(
+                `${apiRoute}${this.listByDescriptionRoute}`,
+                { 
+                    params: {
+                        description: description
+                    }
+                }
+            );
+        }
 
     create(request: CreatePaymentMethodRequest): Observable<ApiResponse<PaymentMethodModel>> {
         return this.http.post<ApiResponse<PaymentMethodModel>>(`${apiRoute}${this.paymentMethodsRoute}`, request);

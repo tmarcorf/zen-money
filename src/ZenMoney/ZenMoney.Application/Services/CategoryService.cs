@@ -16,6 +16,7 @@ namespace ZenMoney.Application.Services
         ICategoryRepository categoryRepository,
         IValidator<CreateCategoryRequest> createCategoryValidator,
         IValidator<UpdateCategoryRequest> updateCategoryValidator,
+        IValidator<Category> deleteCategoryValidator,
         IHttpContextAccessor httpContextAcessor) : BaseService(httpContextAcessor), ICategoryService
     {
         public async Task<Result<CategoryModel>> GetByIdAsync(Guid id)
@@ -123,6 +124,15 @@ namespace ZenMoney.Application.Services
             if (category == null)
             {
                 var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
+
+                return Result<CategoryModel>.Failure(errors);
+            }
+
+            var validationResult = deleteCategoryValidator.Validate(category);
+
+            if (!validationResult.IsValid)
+            {
+                var errors = ErrorHelper.GetErrors(validationResult);
 
                 return Result<CategoryModel>.Failure(errors);
             }
