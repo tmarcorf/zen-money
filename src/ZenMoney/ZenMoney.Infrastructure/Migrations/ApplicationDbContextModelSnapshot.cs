@@ -466,7 +466,7 @@ namespace ZenMoney.Infrastructure.Migrations
                     b.HasOne("ZenMoney.Core.Entities.User", "User")
                         .WithMany("Incomes")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -477,7 +477,7 @@ namespace ZenMoney.Infrastructure.Migrations
                     b.HasOne("ZenMoney.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");

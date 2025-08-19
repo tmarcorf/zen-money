@@ -1,0 +1,16 @@
+<mat-form-field appearance="outline">
+    <mat-label>Categoria</mat-label>
+    <input
+        type="text"
+        matInput
+        [formControl]="categoryFormControl"
+        [matAutocomplete]="categoryAuto"
+        placeholder="Selecione..."
+        (click)="onCategoryClick()"
+    />
+    <mat-autocomplete #categoryAuto="matAutocomplete" [displayWith]="displayCategory" (optionSelected)="onCategorySelected($event)">
+        <mat-option *ngFor="let category of filteredCategories" [value]="category">
+        {{ category.name }}
+        </mat-option>
+    </mat-autocomplete>
+</mat-form-field>

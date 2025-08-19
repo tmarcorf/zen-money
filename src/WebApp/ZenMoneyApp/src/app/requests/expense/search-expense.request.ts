@@ -5,4 +5,6 @@ export interface SearchExpenseRequest extends BaseSearchRequest {
     description?: string;
     startDate?: string;
     endDate?: string;
+    categoryId?: string;
+    paymentMethodId?: string;
 }

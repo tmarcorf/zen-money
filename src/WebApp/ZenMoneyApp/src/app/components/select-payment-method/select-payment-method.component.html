@@ -1,0 +1,20 @@
+<mat-form-field appearance="outline">
+    <mat-label>Forma de pagamento</mat-label>
+    <input
+        type="text"
+        matInput
+        [formControl]="paymentMethodFormControl"
+        [matAutocomplete]="paymentAuto"
+        placeholder="Selecione..."
+        (click)="onPaymentMethodClick()"
+    />
+    <mat-autocomplete 
+        #paymentAuto="matAutocomplete" 
+        [displayWith]="displayPaymentMethod" 
+        (optionSelected)="onPaymentMethodSelected($event)">
+        
+        <mat-option *ngFor="let paymentMethod of filteredPaymentMethods" [value]="paymentMethod">
+            {{ paymentMethod.description }}
+        </mat-option>
+    </mat-autocomplete>
+</mat-form-field>

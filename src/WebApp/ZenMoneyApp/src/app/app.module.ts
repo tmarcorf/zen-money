@@ -29,10 +29,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingComponent } from './components/loading/loading.component';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
-import {MatTableModule} from '@angular/material/table';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -48,8 +48,11 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { CreateUpdateExpenseComponent } from './components/expense/create-update-expense/create-update-expense.component';
 import { TranslateExpenseTypePipe } from './pipes/translate-expense-type.pipe';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import 'moment/locale/pt-br';
 import * as moment from 'moment';
+import { SelectCategoryComponent } from './components/select-category/select-category.component';
+import { SelectPaymentMethodComponent } from './components/select-payment-method/select-payment-method.component';
 
 moment.locale('pt-br');
 
@@ -75,6 +78,8 @@ moment.locale('pt-br');
         CreateUpdateIncomeComponent,
         CreateUpdateExpenseComponent,
         TranslateExpenseTypePipe,
+        SelectCategoryComponent,
+        SelectPaymentMethodComponent,
     ],
     bootstrap: [AppComponent], 
     imports: [
@@ -102,7 +107,8 @@ moment.locale('pt-br');
         MatSortModule,
         NgxMaskDirective,
         MatSelectModule,
-        MatAutocompleteModule
+        MatAutocompleteModule,
+        MatTooltipModule
       ], 
       providers: [
         { provide: LOCALE_ID, useValue: 'pt-BR' },
