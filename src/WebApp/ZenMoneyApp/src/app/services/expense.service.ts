@@ -28,6 +28,8 @@ export class ExpenseService {
                     startDate: request.startDate ?? '',
                     endDate: request.endDate ?? '',
                     description: request.description ?? '',
+                    categoryId: request.categoryId ?? '',
+                    paymentMethodId: request.paymentMethodId ?? '',
                     offset: request.offset ?? 0,
                     take: request.take ?? 10,
                     sortField: request.sortField?.toString() ?? '',

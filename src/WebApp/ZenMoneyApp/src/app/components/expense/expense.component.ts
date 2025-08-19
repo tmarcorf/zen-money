@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ExpenseModel } from '../../responses/expense/expense-model';
 import { ExpenseTypeEnum } from '../../enums/expense-type.enum';
@@ -12,6 +12,10 @@ import { SortField } from '../../enums/sort-field.enum';
 import { SortDirection } from '../../enums/sort-direction.enum';
 import { SearchExpenseRequest } from '../../requests/expense/search-expense.request';
 import { CreateUpdateExpenseComponent } from './create-update-expense/create-update-expense.component';
+import { CategoryModel } from '../../responses/category/category-model';
+import { CategoryService } from '../../services/category.service';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { PaymentMethodModel } from '../../responses/payment-method/payment-method.model';
 
 @Component({
     selector: 'app-expense',
@@ -23,6 +27,8 @@ export class ExpenseComponent {
     displayedColumns: string[] = ['type', 'category', 'description', 'date',  'paymentMethod', 'amount', 'isPaid'];
     dataSource = new MatTableDataSource<ExpenseModel>();
     isNewExpenseDialog: boolean = false;
+    selectedCategory?: CategoryModel | null;
+    selectedPaymentMethod?: PaymentMethodModel | null;
     incomeTypes = Object.values(ExpenseTypeEnum);
     dialogWidth = '400px';
     dialogHeight = '673px';
@@ -44,9 +50,9 @@ export class ExpenseComponent {
 
   constructor(
     private expenseService: ExpenseService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
   ) {}
-
+  
   ngAfterViewInit(): void {
     this.paginator.page.subscribe(() => this.updateDataSource());
     this.sort.sortChange.subscribe(() => {
@@ -96,6 +102,8 @@ export class ExpenseComponent {
         startDate: this.getDateToSearch(this.form.get('startDate')?.value),
         endDate: this.getDateToSearch(this.form.get('endDate')?.value),
         description: this.form.get('description')?.value ?? '',
+        categoryId: this.selectedCategory?.id ?? '',
+        paymentMethodId: this.selectedPaymentMethod?.id ?? '',
         offset: pageIndex * pageSize,
         take: pageSize,
         sortField: sortField,
@@ -112,6 +120,14 @@ export class ExpenseComponent {
       }
     });
   }
+
+  getCategory(category: CategoryModel | null) {
+    this.selectedCategory = category;
+  }
+
+  getPaymentMethod(paymentMethod: PaymentMethodModel | null) {
+    this.selectedPaymentMethod = paymentMethod;
+  } 
 
   applyFilter(): void {
     this.paginator.pageIndex = 0;
@@ -169,5 +185,14 @@ export class ExpenseComponent {
     return date != '' && date != null 
       ? new Date(date as Date).toISOString().split('T')[0] 
       : '';
+  }
+
+  clearFilters() {
+    this.form.get('type')?.setValue('');
+    this.form.get('startDate')?.setValue('');
+    this.form.get('endDate')?.setValue('');
+    this.form.get('description')?.setValue('');
+    this.selectedCategory = null
+    this.selectedPaymentMethod = null;
   }
 }

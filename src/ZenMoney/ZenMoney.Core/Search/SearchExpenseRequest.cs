@@ -16,5 +16,9 @@ namespace ZenMoney.Core.Search
         public DateOnly? StartDate { get; set; }
 
         public DateOnly? EndDate { get; set; }
+
+        public Guid? CategoryId { get; set; }
+
+        public Guid? PaymentMethodId { get; set; }
     }
 }

@@ -61,6 +61,16 @@ namespace ZenMoney.Infrastructure.Data.Repositories
                 query = query.Where(e => e.Date <= request.EndDate.Value);
             }
 
+            if (request.CategoryId.HasValue)
+            {
+                query = query.Where(e => e.CategoryId == request.CategoryId.Value);
+            }
+
+            if (request.PaymentMethodId.HasValue)
+            {
+                query = query.Where(e => e.PaymentMethodId == request.PaymentMethodId.Value);
+            }
+
             if (request.SortField == SortFieldEnum.Type)
             {
                 query = request.SortDirection == SortDirectionEnum.Asc

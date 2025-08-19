@@ -1,8 +1,16 @@
 <div class="row pe-3">
     <mat-card class="card p-0" appearance="outlined">
         <mat-card-header>
-            <mat-card-title>Gastos</mat-card-title>
-            <mat-card-subtitle>Controle seu dinheiro registrando seus gastos diários.</mat-card-subtitle>
+            <div class="col">
+                <mat-card-title>Gastos</mat-card-title>
+                <mat-card-subtitle>Controle seu dinheiro registrando seus gastos diários.</mat-card-subtitle>
+            </div>
+            <div class="col d-flex align-items-center justify-content-end">
+                <button class="ms-2" mat-raised-button color="warn" (click)="clearFilters()">
+                    <span class="pe-1 material-icons">clear</span>
+                    Limpar filtros
+                </button>
+            </div>
         </mat-card-header>
 
         <div class="row">
@@ -15,7 +23,7 @@
 
                     <form [formGroup]="form" (ngSubmit)="applyFilter()">
                         <div class="row">
-                            <mat-form-field appearance="outline" class="col-5 form-item">
+                            <mat-form-field appearance="outline" class="col-sm-3 col-12 form-item">
                                 <mat-label>Data</mat-label>
                                 <mat-date-range-input [rangePicker]="picker">
                                     <input matStartDate placeholder="Data inicial" formControlName="startDate" (input)="formatDate($event)">
@@ -35,6 +43,10 @@
                                 </mat-select>
                             </mat-form-field>
                         
+                            <app-select-category class="col" (selectedCategory)="getCategory($event)"></app-select-category>
+
+                            <app-select-payment-method class="col" (selectedPaymentMethod)="getPaymentMethod($event)"></app-select-payment-method>
+
                             <mat-form-field class="col me-1" appearance="outline">
                                 <mat-label>Descrição</mat-label>
                                 <input matInput formControlName="description">
@@ -42,6 +54,9 @@
                                     <mat-icon>search</mat-icon>
                                 </button>
                             </mat-form-field>
+
+                            
+
                         </div>
                     </form>
                 </mat-card-actions>
