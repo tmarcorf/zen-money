@@ -57,4 +57,9 @@ export class SelectCategoryComponent implements OnInit {
   onCategorySelected(event: any) {
     this.selectedCategory.emit(event.option.value as CategoryModel);
   }
+
+  clearFilter() {
+    this.categoryFormControl.setValue(null);
+    this.selectedCategory.emit(null);
+  }
 }

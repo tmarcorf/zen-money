@@ -1,65 +1,68 @@
 <div class="row pe-3">
     <mat-card class="card p-0" appearance="outlined">
-        <mat-card-header>
-            <div class="col">
-                <mat-card-title>Gastos</mat-card-title>
-                <mat-card-subtitle>Controle seu dinheiro registrando seus gastos diários.</mat-card-subtitle>
-            </div>
-            <div class="col d-flex align-items-center justify-content-end">
-                <button class="ms-2" mat-raised-button color="warn" (click)="clearFilters()">
-                    <span class="pe-1 material-icons">clear</span>
-                    Limpar filtros
-                </button>
-            </div>
-        </mat-card-header>
-
         <div class="row">
-            <div class="col-12">
-                <mat-card-actions class="justify-content-between">
-                    <button class="ms-2" mat-raised-button color="primary" (click)="create()">
+            <div class="col-5">
+                <mat-card-header>
+                    <mat-card-title>Gastos</mat-card-title>
+                    <mat-card-subtitle>Controle seu dinheiro registrando seus gastos diários.</mat-card-subtitle>
+                </mat-card-header>
+            </div>
+            <div class="col-7">
+                <form [formGroup]="form">
+                    <div class="row mt-2 justify-content-end">
+                        <mat-form-field class="col-4 mt-3 p-0 pe-2" appearance="outline">
+                            <mat-label>Data</mat-label>
+                            <mat-date-range-input [rangePicker]="picker">
+                                <input matStartDate placeholder="Data inicial" formControlName="startDate" (input)="formatDate($event)">
+                                <input matEndDate placeholder="Data final" formControlName="endDate" (input)="formatDate($event)">
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="col-3 mt-3 p-0 pe-2">
+                            <mat-label>Tipo</mat-label>
+                            <mat-select formControlName="type">
+                                <mat-option>Nenhum</mat-option>
+                                <mat-option *ngFor="let type of incomeTypes" [value]="type">
+                                    {{type | translateIncomeType}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field class="col-3 mt-3 me-3 ps-0 mb-0" appearance="outline">
+                            <mat-label>Descrição</mat-label>
+                            <input matInput formControlName="description">
+                        </mat-form-field>
+                    </div>
+
+                    <div class="row me-5 justify-content-end">
+                        <app-select-category class="col-3 me-4" (selectedCategory)="getCategory($event)"></app-select-category>
+                    
+                        <app-select-payment-method class="col-3" (selectedPaymentMethod)="getPaymentMethod($event)"></app-select-payment-method>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row mb-2 me-2 d-flex justify-content-end align-items-center">
+                <div class="col d-flex justify-content-start">
+                    <button class="ms-3" mat-raised-button color="primary" (click)="create()">
                         <span class="pe-1 material-icons">add</span>
                         Adicionar
                     </button>
+                </div>
+                <div class="col d-flex justify-content-end align-items-end p-0">
+                    <button class="col-3 me-2" type="button" mat-raised-button color="warn" (click)="clearFilters()">
+                        <span class="pe-1 material-icons">cleaning_services</span>
+                        Limpar filtros
+                    </button>
 
-                    <form [formGroup]="form" (ngSubmit)="applyFilter()">
-                        <div class="row">
-                            <mat-form-field appearance="outline" class="col-sm-3 col-12 form-item">
-                                <mat-label>Data</mat-label>
-                                <mat-date-range-input [rangePicker]="picker">
-                                    <input matStartDate placeholder="Data inicial" formControlName="startDate" (input)="formatDate($event)">
-                                    <input matEndDate placeholder="Data final" formControlName="endDate" (input)="formatDate($event)">
-                                </mat-date-range-input>
-                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                                <mat-date-range-picker #picker></mat-date-range-picker>
-                            </mat-form-field>
-                            
-                            <mat-form-field appearance="outline" class="col">
-                                <mat-label>Tipo</mat-label>
-                                <mat-select formControlName="type">
-                                    <mat-option>Nenhum</mat-option>
-                                    <mat-option *ngFor="let type of incomeTypes" [value]="type">
-                                        {{type | translateIncomeType}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        
-                            <app-select-category class="col" (selectedCategory)="getCategory($event)"></app-select-category>
-
-                            <app-select-payment-method class="col" (selectedPaymentMethod)="getPaymentMethod($event)"></app-select-payment-method>
-
-                            <mat-form-field class="col me-1" appearance="outline">
-                                <mat-label>Descrição</mat-label>
-                                <input matInput formControlName="description">
-                                <button type="submit" mat-icon-button matSuffix>
-                                    <mat-icon>search</mat-icon>
-                                </button>
-                            </mat-form-field>
-
-                            
-
-                        </div>
-                    </form>
-                </mat-card-actions>
+                    <button class="col-2 me-1" type="submit" mat-raised-button color="primary" (click)="applyFilter()">
+                        <span class="pe-1 material-icons">search</span>
+                        Buscar
+                    </button>
+                </div>
             </div>
         </div>
 
