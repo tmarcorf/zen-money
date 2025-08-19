@@ -57,4 +57,9 @@ export class SelectPaymentMethodComponent implements OnInit {
   onPaymentMethodSelected(event: any) {
     this.selectedPaymentMethod.emit(event.option.value as PaymentMethodModel);
   }
+
+  clearFilter() {
+    this.paymentMethodFormControl.setValue(null);
+    this.selectedPaymentMethod.emit(null);
+  }
 }

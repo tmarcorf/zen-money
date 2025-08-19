@@ -16,6 +16,8 @@ import { CategoryModel } from '../../responses/category/category-model';
 import { CategoryService } from '../../services/category.service';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { PaymentMethodModel } from '../../responses/payment-method/payment-method.model';
+import { SelectCategoryComponent } from '../select-category/select-category.component';
+import { SelectPaymentMethodComponent } from '../select-payment-method/select-payment-method.component';
 
 @Component({
     selector: 'app-expense',
@@ -32,6 +34,9 @@ export class ExpenseComponent {
     incomeTypes = Object.values(ExpenseTypeEnum);
     dialogWidth = '400px';
     dialogHeight = '673px';
+
+    @ViewChild(SelectCategoryComponent) selectCategory!: SelectCategoryComponent;
+    @ViewChild(SelectPaymentMethodComponent) selectPaymentMethod!: SelectPaymentMethodComponent;
     
     totalItems = 0;
 
@@ -193,6 +198,8 @@ export class ExpenseComponent {
     this.form.get('endDate')?.setValue('');
     this.form.get('description')?.setValue('');
     this.selectedCategory = null
+    this.selectCategory.clearFilter();
     this.selectedPaymentMethod = null;
+    this.selectPaymentMethod.clearFilter();
   }
 }
