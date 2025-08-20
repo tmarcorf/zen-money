@@ -53,6 +53,8 @@ import 'moment/locale/pt-br';
 import * as moment from 'moment';
 import { SelectCategoryComponent } from './components/select-category/select-category.component';
 import { SelectPaymentMethodComponent } from './components/select-payment-method/select-payment-method.component';
+import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { IncomesExpensesDashboardComponent } from './components/dashboard/incomes-expenses-dashboard/incomes-expenses-dashboard.component';
 
 moment.locale('pt-br');
 
@@ -80,6 +82,7 @@ moment.locale('pt-br');
         TranslateExpenseTypePipe,
         SelectCategoryComponent,
         SelectPaymentMethodComponent,
+        IncomesExpensesDashboardComponent,
     ],
     bootstrap: [AppComponent], 
     imports: [
@@ -108,7 +111,8 @@ moment.locale('pt-br');
         NgxMaskDirective,
         MatSelectModule,
         MatAutocompleteModule,
-        MatTooltipModule
+        MatTooltipModule,
+        BaseChartDirective,
       ], 
       providers: [
         { provide: LOCALE_ID, useValue: 'pt-BR' },
@@ -127,7 +131,8 @@ moment.locale('pt-br');
           multi: true
         },
         provideHttpClient(withInterceptorsFromDi()),
-        provideNgxMask()
+        provideNgxMask(),
+        provideCharts(withDefaultRegisterables()),
     ],
     exports: [
       TranslateIncomeTypePipe,

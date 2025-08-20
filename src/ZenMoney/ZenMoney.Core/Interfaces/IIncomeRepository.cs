@@ -8,5 +8,7 @@ namespace ZenMoney.Core.Interfaces
         Task<List<Income>> ListPaginatedAsync(SearchIncomeRequest request, Guid userId);
 
         Task<int> CountPaginatedAsync(SearchIncomeRequest request, Guid userId);
+
+        Task<decimal> GetTotalAmoutPerMonth(int month, int year, Guid userId);
     }
 }
