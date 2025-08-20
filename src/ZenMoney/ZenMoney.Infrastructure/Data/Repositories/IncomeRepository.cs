@@ -13,6 +13,8 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 {
     public class IncomeRepository : BaseRepository<Income>, IIncomeRepository
     {
+        private const int DECIMALS = 2;
+
         public IncomeRepository(ApplicationDbContext dbContext)
             : base(dbContext)
         {
@@ -34,6 +36,19 @@ namespace ZenMoney.Infrastructure.Data.Repositories
             var query = GetSearchQuery(request, userId);
 
             return await query.CountAsync();
+        }
+
+        public async Task<decimal> GetTotalAmoutPerMonth(int month, int year, Guid userId)
+        {
+            var query = DbContext.Incomes
+                .Where(i => i.UserId == userId && i.Date.Month == month && i.Date.Year == year)
+                .AsNoTracking();
+
+            var totalAmount = await query
+                .Select(i => i.Amount)
+                .SumAsync();
+
+            return Math.Round(totalAmount, DECIMALS);
         }
 
         private IQueryable<Income> GetSearchQuery(SearchIncomeRequest request, Guid userId)
@@ -86,7 +101,7 @@ namespace ZenMoney.Infrastructure.Data.Repositories
                     : query.OrderByDescending(i => i.Amount);
             }
 
-            return query;
+            return query.AsNoTracking();
         }
     }
 }

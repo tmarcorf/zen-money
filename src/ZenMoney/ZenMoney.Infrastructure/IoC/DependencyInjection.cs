@@ -55,6 +55,7 @@ namespace ZenMoney.Infrastructure.IoC
             services.AddScoped<IPaymentMethodService, PaymentMethodService>();
             services.AddScoped<IIncomeService, IncomeService>();
             services.AddScoped<IExpenseService, ExpenseService>();
+            services.AddScoped<IDashboardService, DashboardService>();
 
             return services;
         }

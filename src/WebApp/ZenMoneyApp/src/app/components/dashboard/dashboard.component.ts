@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
     selector: 'app-dashboard',
@@ -7,5 +9,5 @@ import { Component } from '@angular/core';
     standalone: false
 })
 export class DashboardComponent {
-
+    
 }

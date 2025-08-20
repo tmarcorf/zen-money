@@ -14,6 +14,8 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 {
     public class ExpenseRepository : BaseRepository<Expense>, IExpenseRepository
     {
+        private const int DECIMALS = 2;
+
         public ExpenseRepository(ApplicationDbContext dbContext) 
             : base(dbContext)
         {
@@ -35,6 +37,19 @@ namespace ZenMoney.Infrastructure.Data.Repositories
             var query = GetSearchQuery(request, userId);
 
             return await query.CountAsync();
+        }
+
+        public async Task<decimal> GetTotalAmoutPerMonth(int month, int year, Guid userId)
+        {
+            var query = DbContext.Expenses
+                .Where(e => e.UserId == userId && e.Date.Month == month && e.Date.Year == year)
+                .AsNoTracking();
+
+            var totalAmount = await query
+                .Select(i => i.Amount)
+                .SumAsync();
+
+            return Math.Round(totalAmount, DECIMALS);
         }
 
         private IQueryable<Expense> GetSearchQuery(SearchExpenseRequest request, Guid userId)
