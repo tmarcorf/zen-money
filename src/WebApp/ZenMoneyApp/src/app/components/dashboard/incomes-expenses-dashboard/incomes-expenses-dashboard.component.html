@@ -1,4 +1,4 @@
-<mat-card class="card d-flex p-0" appearance="outlined">
+<mat-card class="card d-flex" appearance="outlined">
   <mat-card-header>
     <mat-card-title>Entradas e Saídas</mat-card-title>
     <mat-card-subtitle>Relação entre total de entradas e saídas do mês</mat-card-subtitle>
@@ -6,8 +6,6 @@
 
   <mat-card-content>
     <canvas
-        width="100"
-        height="100"
         baseChart
         [data]="pieChartData"
         [type]="pieChartType"

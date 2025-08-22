@@ -1,8 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { StorageService } from './storage.service';
-import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { CategoryModel } from '../responses/category/category-model';
 import { ApiResponse } from '../responses/api-response';
 import { apiRoute } from '../constants';
