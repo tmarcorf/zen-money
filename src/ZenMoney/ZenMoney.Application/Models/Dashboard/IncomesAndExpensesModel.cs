@@ -12,8 +12,8 @@ namespace ZenMoney.Application.Models.Dashboard
 
         public int Year { get; set; }
 
-        public decimal TotalAmountIncomes { get; set; }
+        public decimal CurrentAmountIncomes { get; set; }
 
-        public decimal TotalAmountExpenses { get; set; }
+        public decimal CurrentAmountExpenses { get; internal set; }
     }
 }

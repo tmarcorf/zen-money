@@ -95,9 +95,25 @@
                     </ng-container>
 
                     <ng-container matColumnDef="amount">
-                        <th class="amount-width" mat-header-cell *matHeaderCellDef mat-sort-header>Valor</th>
-                        <td class="amount-width" mat-cell *matCellDef="let element">
-                            {{element.amount | currencyBr}}
+                        <th class="amount-width" mat-header-cell *matHeaderCellDef mat-sort-header>
+                            Valor
+                            <button
+                                type="button"
+                                mat-icon-button
+                                matSuffix
+                                title="Esconder a senha"
+                                (click)="hideOrShowCurrency($event)"
+                                [attr.aria-label]="'Esconder senha'"
+                                [attr.aria-pressed]="hide()"
+                            >
+                                <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                            </button>
+                        </th>
+                        <td 
+                            class="amount-width" 
+                            mat-cell 
+                            *matCellDef="let element">
+                            {{!hide() ?  (element.amount | currencyBr) : 'R$ ' + '*'.repeat(6)}}
                         </td>
                     </ng-container>
 

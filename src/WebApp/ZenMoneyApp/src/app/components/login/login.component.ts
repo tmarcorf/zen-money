@@ -4,7 +4,7 @@ import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
 import { AuthUserRequest } from '../../requests/user/auth-user.request';
 import { StorageService } from '../../services/storage.service';
-import { TOKEN_KEY, EXP_DATE, USER_NAME, ZM_USER_EMAIL } from '../../constants';
+import { TOKEN_KEY, EXP_DATE, USER_NAME, ZM_USER_EMAIL, ZM_HIDE_INCOME_CURRENCY, ZM_HIDE_EXPENSE_CURRENCY } from '../../constants';
 import { NotificationService } from '../../services/notification.service';
 
 @Component({
@@ -54,6 +54,8 @@ export class LoginComponent implements OnInit {
         this.storageService.set(EXP_DATE, response.data.expiration);
         this.storageService.set(USER_NAME, response.data.firstName);
         this.storageService.set(ZM_USER_EMAIL, response.data.email);
+        this.storageService.set(ZM_HIDE_INCOME_CURRENCY, 'true');
+        this.storageService.set(ZM_HIDE_EXPENSE_CURRENCY, 'true');
         this.notificationService.success("Login efetuado com sucesso");
         this.userService.updateLoginState();
         this.router.navigate(['/home']);

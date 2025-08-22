@@ -18,7 +18,7 @@ namespace ZenMoney.Application.Services
         IExpenseRepository expenseRepository,
         IHttpContextAccessor httpContextAcessor) : BaseService(httpContextAcessor), IDashboardService
     {
-        public async Task<Result<IncomesAndExpensesModel>> GetIncomesAndExpensesAmountPerMonth(int month, int year)
+        public async Task<Result<IncomesAndExpensesModel>> GetIncomesVersusExpensesPerMonth(int month, int year)
         {
             if (!AreMonthAndYearValid(month, year))
             {
@@ -36,8 +36,8 @@ namespace ZenMoney.Application.Services
             {
                 Month = month,
                 Year = year,
-                TotalAmountIncomes = totalAmountIncomes,
-                TotalAmountExpenses = totalAmountExpenses
+                CurrentAmountIncomes = totalAmountIncomes - totalAmountExpenses,
+                CurrentAmountExpenses = totalAmountExpenses
             };
 
             return Result<IncomesAndExpensesModel>.Success(incomesAndExpenses);

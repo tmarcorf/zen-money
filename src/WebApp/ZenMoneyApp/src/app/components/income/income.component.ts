@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { IncomeModel } from '../../responses/income/income.model';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -12,6 +12,8 @@ import { SortDirection } from '../../enums/sort-direction.enum';
 import { SearchIncomeRequest } from '../../requests/income/search-income.request';
 import { IncomeTypeEnum } from '../../enums/income-type.enum';
 import { CreateUpdateIncomeComponent } from './create-update-income/create-update-income.component';
+import { StorageService } from '../../services/storage.service';
+import { ZM_HIDE_INCOME_CURRENCY } from '../../constants';
 
 @Component({
     selector: 'app-income',
@@ -24,6 +26,7 @@ export class IncomeComponent {
     dataSource = new MatTableDataSource<IncomeModel>();
     isNewIncomeDialog: boolean = false;
     incomeTypes = Object.values(IncomeTypeEnum);
+    hide = signal(true);
     dialogWidth = '400px';
     dialogHeight = '463px';
     
@@ -33,8 +36,7 @@ export class IncomeComponent {
         type: new FormControl(''),
         startDate: new FormControl(''),
         endDate: new FormControl(''),
-        description: new FormControl(''),
-        amount: new FormControl('')
+        description: new FormControl('')
     });
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -44,8 +46,14 @@ export class IncomeComponent {
 
   constructor(
     private incomeService: IncomeService,
-    private notificationService: NotificationService
-  ) {}
+    private notificationService: NotificationService,
+    private storageService: StorageService
+  ) {
+    let hideString = this.storageService.get(ZM_HIDE_INCOME_CURRENCY);
+    let hide = hideString == '' || hideString == 'false' ? false : true;
+
+    this.hide.set(hide);
+  }
 
   ngAfterViewInit(): void {
     this.paginator.page.subscribe(() => this.updateDataSource());
@@ -163,5 +171,13 @@ export class IncomeComponent {
     return date != '' && date != null 
       ? new Date(date as Date).toISOString().split('T')[0] 
       : '';
+  }
+
+  hideOrShowCurrency(event: MouseEvent) {
+    let show = !this.hide();
+
+    this.hide.set(show);
+    this.storageService.set(ZM_HIDE_INCOME_CURRENCY, show.toString());
+    event.stopPropagation();
   }
 }
