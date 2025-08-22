@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ExpenseModel } from '../../responses/expense/expense-model';
 import { ExpenseTypeEnum } from '../../enums/expense-type.enum';
@@ -18,6 +18,8 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { PaymentMethodModel } from '../../responses/payment-method/payment-method.model';
 import { SelectCategoryComponent } from '../select-category/select-category.component';
 import { SelectPaymentMethodComponent } from '../select-payment-method/select-payment-method.component';
+import { StorageService } from '../../services/storage.service';
+import { ZM_HIDE_EXPENSE_CURRENCY } from '../../constants';
 
 @Component({
     selector: 'app-expense',
@@ -32,6 +34,7 @@ export class ExpenseComponent {
     selectedCategory?: CategoryModel | null;
     selectedPaymentMethod?: PaymentMethodModel | null;
     incomeTypes = Object.values(ExpenseTypeEnum);
+    hide = signal(true);
     dialogWidth = '400px';
     dialogHeight = '673px';
 
@@ -56,7 +59,13 @@ export class ExpenseComponent {
   constructor(
     private expenseService: ExpenseService,
     private notificationService: NotificationService,
-  ) {}
+    private storageService: StorageService
+  ) {
+    let hideString = this.storageService.get(ZM_HIDE_EXPENSE_CURRENCY);
+    let hide = hideString == '' || hideString == 'false' ? false : true;
+
+    this.hide.set(hide);
+  }
   
   ngAfterViewInit(): void {
     this.paginator.page.subscribe(() => this.updateDataSource());
@@ -201,5 +210,13 @@ export class ExpenseComponent {
     this.selectCategory.clearFilter();
     this.selectedPaymentMethod = null;
     this.selectPaymentMethod.clearFilter();
+  }
+
+  hideOrShowCurrency(event: MouseEvent) {
+    let show = !this.hide();
+    
+    this.hide.set(show);
+    this.storageService.set(ZM_HIDE_EXPENSE_CURRENCY, show.toString());
+    event.stopPropagation();
   }
 }

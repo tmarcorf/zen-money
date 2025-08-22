@@ -18,7 +18,7 @@ namespace ZenMoney.API.Controllers
         [HttpGet("incomes-expenses")]
         public async Task<IActionResult> GetIncomesAndExpensesAmountPerMonth(int month, int year)
         {
-            var result = await dashboardService.GetIncomesAndExpensesAmountPerMonth(month, year);
+            var result = await dashboardService.GetIncomesVersusExpensesPerMonth(month, year);
 
             if (!result.IsSuccess)
             {

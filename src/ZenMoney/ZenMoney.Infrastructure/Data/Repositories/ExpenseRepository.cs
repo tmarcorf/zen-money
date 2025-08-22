@@ -135,7 +135,7 @@ namespace ZenMoney.Infrastructure.Data.Repositories
                     : query.OrderByDescending(e => e.IsPaid);
             }
 
-            return query;
+            return query.AsNoTracking();
         }
     }
 }

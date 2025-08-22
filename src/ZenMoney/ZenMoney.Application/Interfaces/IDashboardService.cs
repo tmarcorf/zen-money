@@ -10,6 +10,6 @@ namespace ZenMoney.Application.Interfaces
 {
     public interface IDashboardService
     {
-        Task<Result<IncomesAndExpensesModel>> GetIncomesAndExpensesAmountPerMonth(int month, int year);
+        Task<Result<IncomesAndExpensesModel>> GetIncomesVersusExpensesPerMonth(int month, int year);
     }
 }

@@ -41,7 +41,9 @@ namespace ZenMoney.Infrastructure.Data.Repositories
         public async Task<decimal> GetTotalAmoutPerMonth(int month, int year, Guid userId)
         {
             var query = DbContext.Incomes
-                .Where(i => i.UserId == userId && i.Date.Month == month && i.Date.Year == year)
+                .Where(i => i.UserId == userId && 
+                            i.Date.Month == month && 
+                            i.Date.Year == year)
                 .AsNoTracking();
 
             var totalAmount = await query
