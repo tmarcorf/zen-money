@@ -77,8 +77,6 @@ export class ExpenseComponent {
     this.sort.active = 'date';
     this.sort.direction = 'desc';
     this.sort.sortChange.emit({ active: this.sort.active, direction: this.sort.direction });
-
-    this.updateDataSource();
   }
 
   updateDataSource(): void {
