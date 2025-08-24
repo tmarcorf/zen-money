@@ -16,7 +16,7 @@
                   type="button"
                   mat-icon-button
                   matSuffix
-                  title="Próximo mês"
+                  matTooltip="Mês anterior"
                   (click)="previousMonth()"
               >
                   <mat-icon>keyboard_arrow_left</mat-icon>
@@ -26,13 +26,13 @@
                 [matDatepicker]="dp" 
                 [formControl]="date">
               
-              <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+              <mat-datepicker-toggle matTooltip="Selecionar mês" matIconSuffix [for]="dp"></mat-datepicker-toggle>
 
               <button
                   type="button"
                   mat-icon-button
                   matSuffix
-                  title="Próximo mês"
+                  matTooltip="Próximo mês"
                   (click)="nextMonth()"
               >
                   <mat-icon>keyboard_arrow_right</mat-icon>

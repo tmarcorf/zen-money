@@ -10,6 +10,7 @@ import { PaymentMethodComponent } from './components/payment-method/payment-meth
 import { ReportComponent } from './components/report/report.component';
 import { HomeComponent } from './components/home/home.component';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 const routes: Routes = [
   {
@@ -61,6 +62,11 @@ const routes: Routes = [
     path: 'reports',
     component: ReportComponent,
     title: 'ZenMoney | Relatórios'
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
+    title: 'ZenMoney | Configurações'
   }
 ];
 

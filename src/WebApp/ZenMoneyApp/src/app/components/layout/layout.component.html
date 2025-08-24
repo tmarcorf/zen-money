@@ -46,20 +46,27 @@
             </button>
         </div>
 
-        <div *ngIf="userService.isLoggedIn$ | async" class="d-flex flex-grow-1 align-items-center">
-            <div class="col justify-content-start align-items-center">
-                <div class="d-flex align-items-center">
-                    <span class="material-icons">person</span>
-                    <p class="user-name mb-0 mt-1"><b>{{userService.getFirstName()}}</b></p>
-                </div>
-                <div class="d-flex">
+        <div *ngIf="userService.isLoggedIn$ | async" class="d-flex flex-column mt-1 flex-grow-1">
+            <button *nfIf="false" class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/settings">
+                <span class="me-2 mb-1 material-icons">settings</span>
+                Configurações
+            </button>
+            
+            <div class="row">
+                <div class="col-8">
+                    <div class="d-flex align-items-center">
+                        <span class="material-icons">person</span>
+                        <p class="user-name mb-0 mt-1"><b>{{userService.getFirstName()}}</b></p>
+                    </div>
                     <p class="mb-0">{{userService.getEmail()}}</p>
                 </div>
+                <div class="col-4">
+                    <button  class="p-4 text-white" mat-button (click)="logout()">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Sair
+                    </button>
+                </div>
             </div>
-            <button  class="p-4 text-white" mat-button (click)="logout()">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                Sair
-            </button>
         </div>
     </div>
 </div>
