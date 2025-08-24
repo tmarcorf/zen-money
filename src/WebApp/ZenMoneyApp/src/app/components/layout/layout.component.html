@@ -55,14 +55,15 @@
             <div class="row">
                 <div class="col-8">
                     <div class="d-flex align-items-center">
-                        <span class="material-icons">person</span>
+                        <span class="material-icons pe-1">person</span>
                         <p class="user-name mb-0 mt-1"><b>{{userService.getFirstName()}}</b></p>
                     </div>
                     <p class="mb-0">{{userService.getEmail()}}</p>
                 </div>
                 <div class="col-4">
                     <button  class="p-4 text-white" mat-button (click)="logout()">
-                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <!-- <i class="fa-solid fa-right-from-bracket"></i> -->
+                        <span class="material-icons pe-1">logout</span>
                         Sair
                     </button>
                 </div>
