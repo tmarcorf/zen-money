@@ -6,7 +6,7 @@ import { validDateValidator } from '../../../utils/date.formats';
 import { formatDate } from '../../../utils/date.formats';
 import { ExpenseService } from '../../../services/expense.service';
 import { NotificationService } from '../../../services/notification.service';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import moment from 'moment';
 import { CreateExpenseRequest } from '../../../requests/expense/create-expense.request';
 import { UpdateExpenseRequest } from '../../../requests/expense/update-expense.request';
@@ -16,6 +16,7 @@ import { CategoryService } from '../../../services/category.service';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { formatAmount, formatToBRL } from '../../../utils/currency.formats';
 import { PaymentMethodService } from '../../../services/payment-method.service';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-create-update-expense',
@@ -60,6 +61,7 @@ export class CreateUpdateExpenseComponent implements OnInit {
     private categoryService: CategoryService,
     private paymentMethodService: PaymentMethodService,
     public dialogRef: MatDialogRef<CreateUpdateExpenseComponent>,
+    private confirmDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: {row: ExpenseModel, isNewExpenseDialog: boolean}){
       this.selectedExpense = data.row;
       this.isNewExpense = data.isNewExpenseDialog;
@@ -242,17 +244,30 @@ export class CreateUpdateExpenseComponent implements OnInit {
   }
 
   delete() {
-    var id = this.selectedExpense?.id ?? '';
+    const dialogRef = this.confirmDialog.open(ConfirmDialogComponent, {
+      width: '410px',
+      height: '200px',
+      data: {
+        title: 'Remover Gasto',
+        description: 'Deseja remover este gasto ?'
+      }
+    });
 
-    this.expenseService.delete(id).subscribe({
-        next: (response) => {
-          this.notificationService.success(`Gasto ${response.data.description} removido com sucesso`);
-          this.dialogRef.close();
-        },
-        error: (response) => {
-          this.notificationService.errors(response.error.errors);
-        }
-      })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        var id = this.selectedExpense?.id ?? '';
+
+        this.expenseService.delete(id).subscribe({
+          next: (response) => {
+            this.notificationService.success(`Gasto ${response.data.description} removido com sucesso`);
+            this.dialogRef.close();
+          },
+          error: (response) => {
+            this.notificationService.errors(response.error.errors);
+          }
+        })
+      }
+    });
   }
 
   formatAmount(event: any): void {
