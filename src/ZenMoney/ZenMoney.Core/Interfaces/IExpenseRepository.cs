@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ZenMoney.Core.Dashboard;
 using ZenMoney.Core.Entities;
 using ZenMoney.Core.Search;
 
@@ -14,6 +10,10 @@ namespace ZenMoney.Core.Interfaces
 
         Task<int> CountPaginatedAsync(SearchExpenseRequest request, Guid userId);
 
-        Task<decimal> GetTotalAmoutPerMonth(int month, int year, Guid userId);
+        Task<decimal> GetTotalAmoutByMonth(int month, int year, Guid userId);
+
+        Task<List<ExpensesByCategoryModel>> GetExpensesByCategoryByMonth(int month, int year, Guid userId);
+
+        Task<List<ExpensesByPaymentMethodModel>> GetExpensesByPaymentMethodByMonth(int month, int year, Guid userId);
     }
 }

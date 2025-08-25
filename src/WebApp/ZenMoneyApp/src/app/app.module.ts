@@ -56,6 +56,7 @@ import { SelectPaymentMethodComponent } from './components/select-payment-method
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { IncomesExpensesDashboardComponent } from './components/dashboard/incomes-expenses-dashboard/incomes-expenses-dashboard.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { ExpensesByCategoryDashboardComponent } from './components/dashboard/expenses-by-category-dashboard/expenses-by-category-dashboard.component';
 
 moment.locale('pt-br');
 
@@ -85,6 +86,7 @@ moment.locale('pt-br');
         SelectPaymentMethodComponent,
         IncomesExpensesDashboardComponent,
         SettingsComponent,
+        ExpensesByCategoryDashboardComponent,
     ],
     bootstrap: [AppComponent], 
     imports: [

@@ -9,6 +9,7 @@ using ZenMoney.Application.Interfaces;
 using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Models.Dashboard;
 using ZenMoney.Application.Results;
+using ZenMoney.Core.Dashboard;
 using ZenMoney.Core.Interfaces;
 
 namespace ZenMoney.Application.Services
@@ -18,7 +19,7 @@ namespace ZenMoney.Application.Services
         IExpenseRepository expenseRepository,
         IHttpContextAccessor httpContextAcessor) : BaseService(httpContextAcessor), IDashboardService
     {
-        public async Task<Result<IncomesAndExpensesModel>> GetIncomesVersusExpensesPerMonth(int month, int year)
+        public async Task<Result<IncomesAndExpensesModel>> GetIncomesVersusExpensesByMonth(int month, int year)
         {
             if (!AreMonthAndYearValid(month, year))
             {
@@ -29,8 +30,8 @@ namespace ZenMoney.Application.Services
 
             var userId = GetUserId();
 
-            var totalAmountIncomes = await incomeRepository.GetTotalAmoutPerMonth(month, year, userId);
-            var totalAmountExpenses = await expenseRepository.GetTotalAmoutPerMonth(month, year, userId);
+            var totalAmountIncomes = await incomeRepository.GetTotalAmoutByMonth(month, year, userId);
+            var totalAmountExpenses = await expenseRepository.GetTotalAmoutByMonth(month, year, userId);
 
             var incomesAndExpenses = new IncomesAndExpensesModel
             {
@@ -41,6 +42,36 @@ namespace ZenMoney.Application.Services
             };
 
             return Result<IncomesAndExpensesModel>.Success(incomesAndExpenses);
+        }
+
+        public async Task<Result<List<ExpensesByCategoryModel>>> GetExpensesByCategoryByMonth(int month, int year)
+        {
+            if (!AreMonthAndYearValid(month, year))
+            {
+                var error = ErrorHelper.GetInvalidParameterError($"{nameof(month)}/{nameof(year)}", $"{month}/{year}");
+
+                return Result<List<ExpensesByCategoryModel>>.Failure(error);
+            }
+
+            var userId = GetUserId();
+            var expensesByCategoryByMonth = await expenseRepository.GetExpensesByCategoryByMonth(month, year, userId);
+
+            return Result<List<ExpensesByCategoryModel>>.Success(expensesByCategoryByMonth);
+        }
+
+        public async Task<Result<List<ExpensesByPaymentMethodModel>>> GetExpensesByPaymentMethodByMonth(int month, int year)
+        {
+            if (!AreMonthAndYearValid(month, year))
+            {
+                var error = ErrorHelper.GetInvalidParameterError($"{nameof(month)}/{nameof(year)}", $"{month}/{year}");
+
+                return Result<List<ExpensesByPaymentMethodModel>>.Failure(error);
+            }
+
+            var userId = GetUserId();
+            var expensesByCategoryByMonth = await expenseRepository.GetExpensesByPaymentMethodByMonth(month, year, userId);
+
+            return Result<List<ExpensesByPaymentMethodModel>>.Success(expensesByCategoryByMonth);
         }
 
         private bool AreMonthAndYearValid(int month, int year)
