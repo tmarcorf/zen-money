@@ -60,6 +60,8 @@ import { ExpensesByCategoryDashboardComponent } from './components/dashboard/exp
 import { ExpensesByPaymentMethodDashboardComponent } from './components/dashboard/expenses-by-payment-method-dashboard/expenses-by-payment-method-dashboard.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { MatDialogContent, MatDialogActions } from "@angular/material/dialog";
+import { InstallmentPurchasesComponent } from './components/installment-purchases/installment-purchases.component';
+import { SavingsComponent } from './components/savings/savings.component';
 
 moment.locale('pt-br');
 
@@ -92,6 +94,8 @@ moment.locale('pt-br');
         ExpensesByCategoryDashboardComponent,
         ExpensesByPaymentMethodDashboardComponent,
         ConfirmDialogComponent,
+        InstallmentPurchasesComponent,
+        SavingsComponent,
     ],
     bootstrap: [AppComponent], 
     imports: [

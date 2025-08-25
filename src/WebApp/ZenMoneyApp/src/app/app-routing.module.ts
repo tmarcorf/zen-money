@@ -11,6 +11,8 @@ import { ReportComponent } from './components/report/report.component';
 import { HomeComponent } from './components/home/home.component';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { InstallmentPurchasesComponent } from './components/installment-purchases/installment-purchases.component';
+import { SavingsComponent } from './components/savings/savings.component';
 
 const routes: Routes = [
   {
@@ -67,6 +69,16 @@ const routes: Routes = [
     path: 'settings',
     component: SettingsComponent,
     title: 'ZenMoney | Configurações'
+  },
+  {
+    path: 'installment-purchases',
+    component: InstallmentPurchasesComponent,
+    title: 'ZenMoney | Compras Parceladas'
+  },
+  {
+    path: 'savings',
+    component: SavingsComponent,
+    title: 'ZenMoney | Cofrinhos'
   }
 ];
 
