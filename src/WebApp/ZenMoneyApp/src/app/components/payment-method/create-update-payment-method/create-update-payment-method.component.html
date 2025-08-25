@@ -13,7 +13,7 @@
         </mat-form-field>
 
         <div class="button-container justify-content-end" [ngClass]="{'justify-content-between': !isNewPaymentMethod}">
-            <button *ngIf="!isNewPaymentMethod" class="ms-4" mat-raised-button color="warn" (click)="delete()">
+            <button type="button" *ngIf="!isNewPaymentMethod" class="ms-4" mat-raised-button color="warn" (click)="delete()">
                 <span class="material-icons">delete</span>
                 Remover
             </button>

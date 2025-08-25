@@ -8,6 +8,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import { IncomesAndExpensesModel } from '../../responses/dashboard/incomes-and-expenses.model';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { ExpensesByCategoryModel } from '../../responses/dashboard/expenses-by-category.model';
+import { ExpensesByPaymentMethodModel } from '../../responses/dashboard/expenses-by-payment-method.model';
 
 const moment = _moment;
 
@@ -36,6 +37,7 @@ export const MONTH_YEAR_FORMATS = {
 export class DashboardComponent implements OnInit{
     incomesVersusExpensesData!: IncomesAndExpensesModel;
     expensesByCategoryData!: ExpensesByCategoryModel[];
+    expensesByPaymentMethodData!: ExpensesByPaymentMethodModel[];
     date = new FormControl(moment(), Validators.required);
 
     get month(): number | null {
@@ -56,6 +58,7 @@ export class DashboardComponent implements OnInit{
         .subscribe(value => {
             this.updateIncomesAndExpensesDashboard(value);
             this.updateExpensesByCategoryDashboard(value);
+            this.updateExpensesByPaymentMethodDashboard(value);
         });
 
         this.triggerInitialLoad();
@@ -66,6 +69,7 @@ export class DashboardComponent implements OnInit{
 
         this.updateIncomesAndExpensesDashboard(val);
         this.updateExpensesByCategoryDashboard(val);
+        this.updateExpensesByPaymentMethodDashboard(val);
     }
 
     updateIncomesAndExpensesDashboard(val: Moment | null) {
@@ -87,6 +91,18 @@ export class DashboardComponent implements OnInit{
             this.dashboardService.getExpensesByCategoryByMonth(month, year).subscribe({
                 next: (response) => {
                     this.expensesByCategoryData = response.data;
+                }
+            });
+        }
+    }
+
+    updateExpensesByPaymentMethodDashboard(val: Moment | null) {
+        if (val) {
+            const month = this.month ?? 0
+            const year = this.year ?? 0;
+            this.dashboardService.getExpensesByPaymentMethodByMonth(month, year).subscribe({
+                next: (response) => {
+                    this.expensesByPaymentMethodData = response.data;
                 }
             });
         }

@@ -15,7 +15,6 @@ export class ExpensesByCategoryDashboardComponent {
 
   pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
-    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: true,

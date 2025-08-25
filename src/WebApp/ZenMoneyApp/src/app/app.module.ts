@@ -57,6 +57,7 @@ import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2
 import { IncomesExpensesDashboardComponent } from './components/dashboard/incomes-expenses-dashboard/incomes-expenses-dashboard.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { ExpensesByCategoryDashboardComponent } from './components/dashboard/expenses-by-category-dashboard/expenses-by-category-dashboard.component';
+import { ExpensesByPaymentMethodDashboardComponent } from './components/dashboard/expenses-by-payment-method-dashboard/expenses-by-payment-method-dashboard.component';
 
 moment.locale('pt-br');
 
@@ -87,6 +88,7 @@ moment.locale('pt-br');
         IncomesExpensesDashboardComponent,
         SettingsComponent,
         ExpensesByCategoryDashboardComponent,
+        ExpensesByPaymentMethodDashboardComponent,
     ],
     bootstrap: [AppComponent], 
     imports: [
