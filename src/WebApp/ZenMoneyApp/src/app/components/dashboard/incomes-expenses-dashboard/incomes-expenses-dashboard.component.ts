@@ -11,7 +11,7 @@ import { IncomesAndExpensesModel } from '../../../responses/dashboard/incomes-an
 export class IncomesExpensesDashboardComponent implements OnChanges {
   @Input() data!: IncomesAndExpensesModel;
 
-  pieChartType: ChartType = 'pie';
+  pieChartType: ChartType = 'doughnut';
 
   pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,

@@ -11,7 +11,7 @@ import { ExpensesByPaymentMethodModel } from '../../../responses/dashboard/expen
 export class ExpensesByPaymentMethodDashboardComponent {
   @Input() data!: ExpensesByPaymentMethodModel[];
 
-  pieChartType: ChartType = 'pie';
+  pieChartType: ChartType = 'doughnut';
 
   pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,

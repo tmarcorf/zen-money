@@ -11,7 +11,7 @@ import { ExpensesByCategoryModel } from '../../../responses/dashboard/expenses-b
 export class ExpensesByCategoryDashboardComponent {
   @Input() data!: ExpensesByCategoryModel[];
 
-  pieChartType: ChartType = 'pie';
+  pieChartType: ChartType = 'doughnut';
 
   pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
