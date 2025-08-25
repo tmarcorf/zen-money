@@ -1,15 +1,15 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-import { IncomesAndExpensesModel } from '../../../responses/dashboard/incomes-and-expenses.model';
+import { ExpensesByPaymentMethodModel } from '../../../responses/dashboard/expenses-by-payment-method.model';
 
 @Component({
-  selector: 'app-incomes-expenses-dashboard',
+  selector: 'app-expenses-by-payment-method-dashboard',
   standalone: false,
-  templateUrl: './incomes-expenses-dashboard.component.html',
-  styleUrl: './incomes-expenses-dashboard.component.scss'
+  templateUrl: './expenses-by-payment-method-dashboard.component.html',
+  styleUrl: './expenses-by-payment-method-dashboard.component.scss'
 })
-export class IncomesExpensesDashboardComponent implements OnChanges {
-  @Input() data!: IncomesAndExpensesModel;
+export class ExpensesByPaymentMethodDashboardComponent {
+  @Input() data!: ExpensesByPaymentMethodModel[];
 
   pieChartType: ChartType = 'pie';
 
@@ -34,11 +34,11 @@ export class IncomesExpensesDashboardComponent implements OnChanges {
               const arc: any = meta.data[i];
               
               return {
-                text: `${label}: R$ ${value.toLocaleString('pt-BR')}`,
+                text: `${label}:\nR$ ${value.toLocaleString('pt-BR')}`,
                 fillStyle: (dataset.backgroundColor as string[] | undefined)?.[i] || '#000',
                 strokeStyle: '#fff',
                 lineWidth: 2,
-                hidden: arc && arc.hidden,
+                hidden: arc?.hidden ?? false,
                 index: i,
               };
             });
@@ -49,10 +49,10 @@ export class IncomesExpensesDashboardComponent implements OnChanges {
   };
 
   pieChartData: ChartData<'pie', number[], string | string[]> = {
-    labels: ['Entradas', 'Gastos'],
+    labels: [],
     datasets: [
       {
-        data: [0, 0],
+        data: [],
       },
     ],
   };
@@ -63,15 +63,12 @@ export class IncomesExpensesDashboardComponent implements OnChanges {
     }
   }
 
-  updateChart(incomesExpensesModel: IncomesAndExpensesModel) {
+  updateChart(data: ExpensesByPaymentMethodModel[]) {
     this.pieChartData = {
-      labels: ['Entradas', 'Gastos'],
+      labels: this.data.map(x => x.paymentMethod.description),
       datasets: [
         {
-          data: [
-            incomesExpensesModel.currentAmountIncomes,
-            incomesExpensesModel.currentAmountExpenses,
-          ],
+          data: data.map(x => x.totalAmount),
         },
       ],
     };

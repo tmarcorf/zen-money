@@ -42,11 +42,14 @@
 </div>
 
 <div class="row">
-  <div class="col-sm-4 col-12 mt-3">
+  <div class="col-sm-6 col-12 mt-3">
     <app-incomes-expenses-dashboard [data]="incomesVersusExpensesData"></app-incomes-expenses-dashboard>
   </div>
-  <div class="col-sm-4 col-12 mt-3">
+  <div class="col-sm-6 col-12 mt-3">
     <app-expenses-by-category-dashboard [data]="expensesByCategoryData"></app-expenses-by-category-dashboard>
+  </div>
+  <div class="col-sm-6 col-12 mt-3">
+    <app-expenses-by-payment-method-dashboard [data]="expensesByPaymentMethodData"></app-expenses-by-payment-method-dashboard>
   </div>
 </div>
 
