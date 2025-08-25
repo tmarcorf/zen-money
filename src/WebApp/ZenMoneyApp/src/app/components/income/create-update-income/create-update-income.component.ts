@@ -3,12 +3,13 @@ import { IncomeModel } from '../../../responses/income/income.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IncomeService } from '../../../services/income.service';
 import { NotificationService } from '../../../services/notification.service';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UpdateIncomeRequest } from '../../../requests/income/update-income.request';
 import { CreateIncomeRequest } from '../../../requests/income/create-income.request';
 import { IncomeTypeEnum } from '../../../enums/income-type.enum';
 import moment from 'moment';
 import { validDateValidator } from '../../../utils/date.formats';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-create-update-income',
@@ -41,6 +42,7 @@ export class CreateUpdateIncomeComponent {
     private incomeService: IncomeService,
     private notificationService: NotificationService,
     public dialogRef: MatDialogRef<CreateUpdateIncomeComponent>,
+    private confirmDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: {row: IncomeModel, isNewIncomeDialog: boolean}){
       this.selectedIncome = data.row;
       this.isNewIncome = data.isNewIncomeDialog;
@@ -148,17 +150,30 @@ export class CreateUpdateIncomeComponent {
   }
 
   delete() {
-    var id = this.data.row.id;
+    const dialogRef = this.confirmDialog.open(ConfirmDialogComponent, {
+      width: '410px',
+      height: '200px',
+      data: {
+        title: 'Remover Entrada',
+        description: 'Deseja remover esta entrada ?'
+      }
+    });
 
-    this.incomeService.delete(id).subscribe({
-        next: (response) => {
-          this.notificationService.success(`Entrada ${response.data.description} removida com sucesso`);
-          this.dialogRef.close();
-        },
-        error: (response) => {
-          this.notificationService.errors(response.error.errors);
-        }
-      })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        var id = this.data.row.id;
+
+        this.incomeService.delete(id).subscribe({
+          next: (response) => {
+            this.notificationService.success(`Entrada ${response.data.description} removida com sucesso`);
+            this.dialogRef.close();
+          },
+          error: (response) => {
+            this.notificationService.errors(response.error.errors);
+          }
+        })
+      }
+    });
   }
 
   formatDate(event: any) {

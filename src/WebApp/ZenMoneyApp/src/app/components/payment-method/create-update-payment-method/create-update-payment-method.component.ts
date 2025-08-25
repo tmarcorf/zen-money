@@ -3,9 +3,10 @@ import { PaymentMethodModel } from '../../../responses/payment-method/payment-me
 import { FormControl, FormGroup } from '@angular/forms';
 import { PaymentMethodService } from '../../../services/payment-method.service';
 import { NotificationService } from '../../../services/notification.service';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CreatePaymentMethodRequest } from '../../../requests/payment-method/create-payment-method.request';
 import { UpdatePaymentMethodRequest } from '../../../requests/payment-method/update-payment-method.request';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-create-update-payment-method',
@@ -25,6 +26,7 @@ export class CreateUpdatePaymentMethodComponent {
     private paymentMethodService: PaymentMethodService,
     private notificationService: NotificationService,
     public dialogRef: MatDialogRef<CreateUpdatePaymentMethodComponent>,
+    private confirmDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: {row: PaymentMethodModel, isNewPaymentMethodDialog: boolean}){
       this.selectedPaymentMethod = data.row;
       this.isNewPaymentMethod = data.isNewPaymentMethodDialog;
@@ -82,16 +84,29 @@ export class CreateUpdatePaymentMethodComponent {
   }
 
   delete() {
-    var id = this.data.row.id;
+    const dialogRef = this.confirmDialog.open(ConfirmDialogComponent, {
+      width: '410px',
+      height: '200px',
+      data: {
+        title: 'Remover Forma de Pagamento',
+        description: 'Deseja remover esta forma de pagamento ?'
+      }
+    });
 
-    this.paymentMethodService.delete(id).subscribe({
-        next: (response) => {
-          this.notificationService.success(`Forma de Pagamento ${response.data.description} removida com sucesso`);
-          this.dialogRef.close();
-        },
-        error: (response) => {
-          this.notificationService.errors(response.error.errors);
-        }
-      })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        var id = this.data.row.id;
+
+        this.paymentMethodService.delete(id).subscribe({
+          next: (response) => {
+            this.notificationService.success(`Forma de Pagamento ${response.data.description} removida com sucesso`);
+            this.dialogRef.close();
+          },
+          error: (response) => {
+            this.notificationService.errors(response.error.errors);
+          }
+        })
+      }
+    })
   }
 }

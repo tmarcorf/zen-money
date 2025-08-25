@@ -58,6 +58,8 @@ import { IncomesExpensesDashboardComponent } from './components/dashboard/income
 import { SettingsComponent } from './components/settings/settings.component';
 import { ExpensesByCategoryDashboardComponent } from './components/dashboard/expenses-by-category-dashboard/expenses-by-category-dashboard.component';
 import { ExpensesByPaymentMethodDashboardComponent } from './components/dashboard/expenses-by-payment-method-dashboard/expenses-by-payment-method-dashboard.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { MatDialogContent, MatDialogActions } from "@angular/material/dialog";
 
 moment.locale('pt-br');
 
@@ -89,6 +91,7 @@ moment.locale('pt-br');
         SettingsComponent,
         ExpensesByCategoryDashboardComponent,
         ExpensesByPaymentMethodDashboardComponent,
+        ConfirmDialogComponent,
     ],
     bootstrap: [AppComponent], 
     imports: [
@@ -118,7 +121,9 @@ moment.locale('pt-br');
     MatSelectModule,
     MatAutocompleteModule,
     MatTooltipModule,
-    BaseChartDirective
+    BaseChartDirective,
+    MatDialogContent,
+    MatDialogActions
 ], 
       providers: [
         { provide: LOCALE_ID, useValue: 'pt-BR' },

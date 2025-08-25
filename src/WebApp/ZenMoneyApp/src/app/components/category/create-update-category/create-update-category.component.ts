@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CategoryModel } from '../../../responses/category/category-model';
 import { CreateCategoryRequest } from '../../../requests/category/create-category.request';
 import { CategoryService } from '../../../services/category.service';
 import { NotificationService } from '../../../services/notification.service';
 import { UpdateCategoryRequest } from '../../../requests/category/update-category.request';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-create-update-category',
@@ -25,6 +26,7 @@ export class CreateUpdateCategoryComponent implements AfterViewInit {
     private categoryService: CategoryService,
     private notificationService: NotificationService,
     public dialogRef: MatDialogRef<CreateUpdateCategoryComponent>,
+    private confirmDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: {row: CategoryModel, isNewCategoryDialog: boolean}){
       this.selectedCategory = data.row;
       this.isNewCategory = data.isNewCategoryDialog;
@@ -82,16 +84,29 @@ export class CreateUpdateCategoryComponent implements AfterViewInit {
   }
 
   delete() {
-    var id = this.data.row.id;
+    const dialogRef = this.confirmDialog.open(ConfirmDialogComponent, {
+      width: '410px',
+      height: '200px',
+      data: {
+        title: 'Remover Categoria',
+        description: 'Deseja remover esta categoria ?'
+      }
+    });
 
-    this.categoryService.delete(id).subscribe({
-        next: (response) => {
-          this.notificationService.success(`Categoria ${response.data.name} removida com sucesso`);
-          this.dialogRef.close();
-        },
-        error: (response) => {
-          this.notificationService.errors(response.error.errors);
-        }
-      })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        var id = this.data.row.id;
+
+        this.categoryService.delete(id).subscribe({
+          next: (response) => {
+            this.notificationService.success(`Categoria ${response.data.name} removida com sucesso`);
+            this.dialogRef.close();
+          },
+          error: (response) => {
+            this.notificationService.errors(response.error.errors);
+          }
+        })
+      }
+    });
   }
 }
