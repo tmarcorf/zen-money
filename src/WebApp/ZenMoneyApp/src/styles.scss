@@ -188,6 +188,18 @@ th.mat-sort-header-sorted {
   border-radius: 8px !important;
 }
 
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-icon {
+  color: #555;
+  cursor: default;
+  margin-left: 8px;
+}
+
 // Inputs
 
 .right-align {

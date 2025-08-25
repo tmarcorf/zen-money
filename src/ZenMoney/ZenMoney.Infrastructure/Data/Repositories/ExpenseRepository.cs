@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using ZenMoney.Core.Dashboard;
 using ZenMoney.Core.Entities;
 using ZenMoney.Core.Enums;
 using ZenMoney.Core.Interfaces;
@@ -39,10 +40,10 @@ namespace ZenMoney.Infrastructure.Data.Repositories
             return await query.CountAsync();
         }
 
-        public async Task<decimal> GetTotalAmoutPerMonth(int month, int year, Guid userId)
+        public async Task<decimal> GetTotalAmoutByMonth(int month, int year, Guid userId)
         {
             var query = DbContext.Expenses
-                .Where(e => e.UserId == userId && e.Date.Month == month && e.Date.Year == year)
+                .Where(e => e.UserId == userId && e.Date.Month == month && e.Date.Year == year && e.IsPaid)
                 .AsNoTracking();
 
             var totalAmount = await query
@@ -50,6 +51,48 @@ namespace ZenMoney.Infrastructure.Data.Repositories
                 .SumAsync();
 
             return Math.Round(totalAmount, DECIMALS);
+        }
+
+        public async Task<List<ExpensesByCategoryModel>> GetExpensesByCategoryByMonth(int month, int year, Guid userId)
+        {
+            var query = DbContext.Expenses
+                .Where(e => e.UserId == userId 
+                            && e.Date.Month == month 
+                            && e.Date.Year == year 
+                            && e.IsPaid)
+                .GroupBy(e => e.Category)
+                .Select(g => new ExpensesByCategoryModel
+                {
+                    Month = month,
+                    Year = year,
+                    Category = g.Key,
+                    TotalAmount = g.Sum(e => e.Amount),
+                })
+                .OrderByDescending(e => e.TotalAmount)
+                .AsNoTracking();
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<List<ExpensesByPaymentMethodModel>> GetExpensesByPaymentMethodByMonth(int month, int year, Guid userId)
+        {
+            var query = DbContext.Expenses
+                .Where(e => e.UserId == userId
+                            && e.Date.Month == month
+                            && e.Date.Year == year
+                            && e.IsPaid)
+                .GroupBy(e => e.PaymentMethod)
+                .Select(g => new ExpensesByPaymentMethodModel
+                {
+                    Month = month,
+                    Year = year,
+                    PaymentMethod = g.Key,
+                    TotalAmount = g.Sum(e => e.Amount),
+                })
+                .OrderByDescending(e => e.TotalAmount)
+                .AsNoTracking();
+
+            return await query.ToListAsync();
         }
 
         private IQueryable<Expense> GetSearchQuery(SearchExpenseRequest request, Guid userId)

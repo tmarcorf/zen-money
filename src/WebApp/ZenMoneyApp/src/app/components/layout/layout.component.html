@@ -1,4 +1,4 @@
-<div class="d-flex flex-column justify-content-between p-3 text-white bg-dark vh-100">
+<div class="d-flex flex-column justify-content-between p-3 text-white bg-dark layout">
     <div class="p-1 ms-3 d-flex align-items-center">
         <span class="me-2 mb-3 material-icons">paid</span>
         <h1>
@@ -47,7 +47,7 @@
         </div>
 
         <div *ngIf="userService.isLoggedIn$ | async" class="d-flex flex-column mt-1 flex-grow-1">
-            <button *nfIf="false" class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/settings">
+            <button *ngIf="false" class="p-4 text-white menu-button" mat-button routerLinkActive="active-link" routerLink="/settings">
                 <span class="me-2 mb-1 material-icons">settings</span>
                 Configurações
             </button>

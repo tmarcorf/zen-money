@@ -38,7 +38,7 @@ namespace ZenMoney.Infrastructure.Data.Repositories
             return await query.CountAsync();
         }
 
-        public async Task<decimal> GetTotalAmoutPerMonth(int month, int year, Guid userId)
+        public async Task<decimal> GetTotalAmoutByMonth(int month, int year, Guid userId)
         {
             var query = DbContext.Incomes
                 .Where(i => i.UserId == userId && 

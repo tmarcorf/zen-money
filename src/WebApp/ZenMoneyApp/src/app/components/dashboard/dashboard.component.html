@@ -2,39 +2,24 @@
   <div class="col-12">
     <mat-card class="card d-flex p-0" appearance="outlined">
       <div class="row">
-        <mat-card-header class="col-4 mb-2">
+        <mat-card-header class="col-4 mb-2 ps-4">
           <mat-card-title>Dashboard</mat-card-title>
-          <mat-card-subtitle>Visualize o resumo mensal das suas finanças</mat-card-subtitle>
+          <mat-card-subtitle>Visualize o resumo mensal de suas finanças</mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content class="col-8 mt-2">
-
           <div class="d-flex justify-content-end align-items-center">
             <mat-form-field class="mt-3 me-3"  appearance="outline">
               <mat-label>Mês/Ano</mat-label>
-              <button
-                  type="button"
-                  mat-icon-button
-                  matSuffix
-                  matTooltip="Mês anterior"
-                  (click)="previousMonth()"
-              >
+              <button type="button" mat-icon-button matSuffix matTooltip="Mês anterior" (click)="previousMonth()">
                   <mat-icon>keyboard_arrow_left</mat-icon>
               </button>
               <input 
                 matInput 
                 [matDatepicker]="dp" 
                 [formControl]="date">
-              
               <mat-datepicker-toggle matTooltip="Selecionar mês" matIconSuffix [for]="dp"></mat-datepicker-toggle>
-
-              <button
-                  type="button"
-                  mat-icon-button
-                  matSuffix
-                  matTooltip="Próximo mês"
-                  (click)="nextMonth()"
-              >
+              <button type="button" mat-icon-button matSuffix matTooltip="Próximo mês" (click)="nextMonth()">
                   <mat-icon>keyboard_arrow_right</mat-icon>
               </button>
               
@@ -44,6 +29,7 @@
                 (yearSelected)="chosenYearHandler($event)"
                 (monthSelected)="chosenMonthHandler($event, dp)">
               </mat-datepicker>
+              <mat-error *ngIf="date.hasError('required')">O Mês/Ano são obritagórios</mat-error>
             </mat-form-field>
           </div>
 
@@ -55,12 +41,12 @@
   </div>
 </div>
 
-<div class="row mt-3">
-  <div class="col-sm-4 col-12">
-    <app-incomes-expenses-dashboard></app-incomes-expenses-dashboard>
+<div class="row">
+  <div class="col-sm-4 col-12 mt-3">
+    <app-incomes-expenses-dashboard [data]="incomesVersusExpensesData"></app-incomes-expenses-dashboard>
   </div>
-  <div class="col-sm-4 col-12">
-    <app-incomes-expenses-dashboard></app-incomes-expenses-dashboard>
+  <div class="col-sm-4 col-12 mt-3">
+    <app-expenses-by-category-dashboard [data]="expensesByCategoryData"></app-expenses-by-category-dashboard>
   </div>
 </div>
 

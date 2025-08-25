@@ -1,22 +1,21 @@
 <mat-card class="card" appearance="outlined">
   <mat-card-header>
     <mat-card-title class="card-title">
-      <span>Entradas e Gastos</span>
+      <span>Gastos por Categoria</span>
       <span 
         class="material-icons info-icon" 
-        matTooltip="Exibe a relação entre Entradas de dinheiro e Gastos pagos do mês selecionado">
+        matTooltip="Exibe o total de gastos pagos agrupados por Categoria no mês selecionado">
         info
       </span>
     </mat-card-title>
 
     <mat-card-subtitle>
-      Relação entre total de entradas e saídas do mês
+      Agrupamento de gastos por categoria no mês
     </mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
     <canvas
-      height="250px"
       baseChart
       [data]="pieChartData"
       [type]="pieChartType"
@@ -24,4 +23,3 @@
     </canvas>
   </mat-card-content>
 </mat-card>
-    

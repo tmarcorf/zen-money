@@ -1,15 +1,15 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-import { IncomesAndExpensesModel } from '../../../responses/dashboard/incomes-and-expenses.model';
+import { ExpensesByCategoryModel } from '../../../responses/dashboard/expenses-by-category.model';
 
 @Component({
-  selector: 'app-incomes-expenses-dashboard',
+  selector: 'app-expenses-by-category-dashboard',
   standalone: false,
-  templateUrl: './incomes-expenses-dashboard.component.html',
-  styleUrl: './incomes-expenses-dashboard.component.scss'
+  templateUrl: './expenses-by-category-dashboard.component.html',
+  styleUrl: './expenses-by-category-dashboard.component.scss'
 })
-export class IncomesExpensesDashboardComponent implements OnChanges {
-  @Input() data!: IncomesAndExpensesModel;
+export class ExpensesByCategoryDashboardComponent {
+  @Input() data!: ExpensesByCategoryModel[];
 
   pieChartType: ChartType = 'pie';
 
@@ -33,7 +33,7 @@ export class IncomesExpensesDashboardComponent implements OnChanges {
             return data.labels.map((label, i) => {
               const value = dataset.data[i] as number;
               const arc: any = meta.data[i];
-              
+
               return {
                 text: `${label}: R$ ${value.toLocaleString('pt-BR')}`,
                 fillStyle: (dataset.backgroundColor as string[] | undefined)?.[i] || '#000',
@@ -50,10 +50,10 @@ export class IncomesExpensesDashboardComponent implements OnChanges {
   };
 
   pieChartData: ChartData<'pie', number[], string | string[]> = {
-    labels: ['Entradas', 'Gastos'],
+    labels: [],
     datasets: [
       {
-        data: [0, 0],
+        data: [],
       },
     ],
   };
@@ -64,15 +64,12 @@ export class IncomesExpensesDashboardComponent implements OnChanges {
     }
   }
 
-  updateChart(incomesExpensesModel: IncomesAndExpensesModel) {
+  updateChart(data: ExpensesByCategoryModel[]) {
     this.pieChartData = {
-      labels: ['Entradas', 'Gastos'],
+      labels: this.data.map(x => x.category.name),
       datasets: [
         {
-          data: [
-            incomesExpensesModel.currentAmountIncomes,
-            incomesExpensesModel.currentAmountExpenses,
-          ],
+          data: data.map(x => x.totalAmount),
         },
       ],
     };

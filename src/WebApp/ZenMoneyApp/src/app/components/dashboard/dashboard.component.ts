@@ -1,12 +1,13 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDatepicker } from '@angular/material/datepicker';
-import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import _moment, { Moment } from 'moment';
-import { BaseChartDirective } from 'ng2-charts';
 import { DashboardService } from '../../services/dashboard.service';
+import { IncomesAndExpensesModel } from '../../responses/dashboard/incomes-and-expenses.model';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { ExpensesByCategoryModel } from '../../responses/dashboard/expenses-by-category.model';
 
 const moment = _moment;
 
@@ -33,30 +34,28 @@ export const MONTH_YEAR_FORMATS = {
     ]
 })
 export class DashboardComponent implements OnInit{
-    date = new FormControl(moment());
-    startDate = moment();
+    incomesVersusExpensesData!: IncomesAndExpensesModel;
+    expensesByCategoryData!: ExpensesByCategoryModel[];
+    date = new FormControl(moment(), Validators.required);
+
+    get month(): number | null {
+        return this.date.value ? this.date.value.month() + 1 : null;
+    }
+
+    get year(): number | null {
+        return this.date.value ? this.date.value.year() : null;
+    }
 
     constructor(private dashboardService: DashboardService) {}
 
     ngOnInit(): void {
-        // toda vez que a data mudar, chama o serviço
-        this.date.valueChanges.subscribe((val: Moment | null) => {
-        if (val) {
-            const month = val.month() + 1; // moment é zero-based
-            const year = val.year();
-
-            this.dashboardService
-            .getIncomesAndExpensesAmountPerMonth(month, year)
-            .subscribe({
-                next: (res) => {
-                console.log('Resposta da API:', res);
-                // aqui você pode salvar em uma propriedade e usar no template
-                },
-                error: (err) => {
-                console.error('Erro ao buscar dados do dashboard', err);
-                }
-            });
-        }
+        this.date.valueChanges.pipe(
+            debounceTime(100),
+            distinctUntilChanged(),
+        )
+        .subscribe(value => {
+            this.updateIncomesAndExpensesDashboard(value);
+            this.updateExpensesByCategoryDashboard(value);
         });
 
         this.triggerInitialLoad();
@@ -65,24 +64,32 @@ export class DashboardComponent implements OnInit{
     private triggerInitialLoad() {
         const val = this.date.value;
 
+        this.updateIncomesAndExpensesDashboard(val);
+        this.updateExpensesByCategoryDashboard(val);
+    }
+
+    updateIncomesAndExpensesDashboard(val: Moment | null) {
         if (val) {
-        const month = val.month() + 1;
-        const year = val.year();
-        this.dashboardService.getIncomesAndExpensesAmountPerMonth(month, year).subscribe({
-            next: (res) => console.log('Carga inicial:', res),
-            error: (err) => console.error(err)
-        });
+            const month = this.month ?? 0
+            const year = this.year ?? 0;
+            this.dashboardService.getIncomesAndExpensesAmountPerMonth(month, year).subscribe({
+                next: (response) => {
+                    this.incomesVersusExpensesData = response.data;
+                }
+            });
         }
     }
 
-    // Pega o mês (1–12)
-    get month(): number | null {
-        return this.date.value ? this.date.value.month() + 1 : null;
-    }
-
-    // Pega o ano (ex: 2025)
-    get year(): number | null {
-        return this.date.value ? this.date.value.year() : null;
+    updateExpensesByCategoryDashboard(val: Moment | null) {
+        if (val) {
+            const month = this.month ?? 0
+            const year = this.year ?? 0;
+            this.dashboardService.getExpensesByCategoryByMonth(month, year).subscribe({
+                next: (response) => {
+                    this.expensesByCategoryData = response.data;
+                }
+            });
+        }
     }
 
     chosenYearHandler(normalizedYear: Moment) {
@@ -92,24 +99,22 @@ export class DashboardComponent implements OnInit{
     }
 
     chosenMonthHandler(normalizedMonth: Moment, datepicker: MatDatepicker<Moment>) {
-        const ctrlValue = this.date.value!;
-        ctrlValue.month(normalizedMonth.month());
-        this.date.setValue(ctrlValue);
+        this.date.setValue(normalizedMonth);
         datepicker.close();
-    }
-
-    nextMonth() {
-        if (this.date.value) {
-            const ctrlValue = this.date.value.clone(); // evita mutar diretamente
-            ctrlValue.add(1, 'month');
-            this.date.setValue(ctrlValue);
-        }
     }
 
     previousMonth() {
         if (this.date.value) {
             const ctrlValue = this.date.value.clone();
             ctrlValue.subtract(1, 'month');
+            this.date.setValue(ctrlValue);
+        }
+    }
+
+    nextMonth() {
+        if (this.date.value) {
+            const ctrlValue = this.date.value.clone();
+            ctrlValue.add(1, 'month');
             this.date.setValue(ctrlValue);
         }
     }
