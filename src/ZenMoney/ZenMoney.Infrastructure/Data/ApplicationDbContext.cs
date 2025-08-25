@@ -20,6 +20,8 @@ namespace ZenMoney.Infrastructure.Data
 
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
 
+        public DbSet<InstallmentPurchase> InstallmentPurchases { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

@@ -48,6 +48,7 @@ namespace ZenMoney.Infrastructure.IoC
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
+            services.AddScoped<IInstallmentPurchaseRepository, InstallmentPurchaseRepository>();
 
             services.AddScoped<BaseService>();
             services.AddScoped<IUserService, UserService>();
