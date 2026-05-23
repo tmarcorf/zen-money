@@ -28,8 +28,7 @@ namespace ZenMoney.Infrastructure.IoC
                     ValidAudience = configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(
-                            Environment.GetEnvironmentVariable(
-                                configuration["Jwt:SecretKey"]))),
+                            configuration["Jwt:SecretKey"])),
                     ClockSkew = TimeSpan.Zero
                 };
             });
