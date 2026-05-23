@@ -114,8 +114,7 @@ namespace ZenMoney.Application.Services
 
             var privateKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(
-                    Environment.GetEnvironmentVariable(
-                        configuration["Jwt:SecretKey"])));
+                    configuration["Jwt:SecretKey"]));
 
             var credentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha512);
             var expiration = DateTime.UtcNow.AddHours(2);
