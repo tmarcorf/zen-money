@@ -24,7 +24,7 @@ namespace ZenMoney.Infrastructure.IoC
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(connectionString, b => b.MigrationsAssembly("ZenMoney.Infrastructure"));
+                options.UseNpgsql(connectionString, b => b.MigrationsAssembly("ZenMoney.Infrastructure"));
             });
 
             services.AddIdentity<User, IdentityRole<Guid>>()

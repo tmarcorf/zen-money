@@ -1,5 +1,7 @@
 
 using System;
+using Microsoft.EntityFrameworkCore;
+using ZenMoney.Infrastructure.Data;
 using ZenMoney.Infrastructure.IoC;
 
 namespace ZenMoney.API
@@ -31,6 +33,12 @@ namespace ZenMoney.API
             });
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                db.Database.Migrate();
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
