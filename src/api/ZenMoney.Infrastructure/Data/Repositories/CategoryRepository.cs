@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ZenMoney.Core.Entities;
 using ZenMoney.Core.Enums;
 using ZenMoney.Core.Interfaces;
