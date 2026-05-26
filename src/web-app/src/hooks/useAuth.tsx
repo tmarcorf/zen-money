@@ -1,6 +1,8 @@
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
-import { setToken, removeToken, isAuthenticated, getStoredUser, setStoredUser } from "@/services/api";
-import { ApiResponse, authService, AuthUserRequest, TokenModel, UserModel } from "@/services/authService";
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
+import { setToken, removeToken, isAuthenticated } from "@/api/client";
+import { userService } from "@/services/userService";
+import type { ApiResponse } from "@/types/api";
+import type { TokenModel, UserModel } from "@/types/entities";
 import { toast } from "sonner";
 
 interface AuthContextType {
@@ -14,19 +16,33 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+function getStoredUser(): UserModel | null {
+  const u = localStorage.getItem("zen_user");
+  return u ? JSON.parse(u) : null;
+}
+
+function setStoredUser(user: UserModel): void {
+  localStorage.setItem("zen_user", JSON.stringify(user));
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserModel | null>(getStoredUser());
   const [loading, setLoading] = useState(false);
 
   const login = useCallback(async (email: string, password: string): Promise<ApiResponse<TokenModel>> => {
     setLoading(true);
-    
     try {
-      const request: AuthUserRequest = { email, password };
-      const response = await authService.authenticate(request);
+      const response = await userService.authenticate({ email, password });
 
       if (response.isSuccess) {
         setToken(response.data.token);
+        setStoredUser({
+          id: "",
+          email: response.data.email,
+          firstName: response.data.firstName,
+          lastName: "",
+          dateOfBirth: "",
+        });
       } else {
         removeToken();
         localStorage.removeItem("zen_user");
@@ -42,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = useCallback(async (userData: { email: string; password: string; firstName: string; lastName: string; dateOfBirth: string }) => {
     setLoading(true);
     try {
-      const response = await authService.createUser(userData);
+      const response = await userService.create(userData);
 
       if (response.isSuccess && response.data) {
         toast.success("Conta criada com sucesso! Faça login para continuar.");
@@ -62,12 +78,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     window.location.href = "/login";
   }, []);
 
-  // Check if user is authenticated on initial load
   useEffect(() => {
     const checkAuth = async () => {
       if (isAuthenticated() && !user) {
         try {
-          const response = await authService.validateToken();
+          const response = await userService.validateToken();
           if (!response.isSuccess) {
             logout();
           }

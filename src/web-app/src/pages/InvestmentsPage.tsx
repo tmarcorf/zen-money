@@ -1,13 +1,14 @@
+// TODO: endpoint nao implementado ainda — nao existe controller de investments no backend
+// Esta pagina continua usando mock data ate que o backend forneca os endpoints
+
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Pencil, Trash2, TrendingUp, TrendingDown } from "lucide-react";
-import { investmentApi } from "@/services/api";
+import { Plus, Pencil, Trash2, TrendingUp, TrendingDown, Loader2 } from "lucide-react";
 import { formatCurrency, formatPercent } from "@/lib/format";
 import { useValueVisibility } from "@/hooks/useValueVisibility";
 import FormModal from "@/components/shared/FormModal";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 
 const mockInvestments = [
   { id: "1", name: "Tesouro Selic 2029", type: "Renda Fixa", investedAmount: 5000, currentValue: 5320, date: "2025-06-01", notes: "" },
@@ -15,40 +16,77 @@ const mockInvestments = [
   { id: "3", name: "CDB Banco Inter", type: "Renda Fixa", investedAmount: 3000, currentValue: 3180, date: "2025-09-01", notes: "" },
 ];
 
+interface Investment {
+  id: string;
+  name: string;
+  type: string;
+  investedAmount: number;
+  currentValue: number;
+  date: string;
+  notes: string;
+}
+
 export default function InvestmentsPage() {
   const { mask } = useValueVisibility();
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<Investment[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<Investment | null>(null);
   const [form, setForm] = useState({ name: "", type: "", investedAmount: "", currentValue: "", date: "", notes: "" });
   const [saving, setSaving] = useState(false);
 
   const fetchData = useCallback(async () => {
-    try { const res = await investmentApi.list(); setItems(res); } catch { setItems(mockInvestments); } finally { setLoading(false); }
+    // TODO: substituir por investmentService.listPaginated() quando o endpoint existir
+    try {
+      // const res = await investmentService.list();
+      // setItems(res.data ?? []);
+      throw new Error("Endpoint nao implementado");
+    } catch {
+      setItems(mockInvestments);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
   const openAdd = () => { setEditing(null); setForm({ name: "", type: "", investedAmount: "", currentValue: "", date: "", notes: "" }); setModalOpen(true); };
-  const openEdit = (item: any) => { setEditing(item); setForm({ name: item.name, type: item.type, investedAmount: String(item.investedAmount), currentValue: String(item.currentValue), date: item.date?.split("T")[0] || "", notes: item.notes || "" }); setModalOpen(true); };
+  const openEdit = (item: Investment) => { setEditing(item); setForm({ name: item.name, type: item.type, investedAmount: String(item.investedAmount), currentValue: String(item.currentValue), date: item.date?.split("T")[0] || "", notes: item.notes || "" }); setModalOpen(true); };
 
   const handleSave = async () => {
     if (!form.name || !form.investedAmount) { toast.error("Preencha os campos obrigatórios"); return; }
     setSaving(true);
     try {
-      const payload = { ...form, investedAmount: parseFloat(form.investedAmount), currentValue: parseFloat(form.currentValue) };
-      if (editing) { await investmentApi.update(editing.id, payload); toast.success("Investimento atualizado!"); }
-      else { await investmentApi.create(payload); toast.success("Investimento criado!"); }
-      setModalOpen(false); fetchData();
-    } catch (err: any) { toast.error(err.message || "Erro ao salvar"); } finally { setSaving(false); }
+      // TODO: substituir por mutation quando o endpoint existir
+      const payload: Investment = { ...form, investedAmount: parseFloat(form.investedAmount), currentValue: parseFloat(form.currentValue), id: editing?.id || crypto.randomUUID() };
+      if (editing) {
+        setItems((prev) => prev.map((i) => i.id === payload.id ? payload : i));
+        toast.success("Investimento atualizado!");
+      } else {
+        setItems((prev) => [...prev, payload]);
+        toast.success("Investimento criado!");
+      }
+      setModalOpen(false);
+    } catch {
+      toast.error("Erro ao salvar");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async () => {
     if (!deleteId) return; setSaving(true);
-    try { await investmentApi.delete(deleteId); toast.success("Investimento excluído!"); setDeleteId(null); fetchData(); }
-    catch (err: any) { toast.error(err.message || "Erro ao excluir"); } finally { setSaving(false); }
+    try {
+      // TODO: substituir por mutation quando o endpoint existir
+      setItems((prev) => prev.filter((i) => i.id !== deleteId));
+      toast.success("Investimento excluído!");
+      setDeleteId(null);
+    } catch {
+      toast.error("Erro ao excluir");
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-accent" /></div>;
