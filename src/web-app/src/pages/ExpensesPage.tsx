@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { Plus, Pencil, Trash2, Search, Filter, X, CalendarIcon } from "lucide-react";
-import { expenseApi, categoryApi, paymentMethodApi } from "@/services/api";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useValueVisibility } from "@/hooks/useValueVisibility";
+import { useExpenses, useCreateExpense, useUpdateExpense, useDeleteExpense } from "@/hooks/queries/useExpenses";
+import { useCategoryList, usePaymentMethodList } from "@/hooks/queries/useCategoryList";
 import DataTable from "@/components/shared/DataTable";
 import FormModal from "@/components/shared/FormModal";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
@@ -13,43 +14,21 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import type { ExpenseModel } from "@/types/entities";
+import type { SearchExpenseRequest, CreateExpenseRequest, UpdateExpenseRequest } from "@/types/requests";
 
 const PAGE_SIZE = 10;
 
-const mockCategories = [
-  { id: "1", name: "Alimentação" },
-  { id: "2", name: "Moradia" },
-  { id: "3", name: "Transporte" },
-];
-
-const mockPaymentMethods = [
-  { id: "1", name: "Crédito" },
-  { id: "2", name: "Débito" },
-  { id: "3", name: "Pix" },
-];
-
-const mockExpenses = [
-  { id: "1", description: "Supermercado Extra", amount: 450.80, date: "2026-04-02", categoryId: "1", categoryName: "Alimentação", paymentMethodId: "1", paymentMethodName: "Crédito", notes: "" },
-  { id: "2", description: "Aluguel Apartamento", amount: 1200, date: "2026-04-01", categoryId: "2", categoryName: "Moradia", paymentMethodId: "2", paymentMethodName: "Débito", notes: "" },
-  { id: "3", description: "Uber", amount: 85.50, date: "2026-04-04", categoryId: "3", categoryName: "Transporte", paymentMethodId: "1", paymentMethodName: "Crédito", notes: "" },
-];
-
 export default function ExpensesPage() {
   const { mask } = useValueVisibility();
-  const [expenses, setExpenses] = useState<any[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<ExpenseModel | null>(null);
   const [form, setForm] = useState({ description: "", amount: "", date: "", categoryId: "", paymentMethodId: "", notes: "" });
   const [saving, setSaving] = useState(false);
 
-  // Filters
   const [showFilters, setShowFilters] = useState(false);
   const [filterCategory, setFilterCategory] = useState("");
   const [filterPayment, setFilterPayment] = useState("");
@@ -57,6 +36,27 @@ export default function ExpensesPage() {
   const [filterDateTo, setFilterDateTo] = useState<Date | undefined>();
 
   const activeFilterCount = [filterCategory, filterPayment, filterDateFrom, filterDateTo].filter(Boolean).length;
+
+  const searchParams: SearchExpenseRequest = {
+    offset: (page - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
+    ...(search && { description: search }),
+    ...(filterCategory && { categoryId: filterCategory }),
+    ...(filterPayment && { paymentMethodId: filterPayment }),
+    ...(filterDateFrom && { startDate: format(filterDateFrom, "yyyy-MM-dd") }),
+    ...(filterDateTo && { endDate: format(filterDateTo, "yyyy-MM-dd") }),
+  };
+
+  const { data, isLoading } = useExpenses(searchParams);
+  const { data: categories = [] } = useCategoryList();
+  const { data: paymentMethods = [] } = usePaymentMethodList();
+
+  const createMutation = useCreateExpense();
+  const updateMutation = useUpdateExpense();
+  const deleteMutation = useDeleteExpense();
+
+  const expenses = data?.items ?? [];
+  const totalCount = data?.totalCount ?? 0;
 
   const clearFilters = () => {
     setFilterCategory("");
@@ -66,61 +66,22 @@ export default function ExpensesPage() {
     setSearch("");
   };
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const skip = (page - 1) * PAGE_SIZE;
-      const [exp, cats, pms] = await Promise.all([
-        expenseApi.list({ skip, take: PAGE_SIZE }),
-        categoryApi.list(),
-        paymentMethodApi.list(),
-      ]);
-      const expData = exp?.data ?? exp;
-      const expTotal = exp?.totalCount ?? (Array.isArray(expData) ? expData.length : 0);
-      setExpenses(Array.isArray(expData) ? expData : []);
-      setTotalCount(expTotal);
-      const catsData = cats?.data ?? cats;
-      setCategories(Array.isArray(catsData) ? catsData : []);
-      const pmsData = pms?.data ?? pms;
-      setPaymentMethods(Array.isArray(pmsData) ? pmsData : []);
-    } catch {
-      setExpenses(mockExpenses);
-      setTotalCount(mockExpenses.length);
-      setCategories(mockCategories);
-      setPaymentMethods(mockPaymentMethods);
-    } finally {
-      setLoading(false);
-    }
-  }, [page]);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
-
-  const filtered = expenses.filter((e) => {
-    if (search && !e.description?.toLowerCase().includes(search.toLowerCase())) return false;
-    if (filterCategory && e.categoryId !== filterCategory) return false;
-    if (filterPayment && e.paymentMethodId !== filterPayment) return false;
-    if (filterDateFrom) {
-      const d = new Date(e.date);
-      if (d < filterDateFrom) return false;
-    }
-    if (filterDateTo) {
-      const d = new Date(e.date);
-      const to = new Date(filterDateTo);
-      to.setHours(23, 59, 59, 999);
-      if (d > to) return false;
-    }
-    return true;
-  });
-
   const openAdd = () => {
     setEditing(null);
     setForm({ description: "", amount: "", date: "", categoryId: "", paymentMethodId: "", notes: "" });
     setModalOpen(true);
   };
 
-  const openEdit = (item: any) => {
+  const openEdit = (item: ExpenseModel) => {
     setEditing(item);
-    setForm({ description: item.description, amount: String(item.amount), date: item.date?.split("T")[0] || "", categoryId: item.categoryId || "", paymentMethodId: item.paymentMethodId || "", notes: item.notes || "" });
+    setForm({
+      description: item.description,
+      amount: String(item.amount),
+      date: item.date?.split("T")[0] || "",
+      categoryId: item.categoryId || "",
+      paymentMethodId: item.paymentMethodId || "",
+      notes: "",
+    });
     setModalOpen(true);
   };
 
@@ -128,18 +89,27 @@ export default function ExpensesPage() {
     if (!form.description || !form.amount) { toast.error("Preencha os campos obrigatórios"); return; }
     setSaving(true);
     try {
-      const payload = { ...form, amount: parseFloat(form.amount) };
+      const payload = {
+        type: 1, // Fixed expense type (default)
+        date: form.date,
+        description: form.description,
+        amount: parseFloat(form.amount),
+        isPaid: true,
+        categoryId: form.categoryId,
+        paymentMethodId: form.paymentMethodId,
+      };
+
       if (editing) {
-        await expenseApi.update(editing.id, payload);
+        const updatePayload: UpdateExpenseRequest = { ...payload, id: editing.id };
+        await updateMutation.mutateAsync(updatePayload);
         toast.success("Despesa atualizada!");
       } else {
-        await expenseApi.create(payload);
+        await createMutation.mutateAsync(payload as CreateExpenseRequest);
         toast.success("Despesa criada!");
       }
       setModalOpen(false);
-      fetchData();
-    } catch (err: any) {
-      toast.error(err.message || "Erro ao salvar");
+    } catch {
+      toast.error("Erro ao salvar");
     } finally {
       setSaving(false);
     }
@@ -149,26 +119,25 @@ export default function ExpensesPage() {
     if (!deleteId) return;
     setSaving(true);
     try {
-      await expenseApi.delete(deleteId);
+      await deleteMutation.mutateAsync(deleteId);
       toast.success("Despesa excluída!");
       setDeleteId(null);
-      fetchData();
-    } catch (err: any) {
-      toast.error(err.message || "Erro ao excluir");
+    } catch {
+      toast.error("Erro ao excluir");
     } finally {
       setSaving(false);
     }
   };
 
   const columns = [
-    { header: "Data", accessor: (r: any) => formatDate(r.date), sortKey: "date" },
+    { header: "Data", accessor: (r: ExpenseModel) => formatDate(r.date), sortKey: "date" },
     { header: "Descrição", accessor: "description" as const, sortKey: "description" },
-    { header: "Valor", accessor: (r: any) => <span className="font-semibold text-destructive">{mask(formatCurrency(r.amount))}</span>, sortKey: (r: any) => r.amount as number },
-    { header: "Categoria", accessor: (r: any) => <span className="px-2 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground">{r.categoryName || "—"}</span>, sortKey: (r: any) => r.categoryName || "" },
-    { header: "Pagamento", accessor: (r: any) => r.paymentMethodName || "—", sortKey: (r: any) => r.paymentMethodName || "" },
+    { header: "Valor", accessor: (r: ExpenseModel) => <span className="font-semibold text-destructive">{mask(formatCurrency(r.amount))}</span>, sortKey: (r: ExpenseModel) => r.amount },
+    { header: "Categoria", accessor: (r: ExpenseModel) => <span className="px-2 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground">{r.category?.name || "—"}</span>, sortKey: (r: ExpenseModel) => r.category?.name || "" },
+    { header: "Pagamento", accessor: (r: ExpenseModel) => r.paymentMethod?.description || "—", sortKey: (r: ExpenseModel) => r.paymentMethod?.description || "" },
     {
       header: "Ações",
-      accessor: (r: any) => (
+      accessor: (r: ExpenseModel) => (
         <div className="flex gap-1">
           <button onClick={() => openEdit(r)} className="p-1.5 rounded hover:bg-muted text-muted-foreground"><Pencil className="w-4 h-4" /></button>
           <button onClick={() => setDeleteId(r.id)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive"><Trash2 className="w-4 h-4" /></button>
@@ -183,7 +152,7 @@ export default function ExpensesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar despesas..." className="w-full pl-9 pr-4 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
+          <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Buscar despesas..." className="w-full pl-9 pr-4 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => setShowFilters((v) => !v)} className="relative">
@@ -250,7 +219,7 @@ export default function ExpensesPage() {
               <label className="block text-xs font-medium text-muted-foreground mb-1">Método de pagamento</label>
               <select value={filterPayment} onChange={(e) => setFilterPayment(e.target.value)} className="w-full px-3 py-2 h-9 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent">
                 <option value="">Todos</option>
-                {paymentMethods.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                {paymentMethods.map((p) => <option key={p.id} value={p.id}>{p.description}</option>)}
               </select>
             </div>
           </div>
@@ -260,9 +229,9 @@ export default function ExpensesPage() {
       <div className="bg-card rounded-xl border border-border">
         <DataTable
           columns={columns}
-          data={filtered}
-          loading={loading}
-          keyExtractor={(r: any) => r.id}
+          data={expenses}
+          loading={isLoading}
+          keyExtractor={(r) => r.id}
           emptyMessage="Nenhuma despesa registrada"
           totalCount={totalCount}
           page={page}
@@ -299,7 +268,7 @@ export default function ExpensesPage() {
               <label className="block text-sm font-medium mb-1">Pagamento</label>
               <select value={form.paymentMethodId} onChange={(e) => setForm({ ...form, paymentMethodId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent">
                 <option value="">Selecione</option>
-                {paymentMethods.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                {paymentMethods.map((p) => <option key={p.id} value={p.id}>{p.description}</option>)}
               </select>
             </div>
           </div>

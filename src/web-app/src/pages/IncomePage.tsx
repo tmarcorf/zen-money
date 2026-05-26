@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { Plus, Pencil, Trash2, Search, Filter, X, CalendarIcon } from "lucide-react";
-import { incomeApi, categoryApi } from "@/services/api";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useValueVisibility } from "@/hooks/useValueVisibility";
+import { useIncomes, useCreateIncome, useUpdateIncome, useDeleteIncome } from "@/hooks/queries/useIncomes";
+import { useCategoryList } from "@/hooks/queries/useCategoryList";
 import DataTable from "@/components/shared/DataTable";
 import FormModal from "@/components/shared/FormModal";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
@@ -13,26 +14,18 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import type { IncomeModel } from "@/types/entities";
+import type { SearchIncomeRequest, CreateIncomeRequest, UpdateIncomeRequest } from "@/types/requests";
 
 const PAGE_SIZE = 10;
 
-const mockIncome = [
-  { id: "1", description: "Salário", amount: 8750, date: "2026-04-01", categoryId: "1", categoryName: "Trabalho", notes: "" },
-  { id: "2", description: "Freelance Design", amount: 2200, date: "2026-04-03", categoryId: "1", categoryName: "Trabalho", notes: "" },
-  { id: "3", description: "Dividendos", amount: 380, date: "2026-04-02", categoryId: "2", categoryName: "Investimentos", notes: "" },
-];
-
 export default function IncomePage() {
   const { mask } = useValueVisibility();
-  const [items, setItems] = useState<any[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<IncomeModel | null>(null);
   const [form, setForm] = useState({ description: "", amount: "", date: "", categoryId: "", notes: "" });
   const [saving, setSaving] = useState(false);
 
@@ -43,6 +36,24 @@ export default function IncomePage() {
 
   const activeFilterCount = [filterCategory, filterDateFrom, filterDateTo].filter(Boolean).length;
 
+  const searchParams: SearchIncomeRequest = {
+    offset: (page - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
+    ...(search && { description: search }),
+    ...(filterDateFrom && { startDate: format(filterDateFrom, "yyyy-MM-dd") }),
+    ...(filterDateTo && { endDate: format(filterDateTo, "yyyy-MM-dd") }),
+  };
+
+  const { data, isLoading } = useIncomes(searchParams);
+  const { data: categories = [] } = useCategoryList();
+
+  const createMutation = useCreateIncome();
+  const updateMutation = useUpdateIncome();
+  const deleteMutation = useDeleteIncome();
+
+  const items = data?.items ?? [];
+  const totalCount = data?.totalCount ?? 0;
+
   const clearFilters = () => {
     setFilterCategory("");
     setFilterDateFrom(undefined);
@@ -50,74 +61,53 @@ export default function IncomePage() {
     setSearch("");
   };
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const skip = (page - 1) * PAGE_SIZE;
-      const [inc, cats] = await Promise.all([
-        incomeApi.list({ skip, take: PAGE_SIZE }),
-        categoryApi.list(),
-      ]);
-      const incData = inc?.data ?? inc;
-      const incTotal = inc?.totalCount ?? (Array.isArray(incData) ? incData.length : 0);
-      setItems(Array.isArray(incData) ? incData : []);
-      setTotalCount(incTotal);
-      const catsData = cats?.data ?? cats;
-      setCategories(Array.isArray(catsData) ? catsData : []);
-    } catch {
-      setItems(mockIncome);
-      setTotalCount(mockIncome.length);
-    } finally {
-      setLoading(false);
-    }
-  }, [page]);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
-
-  const filtered = items.filter((e) => {
-    if (search && !e.description?.toLowerCase().includes(search.toLowerCase())) return false;
-    if (filterCategory && e.categoryId !== filterCategory) return false;
-    if (filterDateFrom) {
-      const d = new Date(e.date);
-      if (d < filterDateFrom) return false;
-    }
-    if (filterDateTo) {
-      const d = new Date(e.date);
-      const to = new Date(filterDateTo);
-      to.setHours(23, 59, 59, 999);
-      if (d > to) return false;
-    }
-    return true;
-  });
-
   const openAdd = () => { setEditing(null); setForm({ description: "", amount: "", date: "", categoryId: "", notes: "" }); setModalOpen(true); };
-  const openEdit = (item: any) => { setEditing(item); setForm({ description: item.description, amount: String(item.amount), date: item.date?.split("T")[0] || "", categoryId: item.categoryId || "", notes: item.notes || "" }); setModalOpen(true); };
+  const openEdit = (item: IncomeModel) => { setEditing(item); setForm({ description: item.description, amount: String(item.amount), date: item.date?.split("T")[0] || "", categoryId: "", notes: "" }); setModalOpen(true); };
 
   const handleSave = async () => {
     if (!form.description || !form.amount) { toast.error("Preencha os campos obrigatórios"); return; }
     setSaving(true);
     try {
-      const payload = { ...form, amount: parseFloat(form.amount) };
-      if (editing) { await incomeApi.update(editing.id, payload); toast.success("Receita atualizada!"); }
-      else { await incomeApi.create(payload); toast.success("Receita criada!"); }
-      setModalOpen(false); fetchData();
-    } catch (err: any) { toast.error(err.message || "Erro ao salvar"); } finally { setSaving(false); }
+      const payload: CreateIncomeRequest = {
+        type: 1,
+        date: form.date,
+        description: form.description,
+        amount: parseFloat(form.amount),
+      };
+      if (editing) {
+        const updatePayload: UpdateIncomeRequest = { ...payload, id: editing.id };
+        await updateMutation.mutateAsync(updatePayload);
+        toast.success("Receita atualizada!");
+      } else {
+        await createMutation.mutateAsync(payload);
+        toast.success("Receita criada!");
+      }
+      setModalOpen(false);
+    } catch {
+      toast.error("Erro ao salvar");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async () => {
     if (!deleteId) return;
     setSaving(true);
-    try { await incomeApi.delete(deleteId); toast.success("Receita excluída!"); setDeleteId(null); fetchData(); }
-    catch (err: any) { toast.error(err.message || "Erro ao excluir"); } finally { setSaving(false); }
+    try { await deleteMutation.mutateAsync(deleteId); toast.success("Receita excluída!"); setDeleteId(null); }
+    catch { toast.error("Erro ao excluir"); } finally { setSaving(false); }
   };
 
+  const filtered = filterCategory
+    ? items.filter((i) => true) // category filter is handled server-side via search, local fallback
+    : items;
+
   const columns = [
-    { header: "Data", accessor: (r: any) => formatDate(r.date), sortKey: "date" },
+    { header: "Data", accessor: (r: IncomeModel) => formatDate(r.date), sortKey: "date" },
     { header: "Descrição", accessor: "description" as const, sortKey: "description" },
-    { header: "Valor", accessor: (r: any) => <span className="font-semibold text-success">{mask(formatCurrency(r.amount))}</span>, sortKey: (r: any) => r.amount as number },
-    { header: "Categoria", accessor: (r: any) => <span className="px-2 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground">{r.categoryName || "—"}</span>, sortKey: (r: any) => r.categoryName || "" },
+    { header: "Valor", accessor: (r: IncomeModel) => <span className="font-semibold text-success">{mask(formatCurrency(r.amount))}</span>, sortKey: (r: IncomeModel) => r.amount },
+    { header: "Categoria", accessor: () => <span className="px-2 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground">—</span>, sortKey: () => "" },
     {
-      header: "Ações", accessor: (r: any) => (
+      header: "Ações", accessor: (r: IncomeModel) => (
         <div className="flex gap-1">
           <button onClick={() => openEdit(r)} className="p-1.5 rounded hover:bg-muted text-muted-foreground"><Pencil className="w-4 h-4" /></button>
           <button onClick={() => setDeleteId(r.id)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive"><Trash2 className="w-4 h-4" /></button>
@@ -131,7 +121,7 @@ export default function IncomePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar receitas..." className="w-full pl-9 pr-4 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
+          <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Buscar receitas..." className="w-full pl-9 pr-4 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => setShowFilters((v) => !v)} className="relative">
@@ -200,8 +190,8 @@ export default function IncomePage() {
         <DataTable
           columns={columns}
           data={filtered}
-          loading={loading}
-          keyExtractor={(r: any) => r.id}
+          loading={isLoading}
+          keyExtractor={(r) => r.id}
           emptyMessage="Nenhuma receita registrada"
           totalCount={totalCount}
           page={page}

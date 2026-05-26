@@ -1,20 +1,22 @@
-import { api } from "./api";
-import { UserModel, UpdateUserRequest, ApiResponse } from "./authService";
+import { apiClient } from "@/api/client";
+import { ENDPOINTS } from "@/api/endpoints";
+import type { ApiResponse } from "@/types/api";
+import type { UserModel, TokenModel } from "@/types/entities";
+import type { AuthUserRequest, CreateUserRequest, UpdateUserRequest } from "@/types/requests";
 
-// User service
 export const userService = {
-  // Get user by ID (requires authentication)
-  getUserById: async (id: string): Promise<ApiResponse<UserModel>> => {
-    return api.get<ApiResponse<UserModel>>(`/api/users/${id}`);
-  },
+  authenticate: (data: AuthUserRequest) =>
+    apiClient.post<ApiResponse<TokenModel>>(ENDPOINTS.auth.authenticate, data),
 
-  // Update user information (requires authentication)
-  updateUser: async (request: UpdateUserRequest): Promise<ApiResponse<UserModel>> => {
-    return api.put<ApiResponse<UserModel>>("/api/users", request);
-  },
+  validateToken: () =>
+    apiClient.get<ApiResponse<boolean>>(ENDPOINTS.auth.validateToken),
 
-  // Validate current token (requires authentication)
-  validateToken: async (): Promise<ApiResponse<boolean>> => {
-    return api.get<ApiResponse<boolean>>("/api/users/validate");
-  },
+  getById: (id: string) =>
+    apiClient.get<ApiResponse<UserModel>>(ENDPOINTS.users, { id }),
+
+  create: (data: CreateUserRequest) =>
+    apiClient.post<ApiResponse<UserModel>>(ENDPOINTS.users, data),
+
+  update: (data: UpdateUserRequest) =>
+    apiClient.put<ApiResponse<UserModel>>(ENDPOINTS.users, data),
 };

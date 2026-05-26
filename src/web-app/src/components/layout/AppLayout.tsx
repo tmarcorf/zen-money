@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import TopNavbar from "./TopNavbar";
-import { isAuthenticated } from "@/services/api";
+import { isAuthenticated } from "@/api/client";
 
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
