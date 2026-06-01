@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ZenMoney.API.Responses;
 using ZenMoney.Application.Interfaces;
 using ZenMoney.Application.Models.User;
 using ZenMoney.Application.Requests.User;
+using ZenMoney.Application.Results;
 
 namespace ZenMoney.API.Controllers
 {
@@ -63,6 +65,14 @@ namespace ZenMoney.API.Controllers
             {
                 return BadRequest(ApiResponse<TokenModel>.Failure(result.Errors));
             }
+            
+            Response.Cookies.Append("auth_token", result.Data.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Expires = result.Data.Expiration
+            });
 
             return Ok(ApiResponse<TokenModel>.Success(result.Data));
         }
@@ -72,6 +82,36 @@ namespace ZenMoney.API.Controllers
         public IActionResult ValidateToken()
         {
             return Ok(ApiResponse<bool>.Success(true, "Token válido"));
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<IActionResult> MeAsync()
+        {
+            // Use ClaimTypes.NameIdentifier because ASP.NET Core maps JWT "sub" to it by default
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var guid))
+            {
+                return Unauthorized(ApiResponse<UserModel>.Failure(
+                    new List<Error> { new Error("401", "Sessão inválida") }, "401"));
+            }
+
+            var result = await userService.GetByIdAsync(guid);
+
+            if (!result.IsSuccess)
+            {
+                return Unauthorized(ApiResponse<UserModel>.Failure(result.Errors, "401"));
+            }
+
+            return Ok(ApiResponse<UserModel>.Success(result.Data));
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("auth_token");
+            return Ok(ApiResponse<bool>.Success(true, "Logout realizado com sucesso"));
         }
     }
 }

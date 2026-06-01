@@ -29,6 +29,7 @@ namespace ZenMoney.API
                         policy.WithOrigins("http://localhost:8080");
                         policy.AllowAnyMethod();
                         policy.AllowAnyHeader();
+                        policy.AllowCredentials();
                     });
             });
 

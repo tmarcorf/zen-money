@@ -3,6 +3,8 @@ export const ENDPOINTS = {
   auth: {
     authenticate: "/api/users/auth",
     validateToken: "/api/users/validate",
+    me: "/api/users/me",
+    logout: "/api/users/logout",
   },
   users: "/api/users",
   expenses: "/api/expenses",

@@ -2,12 +2,24 @@ import { useState } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import TopNavbar from "./TopNavbar";
-import { isAuthenticated } from "@/api/client";
+import { useAuth } from "@/hooks/useAuth";
+import { Loader2 } from "lucide-react";
 
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { authenticated, sessionStatus } = useAuth();
 
-  if (!isAuthenticated()) {
+  // Show a loading indicator while the initial session check is in progress.
+  // This prevents protected routes from flashing when the backend is offline.
+  if (sessionStatus === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-accent" />
+      </div>
+    );
+  }
+
+  if (!authenticated) {
     return <Navigate to="/login" replace />;
   }
 
