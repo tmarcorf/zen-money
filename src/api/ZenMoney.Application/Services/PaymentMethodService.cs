@@ -63,7 +63,7 @@ namespace ZenMoney.Application.Services
 
         public async Task<Result<PaymentMethodModel>> CreateAsync(CreatePaymentMethodRequest request)
         {
-            if (request == null) ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(request);
 
             request.UserId = GetUserId();
             var validationResult = createPaymentMethodValidator.Validate(request);
@@ -88,7 +88,7 @@ namespace ZenMoney.Application.Services
 
         public async Task<Result<PaymentMethodModel>> UpdateAsync(UpdatePaymentMethodRequest request)
         {
-            if (request == null) ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(request);
 
             var validationResult = updatePaymentMethodValidator.Validate(request);
 
