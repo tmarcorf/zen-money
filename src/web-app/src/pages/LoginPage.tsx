@@ -1,15 +1,25 @@
 import { useState } from "react";
 import { useNavigate, Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Wallet, Loader2 } from "lucide-react";
+import { Wallet, Loader2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 
 export default function LoginPage() {
-  const { login, loading, authenticated } = useAuth();
+  const { login, loading, authenticated, sessionStatus } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+
+  // Show a loading spinner while the initial session check is in progress
+  if (sessionStatus === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-primary">
+        <Loader2 className="w-8 h-8 animate-spin text-accent" />
+      </div>
+    );
+  }
 
   if (authenticated) return <Navigate to="/dashboards" replace />;
 
@@ -69,15 +79,25 @@ export default function LoginPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-card-foreground mb-1.5">Senha</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={`w-full px-4 py-2.5 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent ${
-                  errors.password ? "border-destructive" : "border-input"
-                }`}
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`w-full px-4 py-2.5 pr-10 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent ${
+                    errors.password ? "border-destructive" : "border-input"
+                  }`}
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
               {errors.password && <p className="text-xs text-destructive mt-1">{errors.password}</p>}
             </div>
             <button

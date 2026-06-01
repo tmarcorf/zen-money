@@ -1,15 +1,26 @@
 import { useState } from "react";
 import { useNavigate, Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Wallet, Loader2, ArrowLeft } from "lucide-react";
+import { Wallet, Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 
 export default function RegisterPage() {
-  const { authenticated, register } = useAuth();
+  const { authenticated, register, sessionStatus } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ email: "", password: "", confirmPassword: "", firstName: "", lastName: "", dateOfBirth: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Show a loading spinner while the initial session check is in progress
+  if (sessionStatus === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-primary">
+        <Loader2 className="w-8 h-8 animate-spin text-accent" />
+      </div>
+    );
+  }
 
   if (authenticated) return <Navigate to="/dashboards" replace />;
 
@@ -90,12 +101,44 @@ export default function RegisterPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-card-foreground mb-1.5">Senha *</label>
-              <input type="password" value={form.password} onChange={set("password")} className={inputClass("password")} placeholder="••••••••" />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={set("password")}
+                  className={inputClass("password") + " pr-10"}
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
               {errors.password && <p className="text-xs text-destructive mt-1">{errors.password}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-card-foreground mb-1.5">Confirmar Senha *</label>
-              <input type="password" value={form.confirmPassword} onChange={set("confirmPassword")} className={inputClass("confirmPassword")} placeholder="••••••••" />
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={form.confirmPassword}
+                  onChange={set("confirmPassword")}
+                  className={inputClass("confirmPassword") + " pr-10"}
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
               {errors.confirmPassword && <p className="text-xs text-destructive mt-1">{errors.confirmPassword}</p>}
             </div>
             <button

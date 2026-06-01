@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
-import { setToken, removeToken, isAuthenticated } from "@/api/client";
 import { userService } from "@/services/userService";
 import type { ApiResponse } from "@/types/api";
 import type { TokenModel, UserModel } from "@/types/entities";
@@ -8,6 +7,8 @@ import { toast } from "sonner";
 interface AuthContextType {
   user: UserModel | null;
   loading: boolean;
+  /** 'loading' = initial session check in progress; 'checked' = verified with server */
+  sessionStatus: "loading" | "checked";
   login: (email: string, password: string) => Promise<ApiResponse<TokenModel>>;
   logout: () => void;
   authenticated: boolean;
@@ -16,18 +17,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-function getStoredUser(): UserModel | null {
-  const u = localStorage.getItem("zen_user");
-  return u ? JSON.parse(u) : null;
-}
-
-function setStoredUser(user: UserModel): void {
-  localStorage.setItem("zen_user", JSON.stringify(user));
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserModel | null>(getStoredUser());
+  const [user, setUser] = useState<UserModel | null>(null);
   const [loading, setLoading] = useState(false);
+  const [sessionStatus, setSessionStatus] = useState<"loading" | "checked">("loading");
 
   const login = useCallback(async (email: string, password: string): Promise<ApiResponse<TokenModel>> => {
     setLoading(true);
@@ -35,18 +28,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await userService.authenticate({ email, password });
 
       if (response.isSuccess) {
-        setToken(response.data.token);
-        setStoredUser({
-          id: "",
-          email: response.data.email,
-          firstName: response.data.firstName,
-          lastName: "",
-          dateOfBirth: "",
-        });
-      } else {
-        removeToken();
-        localStorage.removeItem("zen_user");
-        setUser(null);
+        // The JWT is now set as an HttpOnly cookie by the backend — we don't touch it.
+        // Fetch the full user profile to populate the auth state.
+        try {
+          const meResponse = await userService.getMe();
+          if (meResponse.isSuccess && meResponse.data) {
+            setUser(meResponse.data);
+          } else {
+            // getMe returned a non-success response (e.g. 401) — fall back to minimal user
+            setUser({
+              id: "",
+              email: response.data.email,
+              firstName: response.data.firstName,
+              lastName: "",
+              dateOfBirth: "",
+            });
+          }
+        } catch {
+          // Network error calling getMe — fall back to minimal user so the user can proceed
+          setUser({
+            id: "",
+            email: response.data.email,
+            firstName: response.data.firstName,
+            lastName: "",
+            dateOfBirth: "",
+          });
+        }
+        setSessionStatus("checked");
       }
 
       return response;
@@ -71,32 +79,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const logout = useCallback(() => {
-    removeToken();
-    localStorage.removeItem("zen_user");
+  const logout = useCallback(async () => {
+    try {
+      // Tell the server to clear the HttpOnly cookie
+      await userService.logout();
+    } catch {
+      // Even if the server call fails, clear local state and redirect
+    }
     setUser(null);
     window.location.href = "/login";
   }, []);
 
+  // On mount: check if there is an active session via the HttpOnly cookie
   useEffect(() => {
-    const checkAuth = async () => {
-      if (isAuthenticated() && !user) {
-        try {
-          const response = await userService.validateToken();
-          if (!response.isSuccess) {
-            logout();
-          }
-        } catch {
-          logout();
+    const checkSession = async () => {
+      try {
+        const response = await userService.getMe();
+        if (response.isSuccess && response.data) {
+          setUser(response.data);
         }
+      } catch {
+        // No active session or backend unreachable — stay unauthenticated
+      } finally {
+        setSessionStatus("checked");
       }
     };
 
-    checkAuth();
-  }, [user, logout]);
+    checkSession();
+  }, []);
+
+  // Listen for the global auth:logout event dispatched by the HTTP client on 401 responses
+  useEffect(() => {
+    const handleAuthLogout = () => {
+      setUser(null);
+      window.location.href = "/login";
+    };
+
+    window.addEventListener("auth:logout", handleAuthLogout);
+    return () => window.removeEventListener("auth:logout", handleAuthLogout);
+  }, []);
+
+  const authenticated = sessionStatus === "checked" && !!user;
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, authenticated: isAuthenticated() && !!user, register }}>
+    <AuthContext.Provider value={{ user, loading, sessionStatus, login, logout, authenticated, register }}>
       {children}
     </AuthContext.Provider>
   );

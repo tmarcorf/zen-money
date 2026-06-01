@@ -11,7 +11,19 @@ import {
   X,
   Wallet,
 } from "lucide-react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const navItems = [
   { to: "/dashboards", label: "Dashboard", icon: LayoutDashboard },
@@ -30,6 +42,12 @@ interface Props {
 
 export default function AppSidebar({ open, onClose }: Props) {
   const { logout } = useAuth();
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    setLogoutDialogOpen(false);
+  };
 
   return (
     <>
@@ -77,13 +95,28 @@ export default function AppSidebar({ open, onClose }: Props) {
 
         {/* Logout */}
         <div className="px-3 py-4 border-t border-sidebar-border">
-          <button
-            onClick={logout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-destructive/20 hover:text-destructive w-full transition-colors"
-          >
-            <LogOut className="w-5 h-5" />
-            Sair
-          </button>
+          <AlertDialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
+            <AlertDialogTrigger asChild>
+              <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-destructive/20 hover:text-destructive w-full transition-colors">
+                <LogOut className="w-5 h-5" />
+                Sair
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Deseja realmente sair da sua conta?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction className="bg-destructive hover:bg-destructive/80 text-destructive-foreground" onClick={handleLogout}>
+                  Sair
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </aside>
     </>

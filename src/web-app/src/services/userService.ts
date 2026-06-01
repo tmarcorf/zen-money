@@ -11,6 +11,15 @@ export const userService = {
   validateToken: () =>
     apiClient.get<ApiResponse<boolean>>(ENDPOINTS.auth.validateToken),
 
+  /** Checks if there is an active session (HttpOnly cookie) and returns the current user.
+   *  Uses skipAuthRedirect so a 401 doesn't trigger a full-page redirect — the auth context handles it. */
+  getMe: () =>
+    apiClient.get<ApiResponse<UserModel>>(ENDPOINTS.auth.me, undefined, { skipAuthRedirect: true }),
+
+  /** Clears the auth cookie server-side. */
+  logout: () =>
+    apiClient.post<ApiResponse<boolean>>(ENDPOINTS.auth.logout),
+
   getById: (id: string) =>
     apiClient.get<ApiResponse<UserModel>>(ENDPOINTS.users, { id }),
 
