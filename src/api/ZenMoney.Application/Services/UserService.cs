@@ -38,7 +38,7 @@ namespace ZenMoney.Application.Services
 
         public async Task<Result<UserModel>> CreateAsync(CreateUserRequest request)
         {
-            if (request == null) ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(request);
 
             var validationResult = createUserValidator.Validate(request);
 
@@ -59,7 +59,7 @@ namespace ZenMoney.Application.Services
 
         public async Task<Result<UserModel>> UpdateAsync(UpdateUserRequest request)
         {
-            if (request == null) ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(request);
 
             var validationResult = updateUserValidator.Validate(request);
 
@@ -80,7 +80,7 @@ namespace ZenMoney.Application.Services
 
         public async Task<Result<TokenModel>> AuthenticateAsync(AuthUserRequest request)
         {
-            if (request == null) ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(request);
 
             var result = await signInManager.PasswordSignInAsync(request.Email, request.Password, false, false);
 

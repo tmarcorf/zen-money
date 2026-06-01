@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Wallet, ArrowDownLeft, ArrowUpRight, TrendingUp, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import SummaryCard from "@/components/shared/SummaryCard";
 import DataTable from "@/components/shared/DataTable";
 import { useDashboardIncomesExpenses, useDashboardExpensesByCategory, useDashboardExpensesByPaymentMethod } from "@/hooks/queries/useDashboard";
@@ -25,6 +27,7 @@ export default function DashboardPage() {
   const now = new Date();
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth());
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const monthParam = selectedMonth + 1;
 
@@ -43,7 +46,7 @@ export default function DashboardPage() {
 
   const totalIncome = incomesExpenses?.currentAmountIncomes ?? 0;
   const totalExpenses = incomesExpenses?.currentAmountExpenses ?? 0;
-  const totalBalance = 0;
+  const totalBalance = totalIncome - totalExpenses;
 
   const barData = {
     labels: ["Receitas", "Despesas"],
@@ -100,14 +103,39 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6 animate-fade-in-up">
       <div className="flex items-center gap-3">
-        <Calendar className="w-5 h-5 text-muted-foreground" />
         <button onClick={handlePrevMonth} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><ChevronLeft className="w-4 h-4" /></button>
-        <span className="text-sm font-semibold min-w-[140px] text-center">{MONTHS[selectedMonth]} {selectedYear}</span>
+
+        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+          <PopoverTrigger asChild>
+            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted transition-colors text-sm font-semibold">
+              <Calendar className="w-4 h-4 text-muted-foreground" />
+              {MONTHS[selectedMonth]} {selectedYear}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <CalendarPicker
+              mode="single"
+              month={new Date(selectedYear, selectedMonth)}
+              onMonthChange={(date: Date) => {
+                setSelectedMonth(date.getMonth());
+                setSelectedYear(date.getFullYear());
+              }}
+              onSelect={(date: Date | undefined) => {
+                if (date) {
+                  setSelectedMonth(date.getMonth());
+                  setSelectedYear(date.getFullYear());
+                  setCalendarOpen(false);
+                }
+              }}
+            />
+          </PopoverContent>
+        </Popover>
+
         <button onClick={handleNextMonth} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><ChevronRight className="w-4 h-4" /></button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <SummaryCard title="Saldo Total" value={totalBalance} icon={Wallet} />
+        <SummaryCard title="Saldo atual" value={totalBalance} icon={Wallet} />
         <SummaryCard title="Receitas (mês)" value={totalIncome} icon={ArrowUpRight} variant="income" />
         <SummaryCard title="Despesas (mês)" value={totalExpenses} icon={ArrowDownLeft} variant="expense" />
         <SummaryCard title="Investimentos" value={0} icon={TrendingUp} variant="investment" />
