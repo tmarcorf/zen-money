@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Search, Filter, X, CalendarIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Filter, X, CalendarIcon, Copy } from "lucide-react";
 import { formatCurrency, formatDate, toDateInputValue } from "@/lib/format";
 import CurrencyInput from "@/components/shared/CurrencyInput";
 import { useValueVisibility } from "@/hooks/useValueVisibility";
@@ -17,6 +17,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { ExpenseModel } from "@/types/entities";
 import type { SearchExpenseRequest, CreateExpenseRequest, UpdateExpenseRequest } from "@/types/requests";
+import { ExpenseType } from "@/types/enums";
 
 const PAGE_SIZE = 10;
 
@@ -86,12 +87,16 @@ export default function ExpensesPage() {
     setModalOpen(true);
   };
 
+  const handleDuplicate = () => {
+    setEditing(null);
+  };
+
   const handleSave = async () => {
     if (!form.description || !form.amount) { toast.error("Preencha os campos obrigatórios"); return; }
     setSaving(true);
     try {
       const payload = {
-        type: 1, // Fixed expense type (default)
+        type: ExpenseType.Fixed,
         date: form.date,
         description: form.description,
         amount: parseFloat(form.amount),
@@ -243,6 +248,14 @@ export default function ExpensesPage() {
 
       <FormModal open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={handleSave} title={editing ? "Editar Despesa" : "Nova Despesa"} loading={saving}>
         <div className="space-y-3">
+          {editing && (
+            <div className="flex justify-end">
+              <Button type="button" variant="ghost" size="sm" onClick={handleDuplicate} className="text-muted-foreground hover:text-foreground">
+                <Copy className="w-4 h-4 mr-1.5" />
+                Duplicar
+              </Button>
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium mb-1">Descrição *</label>
             <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" />

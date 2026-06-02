@@ -37,7 +37,7 @@ namespace ZenMoney.Application.Services
             {
                 Month = month,
                 Year = year,
-                CurrentAmountIncomes = totalAmountIncomes - totalAmountExpenses,
+                CurrentAmountIncomes = totalAmountIncomes,
                 CurrentAmountExpenses = totalAmountExpenses
             };
 

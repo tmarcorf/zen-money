@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Search, Filter, X, CalendarIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Filter, X, CalendarIcon, Copy } from "lucide-react";
 import { formatCurrency, formatDate, toDateInputValue } from "@/lib/format";
 import CurrencyInput from "@/components/shared/CurrencyInput";
 import { useValueVisibility } from "@/hooks/useValueVisibility";
@@ -79,6 +79,10 @@ export default function IncomePage() {
       type: String(item.type),
     });
     setModalOpen(true);
+  };
+
+  const handleDuplicate = () => {
+    setEditing(null);
   };
 
   const handleSave = async () => {
@@ -208,6 +212,14 @@ export default function IncomePage() {
 
       <FormModal open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={handleSave} title={editing ? "Editar Receita" : "Nova Receita"} loading={saving}>
         <div className="space-y-3">
+          {editing && (
+            <div className="flex justify-end">
+              <Button type="button" variant="ghost" size="sm" onClick={handleDuplicate} className="text-muted-foreground hover:text-foreground">
+                <Copy className="w-4 h-4 mr-1.5" />
+                Duplicar
+              </Button>
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium mb-1">Descrição *</label>
             <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
