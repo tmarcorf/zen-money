@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Plus, Pencil, Trash2, Search, Filter, X, CalendarIcon } from "lucide-react";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { formatCurrency, formatDate, toDateInputValue } from "@/lib/format";
+import CurrencyInput from "@/components/shared/CurrencyInput";
 import { useValueVisibility } from "@/hooks/useValueVisibility";
 import { useIncomes, useCreateIncome, useUpdateIncome, useDeleteIncome } from "@/hooks/queries/useIncomes";
-import { useCategoryList } from "@/hooks/queries/useCategoryList";
 import DataTable from "@/components/shared/DataTable";
 import FormModal from "@/components/shared/FormModal";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
@@ -16,8 +16,14 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { IncomeModel } from "@/types/entities";
 import type { SearchIncomeRequest, CreateIncomeRequest, UpdateIncomeRequest } from "@/types/requests";
+import { IncomeType } from "@/types/enums";
 
 const PAGE_SIZE = 10;
+
+const INCOME_TYPE_LABEL: Record<number, string> = {
+  [IncomeType.Fixed]: "Fixa",
+  [IncomeType.Variable]: "Variável",
+};
 
 export default function IncomePage() {
   const { mask } = useValueVisibility();
@@ -26,15 +32,14 @@ export default function IncomePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [editing, setEditing] = useState<IncomeModel | null>(null);
-  const [form, setForm] = useState({ description: "", amount: "", date: "", categoryId: "", notes: "" });
+  const [form, setForm] = useState({ description: "", amount: "", date: "", type: String(IncomeType.Fixed) });
   const [saving, setSaving] = useState(false);
 
   const [showFilters, setShowFilters] = useState(false);
-  const [filterCategory, setFilterCategory] = useState("");
   const [filterDateFrom, setFilterDateFrom] = useState<Date | undefined>();
   const [filterDateTo, setFilterDateTo] = useState<Date | undefined>();
 
-  const activeFilterCount = [filterCategory, filterDateFrom, filterDateTo].filter(Boolean).length;
+  const activeFilterCount = [filterDateFrom, filterDateTo].filter(Boolean).length;
 
   const searchParams: SearchIncomeRequest = {
     offset: (page - 1) * PAGE_SIZE,
@@ -45,7 +50,6 @@ export default function IncomePage() {
   };
 
   const { data, isLoading } = useIncomes(searchParams);
-  const { data: categories = [] } = useCategoryList();
 
   const createMutation = useCreateIncome();
   const updateMutation = useUpdateIncome();
@@ -55,21 +59,34 @@ export default function IncomePage() {
   const totalCount = data?.totalCount ?? 0;
 
   const clearFilters = () => {
-    setFilterCategory("");
     setFilterDateFrom(undefined);
     setFilterDateTo(undefined);
     setSearch("");
   };
 
-  const openAdd = () => { setEditing(null); setForm({ description: "", amount: "", date: "", categoryId: "", notes: "" }); setModalOpen(true); };
-  const openEdit = (item: IncomeModel) => { setEditing(item); setForm({ description: item.description, amount: String(item.amount), date: item.date?.split("T")[0] || "", categoryId: "", notes: "" }); setModalOpen(true); };
+  const openAdd = () => {
+    setEditing(null);
+    setForm({ description: "", amount: "", date: "", type: String(IncomeType.Fixed) });
+    setModalOpen(true);
+  };
+
+  const openEdit = (item: IncomeModel) => {
+    setEditing(item);
+    setForm({
+      description: item.description,
+      amount: String(item.amount),
+      date: toDateInputValue(item.date),
+      type: String(item.type),
+    });
+    setModalOpen(true);
+  };
 
   const handleSave = async () => {
     if (!form.description || !form.amount) { toast.error("Preencha os campos obrigatórios"); return; }
     setSaving(true);
     try {
       const payload: CreateIncomeRequest = {
-        type: 1,
+        type: Number(form.type) as IncomeModel["type"],
         date: form.date,
         description: form.description,
         amount: parseFloat(form.amount),
@@ -97,15 +114,11 @@ export default function IncomePage() {
     catch { toast.error("Erro ao excluir"); } finally { setSaving(false); }
   };
 
-  const filtered = filterCategory
-    ? items.filter((i) => true) // category filter is handled server-side via search, local fallback
-    : items;
-
   const columns = [
     { header: "Data", accessor: (r: IncomeModel) => formatDate(r.date), sortKey: "date" },
     { header: "Descrição", accessor: "description" as const, sortKey: "description" },
     { header: "Valor", accessor: (r: IncomeModel) => <span className="font-semibold text-success">{mask(formatCurrency(r.amount))}</span>, sortKey: (r: IncomeModel) => r.amount },
-    { header: "Categoria", accessor: () => <span className="px-2 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground">—</span>, sortKey: () => "" },
+    { header: "Tipo", accessor: (r: IncomeModel) => <span className="px-2 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground">{INCOME_TYPE_LABEL[r.type] || "—"}</span>, sortKey: (r: IncomeModel) => r.type },
     {
       header: "Ações", accessor: (r: IncomeModel) => (
         <div className="flex gap-1">
@@ -146,7 +159,7 @@ export default function IncomePage() {
               </button>
             )}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-muted-foreground mb-1">Data inicial</label>
               <Popover>
@@ -175,13 +188,6 @@ export default function IncomePage() {
                 </PopoverContent>
               </Popover>
             </div>
-            <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1">Categoria</label>
-              <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="w-full px-3 py-2 h-9 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent">
-                <option value="">Todas</option>
-                {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            </div>
           </div>
         </div>
       )}
@@ -189,7 +195,7 @@ export default function IncomePage() {
       <div className="bg-card rounded-xl border border-border">
         <DataTable
           columns={columns}
-          data={filtered}
+          data={items}
           loading={isLoading}
           keyExtractor={(r) => r.id}
           emptyMessage="Nenhuma receita registrada"
@@ -199,17 +205,33 @@ export default function IncomePage() {
           onPageChange={setPage}
         />
       </div>
+
       <FormModal open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={handleSave} title={editing ? "Editar Receita" : "Nova Receita"} loading={saving}>
         <div className="space-y-3">
-          <div><label className="block text-sm font-medium mb-1">Descrição *</label><input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" /></div>
-          <div className="grid grid-cols-2 gap-3">
-            <div><label className="block text-sm font-medium mb-1">Valor (R$) *</label><input type="number" step="0.01" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" /></div>
-            <div><label className="block text-sm font-medium mb-1">Data</label><input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" /></div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Descrição *</label>
+            <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
           </div>
-          <div><label className="block text-sm font-medium mb-1">Categoria</label><select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent"><option value="">Selecione</option>{categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
-          <div><label className="block text-sm font-medium mb-1">Observações</label><textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent resize-none" /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium mb-1">Valor (R$) *</label>
+              <CurrencyInput value={form.amount} onChange={(amount) => setForm({ ...form, amount })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Data</label>
+              <input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Tipo</label>
+            <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent">
+              <option value={String(IncomeType.Fixed)}>Fixa</option>
+              <option value={String(IncomeType.Variable)}>Variável</option>
+            </select>
+          </div>
         </div>
       </FormModal>
+
       <ConfirmDialog open={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={handleDelete} loading={saving} />
     </div>
   );

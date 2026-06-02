@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ZenMoney.API.Responses;
 using ZenMoney.Application.Interfaces;
-using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Models.Income;
 using ZenMoney.Application.Requests.Income;
 using ZenMoney.Application.Services;
