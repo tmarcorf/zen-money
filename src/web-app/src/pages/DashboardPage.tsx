@@ -53,7 +53,7 @@ export default function DashboardPage() {
     datasets: [
       {
         label: `${MONTHS[selectedMonth]} ${selectedYear}`,
-        data: [totalIncome, totalExpenses],
+        data: [totalIncome - totalExpenses, totalExpenses],
         backgroundColor: ["#00C896", "#FF6B6B"],
         borderRadius: 6,
       },
