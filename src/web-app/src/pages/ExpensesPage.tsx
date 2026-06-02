@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Plus, Pencil, Trash2, Search, Filter, X, CalendarIcon } from "lucide-react";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { formatCurrency, formatDate, toDateInputValue } from "@/lib/format";
+import CurrencyInput from "@/components/shared/CurrencyInput";
 import { useValueVisibility } from "@/hooks/useValueVisibility";
 import { useExpenses, useCreateExpense, useUpdateExpense, useDeleteExpense } from "@/hooks/queries/useExpenses";
 import { useCategoryList, usePaymentMethodList } from "@/hooks/queries/useCategoryList";
@@ -77,7 +78,7 @@ export default function ExpensesPage() {
     setForm({
       description: item.description,
       amount: String(item.amount),
-      date: item.date?.split("T")[0] || "",
+      date: toDateInputValue(item.date),
       categoryId: item.categoryId || "",
       paymentMethodId: item.paymentMethodId || "",
       notes: "",
@@ -249,7 +250,7 @@ export default function ExpensesPage() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-medium mb-1">Valor (R$) *</label>
-              <input type="number" step="0.01" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
+              <CurrencyInput value={form.amount} onChange={(amount) => setForm({ ...form, amount })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Data</label>

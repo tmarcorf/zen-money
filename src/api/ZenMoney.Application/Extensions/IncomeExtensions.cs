@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Models.Income;
 using ZenMoney.Core.Entities;
 

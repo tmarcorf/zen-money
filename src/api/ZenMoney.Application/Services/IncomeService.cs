@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using ZenMoney.Application.Extensions;
 using ZenMoney.Application.Helpers;
 using ZenMoney.Application.Interfaces;
-using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Models.Income;
 using ZenMoney.Application.Requests.Income;
 using ZenMoney.Application.Results;

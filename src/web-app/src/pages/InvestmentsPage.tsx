@@ -3,7 +3,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Plus, Pencil, Trash2, TrendingUp, TrendingDown, Loader2 } from "lucide-react";
-import { formatCurrency, formatPercent } from "@/lib/format";
+import { formatCurrency, formatPercent, toDateInputValue } from "@/lib/format";
+import CurrencyInput from "@/components/shared/CurrencyInput";
 import { useValueVisibility } from "@/hooks/useValueVisibility";
 import FormModal from "@/components/shared/FormModal";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
@@ -52,7 +53,7 @@ export default function InvestmentsPage() {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   const openAdd = () => { setEditing(null); setForm({ name: "", type: "", investedAmount: "", currentValue: "", date: "", notes: "" }); setModalOpen(true); };
-  const openEdit = (item: Investment) => { setEditing(item); setForm({ name: item.name, type: item.type, investedAmount: String(item.investedAmount), currentValue: String(item.currentValue), date: item.date?.split("T")[0] || "", notes: item.notes || "" }); setModalOpen(true); };
+  const openEdit = (item: Investment) => { setEditing(item); setForm({ name: item.name, type: item.type, investedAmount: String(item.investedAmount), currentValue: String(item.currentValue), date: toDateInputValue(item.date), notes: item.notes || "" }); setModalOpen(true); };
 
   const handleSave = async () => {
     if (!form.name || !form.investedAmount) { toast.error("Preencha os campos obrigatórios"); return; }
@@ -135,8 +136,8 @@ export default function InvestmentsPage() {
           <div><label className="block text-sm font-medium mb-1">Nome *</label><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" /></div>
           <div><label className="block text-sm font-medium mb-1">Tipo</label><input value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} placeholder="Ex: Renda Fixa, Ações, ETF" className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" /></div>
           <div className="grid grid-cols-2 gap-3">
-            <div><label className="block text-sm font-medium mb-1">Valor Investido *</label><input type="number" step="0.01" value={form.investedAmount} onChange={(e) => setForm({ ...form, investedAmount: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" /></div>
-            <div><label className="block text-sm font-medium mb-1">Valor Atual</label><input type="number" step="0.01" value={form.currentValue} onChange={(e) => setForm({ ...form, currentValue: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" /></div>
+            <div><label className="block text-sm font-medium mb-1">Valor Investido *</label><CurrencyInput value={form.investedAmount} onChange={(investedAmount) => setForm({ ...form, investedAmount })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" /></div>
+            <div><label className="block text-sm font-medium mb-1">Valor Atual</label><CurrencyInput value={form.currentValue} onChange={(currentValue) => setForm({ ...form, currentValue })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" /></div>
           </div>
           <div><label className="block text-sm font-medium mb-1">Data</label><input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent" /></div>
           <div><label className="block text-sm font-medium mb-1">Observações</label><textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent resize-none" /></div>
