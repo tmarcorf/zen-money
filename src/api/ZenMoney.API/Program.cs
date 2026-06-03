@@ -1,4 +1,3 @@
-
 using System;
 using Microsoft.EntityFrameworkCore;
 using ZenMoney.Infrastructure.Data;
@@ -21,12 +20,19 @@ namespace ZenMoney.API
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // CORS: origins as a comma-separated string (easy to override via env var)
+            var corsOrigins = builder.Configuration
+                .GetValue<string>("Cors:Origins")
+                ?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                ?? new[] { "http://localhost:8080" };
+
             services.AddCors(options =>
             {
                 options.AddPolicy("ZenMoneyApp",
                     policy =>
                     {
-                        policy.WithOrigins("http://localhost:8080");
+                        policy.WithOrigins(corsOrigins);
                         policy.AllowAnyMethod();
                         policy.AllowAnyHeader();
                         policy.AllowCredentials();
@@ -48,10 +54,19 @@ namespace ZenMoney.API
                 app.UseSwaggerUI();
             }
 
+            // HTTPS redirection can be disabled via configuration (useful in Docker/containers)
+            if (!builder.Configuration.GetValue<bool>("NoHttpsRedirection"))
+            {
+                app.UseHttpsRedirection();
+            }
+
             app.UseCors("ZenMoneyApp");
-            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // Health check endpoint for container orchestration
+            app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+
             app.MapControllers();
 
             app.Run();

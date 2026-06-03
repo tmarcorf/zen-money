@@ -4,3 +4,5 @@ obj/
 .idea
 node_modules/
 dist/
+# Docker environment
+.env

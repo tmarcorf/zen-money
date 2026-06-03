@@ -1,0 +1,35 @@
+# .NET
+**/bin/
+**/obj/
+**/.vs/
+**/packages/
+*.user
+*.suo
+*.cache
+*.DotSettings
+
+# Tests (not needed for production image)
+**/ZenMoney.UnitTests/
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Development files
+appsettings.Development.json
+Properties/launchSettings.json
