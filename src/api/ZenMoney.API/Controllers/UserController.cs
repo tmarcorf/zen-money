@@ -69,7 +69,7 @@ namespace ZenMoney.API.Controllers
             Response.Cookies.Append("auth_token", result.Data.Token, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = Request.IsHttps,
                 SameSite = SameSiteMode.Lax,
                 Expires = result.Data.Expiration
             });
