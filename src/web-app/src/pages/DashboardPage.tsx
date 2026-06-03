@@ -1,7 +1,5 @@
-import { useState } from "react";
-import { Wallet, ArrowDownLeft, ArrowUpRight, TrendingUp, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as CalendarPicker } from "@/components/ui/calendar";
+import { useState, useEffect } from "react";
+import { Wallet, ArrowDownLeft, ArrowUpRight, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import SummaryCard from "@/components/shared/SummaryCard";
 import DataTable from "@/components/shared/DataTable";
 import { useDashboardIncomesExpenses, useDashboardExpensesByCategory, useDashboardExpensesByPaymentMethod } from "@/hooks/queries/useDashboard";
@@ -27,7 +25,14 @@ export default function DashboardPage() {
   const now = new Date();
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth());
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
-  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [inputValue, setInputValue] = useState(
+    `${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`
+  );
+
+  // Sync input display when arrows change the month/year
+  useEffect(() => {
+    setInputValue(`${String(selectedMonth + 1).padStart(2, "0")}/${selectedYear}`);
+  }, [selectedMonth, selectedYear]);
 
   const monthParam = selectedMonth + 1;
 
@@ -44,6 +49,24 @@ export default function DashboardPage() {
     else setSelectedMonth(m => m + 1);
   };
 
+  const handleMonthYearInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, "").slice(0, 6);
+    let formatted = raw;
+    if (raw.length >= 3) {
+      formatted = raw.slice(0, 2) + "/" + raw.slice(2);
+    }
+    setInputValue(formatted);
+
+    // Only update state when MM/YYYY is complete and valid
+    const match = formatted.match(/^(0[1-9]|1[0-2])\/\d{4}$/);
+    if (match) {
+      const month = parseInt(formatted.slice(0, 2), 10) - 1;
+      const year = parseInt(formatted.slice(3), 10);
+      setSelectedMonth(month);
+      setSelectedYear(year);
+    }
+  };
+
   const totalIncome = incomesExpenses?.currentAmountIncomes ?? 0;
   const totalExpenses = incomesExpenses?.currentAmountExpenses ?? 0;
   const totalBalance = totalIncome - totalExpenses;
@@ -53,7 +76,7 @@ export default function DashboardPage() {
     datasets: [
       {
         label: `${MONTHS[selectedMonth]} ${selectedYear}`,
-        data: [totalIncome, totalExpenses],
+        data: [totalIncome - totalExpenses, totalExpenses],
         backgroundColor: ["#00C896", "#FF6B6B"],
         borderRadius: 6,
       },
@@ -105,31 +128,14 @@ export default function DashboardPage() {
       <div className="flex items-center gap-3">
         <button onClick={handlePrevMonth} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><ChevronLeft className="w-4 h-4" /></button>
 
-        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-          <PopoverTrigger asChild>
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted transition-colors text-sm font-semibold">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-              {MONTHS[selectedMonth]} {selectedYear}
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <CalendarPicker
-              mode="single"
-              month={new Date(selectedYear, selectedMonth)}
-              onMonthChange={(date: Date) => {
-                setSelectedMonth(date.getMonth());
-                setSelectedYear(date.getFullYear());
-              }}
-              onSelect={(date: Date | undefined) => {
-                if (date) {
-                  setSelectedMonth(date.getMonth());
-                  setSelectedYear(date.getFullYear());
-                  setCalendarOpen(false);
-                }
-              }}
-            />
-          </PopoverContent>
-        </Popover>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={handleMonthYearInput}
+          placeholder="MM/YYYY"
+          maxLength={7}
+          className="w-24 text-center px-3 py-1.5 rounded-lg border border-border bg-background text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-accent"
+        />
 
         <button onClick={handleNextMonth} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><ChevronRight className="w-4 h-4" /></button>
       </div>
