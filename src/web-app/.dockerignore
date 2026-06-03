@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Tests
+src/test/
+playwright.config.ts
+**/*.test.ts
+**/*.test.tsx
+**/__tests__/
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment (handled via docker-compose)
+.env
+.env.*
+
+# Cache
+.vite/
+*.tsbuildinfo
+
+# Documentation
+README.md
+LICENSE
