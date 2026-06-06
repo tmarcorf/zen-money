@@ -33,10 +33,10 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 
         public async Task<List<Category>> ListByNameAsync(string name, Guid userId)
         {
-            var cleanName = !string.IsNullOrWhiteSpace(name) ? name.Trim() : string.Empty;
+            var cleanName = !string.IsNullOrWhiteSpace(name) ? name.Trim().ToLower() : string.Empty;
 
             var query = DbContext.Categories
-                .Where(c => c.UserId == userId && c.Name.Contains(cleanName))
+                .Where(c => c.UserId == userId && c.Name.ToLower().Contains(cleanName))
                 .OrderBy(c => c.Name);
 
             return await query.ToListAsync();
@@ -49,10 +49,10 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 
         private IQueryable<Category> GetSearchQuery(SearchCategoryRequest request, Guid userId)
         {
-            var name = request.Name != null ? request.Name.Trim() : string.Empty;
+            var name = request.Name != null ? request.Name.Trim().ToLower() : string.Empty;
 
             var query = DbContext.Categories
-                .Where(c => c.UserId == userId && c.Name.Contains(name));
+                .Where(c => c.UserId == userId && c.Name.ToLower().Contains(name));
 
             if (request.SortField == SortFieldEnum.Name)
             {

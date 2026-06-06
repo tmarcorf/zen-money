@@ -65,7 +65,7 @@ export default function PaymentMethodsPage() {
   };
 
   const columns = [
-    { header: "Descrição", accessor: "description" as const },
+    { header: "Descrição", accessor: "description" as const, sortKey: "description" },
     {
       header: "Ações", accessor: (r: PaymentMethodModel) => (
         <div className="flex gap-1">

@@ -55,10 +55,10 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 
         private IQueryable<Income> GetSearchQuery(SearchIncomeRequest request, Guid userId)
         {
-            var description = request.Description != null ? request.Description.Trim() : string.Empty;
+            var description = request.Description != null ? request.Description.Trim().ToLower() : string.Empty;
 
             var query = DbContext.Incomes
-                .Where(i => i.UserId == userId && i.Description.Contains(description));
+                .Where(i => i.UserId == userId && i.Description.ToLower().Contains(description));
 
             if (request.Type.HasValue)
             {

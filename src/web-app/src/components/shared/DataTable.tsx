@@ -66,7 +66,7 @@ export default function DataTable<T>({
         : String(va).localeCompare(String(vb), "pt-BR");
       return sortDir === "asc" ? cmp : -cmp;
     });
-  }, [data, sortCol, sortDir, columns]);
+  }, [data, sortCol, sortDir]);
 
   // Pagination logic
   const isPaginated = onPageChange !== undefined;

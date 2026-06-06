@@ -97,12 +97,12 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 
         private IQueryable<Expense> GetSearchQuery(SearchExpenseRequest request, Guid userId)
         {
-            var description = request.Description != null ? request.Description.Trim() : string.Empty;
+            var description = request.Description != null ? request.Description.Trim().ToLower() : string.Empty;
 
             var query = DbContext.Expenses
                 .Include(e => e.Category)
                 .Include(e => e.PaymentMethod)
-                .Where(e => e.UserId == userId && e.Description.Contains(description));
+                .Where(e => e.UserId == userId && e.Description.ToLower().Contains(description));
 
             if (request.Type.HasValue)
             {

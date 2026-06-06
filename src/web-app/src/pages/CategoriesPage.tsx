@@ -66,7 +66,7 @@ export default function CategoriesPage() {
   };
 
   const columns = [
-    { header: "Nome", accessor: "name" as const },
+    { header: "Nome", accessor: "name" as const, sortKey: "name" },
     {
       header: "Ações", accessor: (r: CategoryModel) => (
         <div className="flex gap-1">

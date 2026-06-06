@@ -38,10 +38,10 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 
         public async Task<List<PaymentMethod>> ListByDescriptionAsync(string description, Guid userId)
         {
-            var cleanDescription = !string.IsNullOrWhiteSpace(description) ? description.Trim() : string.Empty;
+            var cleanDescription = !string.IsNullOrWhiteSpace(description) ? description.Trim().ToLower() : string.Empty;
 
             var query = DbContext.PaymentMethods
-                .Where(p => p.UserId == userId && p.Description.Contains(cleanDescription))
+                .Where(p => p.UserId == userId && p.Description.ToLower().Contains(cleanDescription))
                 .OrderBy(p => p.Description);
 
             return await query.ToListAsync();
@@ -54,10 +54,10 @@ namespace ZenMoney.Infrastructure.Data.Repositories
 
         private IQueryable<PaymentMethod> GetSearchQuery(SearchPaymentMethodRequest request, Guid userId)
         {
-            var description = request.Description != null ? request.Description.Trim() : string.Empty;
+            var description = request.Description != null ? request.Description.Trim().ToLower() : string.Empty;
 
             var query = DbContext.PaymentMethods
-                .Where(p => p.UserId == userId && p.Description.Contains(description));
+                .Where(p => p.UserId == userId && p.Description.ToLower().Contains(description));
 
             if (request.SortField == SortFieldEnum.Description)
             {
