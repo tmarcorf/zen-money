@@ -17,6 +17,8 @@ export const ENDPOINTS = {
   paymentMethods: "/api/payment-methods",
   paymentMethodsPaginated: "/api/payment-methods/list-paginated",
   paymentMethodsByDescription: "/api/payment-methods/list-description",
+  investments: "/api/investments",
+  investmentsPaginated: "/api/investments/list-paginated",
   dashboard: {
     incomesExpenses: "/api/dashboards/incomes-expenses",
     expensesByCategory: "/api/dashboards/expenses-by-category",

@@ -14,12 +14,16 @@ import type {
   CreatePaymentMethodRequest,
   UpdatePaymentMethodRequest,
   SearchPaymentMethodRequest,
+  CreateInvestmentRequest,
+  UpdateInvestmentRequest,
+  SearchInvestmentRequest,
 } from "@/types/requests";
 import type {
   ExpenseModel,
   IncomeModel,
   CategoryModel,
   PaymentMethodModel,
+  InvestmentModel,
 } from "@/types/entities";
 
 export const expenseService = {
@@ -74,6 +78,23 @@ export const categoryService = {
 
   delete: (id: string) =>
     apiClient.delete<ApiResponse<CategoryModel>>(ENDPOINTS.categories, { id }),
+};
+
+export const investmentService = {
+  getById: (id: string) =>
+    apiClient.get<ApiResponse<InvestmentModel>>(ENDPOINTS.investments, { id }),
+
+  listPaginated: (params: SearchInvestmentRequest) =>
+    apiClient.get<ApiResponse<InvestmentModel[]>>(ENDPOINTS.investmentsPaginated, params as Record<string, unknown>),
+
+  create: (data: CreateInvestmentRequest) =>
+    apiClient.post<ApiResponse<InvestmentModel>>(ENDPOINTS.investments, data),
+
+  update: (data: UpdateInvestmentRequest) =>
+    apiClient.put<ApiResponse<InvestmentModel>>(ENDPOINTS.investments, data),
+
+  delete: (id: string) =>
+    apiClient.delete<ApiResponse<InvestmentModel>>(ENDPOINTS.investments, { id }),
 };
 
 export const paymentMethodService = {

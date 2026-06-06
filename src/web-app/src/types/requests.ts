@@ -99,3 +99,24 @@ export interface UpdateUserRequest {
   lastName: string;
   dateOfBirth: string;
 }
+
+// Investment
+export interface SearchInvestmentRequest extends SearchParams {
+  name?: string;
+  type?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface CreateInvestmentRequest {
+  name: string;
+  type: string;
+  investedAmount: number;
+  currentValue: number;
+  date: string;
+  notes: string;
+}
+
+export interface UpdateInvestmentRequest extends CreateInvestmentRequest {
+  id: string;
+}

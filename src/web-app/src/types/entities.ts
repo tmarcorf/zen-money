@@ -71,3 +71,12 @@ export interface ExpensesByPaymentMethodModel {
   paymentMethod: PaymentMethodModel;
   totalAmount: number;
 }
+
+export interface InvestmentModel extends BaseModel {
+  name: string;
+  type: string;
+  investedAmount: number;
+  currentValue: number;
+  date: string;
+  notes: string;
+}

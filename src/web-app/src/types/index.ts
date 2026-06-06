@@ -10,6 +10,7 @@ export type {
   IncomesAndExpensesModel,
   ExpensesByCategoryModel,
   ExpensesByPaymentMethodModel,
+  InvestmentModel,
 } from "./entities";
 export type {
   SearchParams,
@@ -25,6 +26,9 @@ export type {
   SearchPaymentMethodRequest,
   CreatePaymentMethodRequest,
   UpdatePaymentMethodRequest,
+  SearchInvestmentRequest,
+  CreateInvestmentRequest,
+  UpdateInvestmentRequest,
   AuthUserRequest,
   CreateUserRequest,
   UpdateUserRequest,
