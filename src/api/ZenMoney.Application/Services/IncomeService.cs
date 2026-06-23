@@ -100,8 +100,7 @@ namespace ZenMoney.Application.Services
             income.Date = request.Date;
             income.Amount = request.Amount;
 
-            incomeRepository.Update(income);
-            await incomeRepository.SaveChangesAsync();
+            await incomeRepository.UpdateEntityAsync(income);
 
             return Result<IncomeModel>.Success(income.ToModel());
         }

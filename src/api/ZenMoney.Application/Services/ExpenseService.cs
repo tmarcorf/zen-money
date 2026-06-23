@@ -113,8 +113,7 @@ namespace ZenMoney.Application.Services
             expense.CategoryId = request.CategoryId;
             expense.PaymentMethodId = request.PaymentMethodId;
 
-            expenseRepository.Update(expense);
-            await expenseRepository.SaveChangesAsync();
+            await expenseRepository.UpdateEntityAsync(expense);
 
             return Result<ExpenseModel>.Success(expense.ToModel());
         }

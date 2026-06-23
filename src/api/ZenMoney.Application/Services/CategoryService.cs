@@ -104,8 +104,7 @@ namespace ZenMoney.Application.Services
             category.Name = request.Name;
             category.UpdatedAt = DateTimeOffset.UtcNow;
 
-            categoryRepository.Update(category);
-            await categoryRepository.SaveChangesAsync();
+            await categoryRepository.UpdateEntityAsync(category);
 
             return Result<CategoryModel>.Success(category.ToModel());
         }

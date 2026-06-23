@@ -66,7 +66,7 @@ namespace ZenMoney.Application.Services
             ArgumentNullException.ThrowIfNull(request);
 
             request.UserId = GetUserId();
-            var validationResult = createPaymentMethodValidator.Validate(request);
+            var validationResult = await createPaymentMethodValidator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {
@@ -103,8 +103,7 @@ namespace ZenMoney.Application.Services
             paymentMethod.UpdatedAt = DateTimeOffset.UtcNow;
             paymentMethod.Description = request.Description;
 
-            paymentMethodRepository.Update(paymentMethod);
-            await paymentMethodRepository.SaveChangesAsync();
+            await paymentMethodRepository.UpdateEntityAsync(paymentMethod);
 
             return Result<PaymentMethodModel>.Success(paymentMethod.ToModel());
         }

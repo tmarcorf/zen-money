@@ -49,13 +49,6 @@ namespace ZenMoney.Infrastructure.Data.Repositories
             return entity;
         }
 
-        public T Update(T entity)
-        {
-            DbContext.Set<T>().Update(entity);
-
-            return entity;
-        }
-
         public T Delete(T entity)
         {
             DbContext.Set<T>().Remove(entity);
@@ -74,6 +67,12 @@ namespace ZenMoney.Infrastructure.Data.Repositories
         public async Task SaveChangesAsync()
         {
             await DbContext.SaveChangesAsync();
+        }
+        
+        public async Task UpdateEntityAsync(T entity)
+        {
+            entity.UpdatedAt = DateTimeOffset.UtcNow;
+            await SaveChangesAsync();
         }
     }
 }

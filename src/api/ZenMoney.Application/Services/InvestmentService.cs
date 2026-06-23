@@ -103,8 +103,7 @@ namespace ZenMoney.Application.Services
             investment.Date = request.Date;
             investment.Notes = request.Notes;
 
-            investmentRepository.Update(investment);
-            await investmentRepository.SaveChangesAsync();
+            await investmentRepository.UpdateEntityAsync(investment);
 
             return Result<InvestmentModel>.Success(investment.ToModel());
         }

@@ -17,12 +17,12 @@ namespace ZenMoney.Core.Interfaces
 
         T Create(T entity);
 
-        T Update(T entity);
-
         T Delete(T entity);
 
         Task<int> CountAsync(Guid userId);
 
         Task SaveChangesAsync();
+
+        Task UpdateEntityAsync(T entity);
     }
 }
