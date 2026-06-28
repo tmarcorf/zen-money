@@ -11,6 +11,15 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    // Proxy /api requests to the backend in dev — avoids CORS entirely.
+    // Set VITE_API_TARGET env var to override (default: http://localhost:5160 for local dotnet run).
+    proxy: {
+      "/api": {
+        target: process.env.VITE_API_TARGET || "http://localhost:5160",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {

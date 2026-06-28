@@ -1,4 +1,7 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "https://localhost:7109";
+// Use nullish coalescing so an empty string (dev proxy mode) is kept as-is.
+// Fallback matches the default .env value (HTTP, not HTTPS).
+// In dev with the Vite proxy, set VITE_API_URL="" — requests stay same-origin.
+const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:7109";
 
 function buildQueryString(params?: Record<string, unknown>): string {
   if (!params) return "";

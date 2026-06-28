@@ -66,7 +66,7 @@ namespace ZenMoney.Application.Services
             ArgumentNullException.ThrowIfNull(request);
 
             request.UserId = GetUserId();
-            var validationResult = await createPaymentMethodValidator.ValidateAsync(request);
+            var validationResult = createPaymentMethodValidator.Validate(request);
 
             if (!validationResult.IsValid)
             {
