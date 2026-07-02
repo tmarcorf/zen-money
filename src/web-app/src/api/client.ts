@@ -1,7 +1,7 @@
-// Use nullish coalescing so an empty string (dev proxy mode) is kept as-is.
-// Fallback matches the default .env value (HTTP, not HTTPS).
-// In dev with the Vite proxy, set VITE_API_URL="" — requests stay same-origin.
-const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:7109";
+// Em produção (Docker), BASE_URL vazio → chamadas relativas → Nginx faz proxy /api/ → API
+// Em dev com o Vite proxy, defina VITE_API_URL="" para manter as chamadas same-origin
+// Para dev com API separada, defina VITE_API_URL=http://localhost:7109
+const BASE_URL = import.meta.env.VITE_API_URL || "";
 
 function buildQueryString(params?: Record<string, unknown>): string {
   if (!params) return "";

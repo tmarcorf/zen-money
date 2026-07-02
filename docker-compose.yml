@@ -69,8 +69,8 @@ services:
       context: ./src/web-app
       dockerfile: Dockerfile
       args:
-        # Injected at Vite build time — this is the URL the browser uses to reach the API
-        - VITE_API_URL=${VITE_API_URL:-http://localhost:7109}
+        # Injected at Vite build time — empty = relative URLs via Nginx reverse proxy
+        - VITE_API_URL=${VITE_API_URL:-}
     container_name: zenmoney-frontend
     restart: unless-stopped
     ports:
