@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ZenMoney.API.Responses;
 using ZenMoney.Application.Interfaces;
 using ZenMoney.Application.Models.User;
 using ZenMoney.Application.Requests.User;
-using ZenMoney.Application.Results;
+using ZenMoney.Core.Enums;
 
 namespace ZenMoney.API.Controllers
 {
@@ -23,7 +22,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<UserModel>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<UserModel>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<UserModel>.Success(result.Data));
@@ -36,7 +35,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(ApiResponse<UserModel>.Failure(result.Errors));
+                return BadRequest(ApiResponse<UserModel>.Failure(result.Error));
             }
 
             return Ok(ApiResponse<UserModel>.Success(result.Data));
@@ -50,7 +49,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(ApiResponse<UserModel>.Failure(result.Errors));
+                return BadRequest(ApiResponse<UserModel>.Failure(result.Error));
             }
 
             return Ok(ApiResponse<UserModel>.Success(result.Data));
@@ -63,7 +62,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(ApiResponse<TokenModel>.Failure(result.Errors));
+                return BadRequest(ApiResponse<TokenModel>.Failure(result.Error));
             }
             
             Response.Cookies.Append("auth_token", result.Data.Token, new CookieOptions
@@ -92,15 +91,14 @@ namespace ZenMoney.API.Controllers
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var guid))
             {
-                return Unauthorized(ApiResponse<UserModel>.Failure(
-                    new List<Error> { new Error("401", "Sessão inválida") }, "401"));
+                return Unauthorized(ApiResponse<UserModel>.Failure(ErrorCodes.InvalidSession, "401"));
             }
 
             var result = await userService.GetByIdAsync(guid);
 
             if (!result.IsSuccess)
             {
-                return Unauthorized(ApiResponse<UserModel>.Failure(result.Errors, "401"));
+                return Unauthorized(ApiResponse<UserModel>.Failure(result.Error, "401"));
             }
 
             return Ok(ApiResponse<UserModel>.Success(result.Data));

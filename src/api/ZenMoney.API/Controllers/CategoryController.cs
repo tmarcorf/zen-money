@@ -21,7 +21,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<CategoryModel>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<CategoryModel>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<CategoryModel>.Success(result.Data));
@@ -35,7 +35,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<List<CategoryModel>>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<List<CategoryModel>>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<List<CategoryModel>>.Success(result.Data, totalCount: result.TotalCount));
@@ -49,7 +49,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<List<CategoryModel>>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<List<CategoryModel>>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<List<CategoryModel>>.Success(result.Data));
@@ -63,7 +63,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(ApiResponse<CategoryModel>.Failure(result.Errors));
+                return BadRequest(ApiResponse<CategoryModel>.Failure(result.Error));
             }
 
             return Ok(ApiResponse<CategoryModel>.Success(result.Data));
@@ -77,7 +77,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(ApiResponse<CategoryModel>.Failure(result.Errors));
+                return BadRequest(ApiResponse<CategoryModel>.Failure(result.Error));
             }
 
             return Ok(ApiResponse<CategoryModel>.Success(result.Data));
@@ -91,7 +91,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<CategoryModel>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<CategoryModel>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<CategoryModel>.Success(result.Data));

@@ -1,28 +1,31 @@
-﻿namespace ZenMoney.Application.Results
+﻿using ZenMoney.Application.Extensions;
+using ZenMoney.Core.Enums;
+
+namespace ZenMoney.Application.Results
 {
     public class Result<T>
     {
-        protected Result(T data, List<Error> errors)
+        protected Result(T data, Error error)
         {
             Data = data;
-            IsSuccess = errors == null || errors.Count == 0;
-            Errors = errors;
+            IsSuccess = error == null;
+            Error = error;
         }
 
         public T Data { get; }
 
         public bool IsSuccess { get; }
 
-        public List<Error> Errors { get; }
+        public Error Error { get; }
 
         public static Result<T> Success(T data)
         {
             return new Result<T>(data, null);
         }
-
-        public static Result<T> Failure(List<Error> errors)
+        
+        public static Result<T> Failure(ErrorCodes error)
         {
-            return new Result<T>(default, errors);
+            return new Result<T>(default, error.ToError());
         }
     }
 }

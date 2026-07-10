@@ -1,47 +1,34 @@
-﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ZenMoney.Application.Extensions;
-using ZenMoney.Application.Helpers;
 using ZenMoney.Application.Interfaces;
-using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Models.Expense;
-using ZenMoney.Application.Models.Income;
 using ZenMoney.Application.Requests.Expense;
 using ZenMoney.Application.Results;
 using ZenMoney.Core.Entities;
+using ZenMoney.Core.Enums;
 using ZenMoney.Core.Interfaces;
 using ZenMoney.Core.Search;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZenMoney.Application.Services
 {
     public class ExpenseService(
         IExpenseRepository expenseRepository,
-        IHttpContextAccessor httpContextAccessor,
-        IValidator<CreateExpenseRequest> createExpenseValidator,
-        IValidator<UpdateExpenseRequest> updateExpenseValidator) : BaseService(httpContextAccessor), IExpenseService
+        ICategoryRepository categoryRepository,
+        IPaymentMethodRepository paymentMethodRepository,
+        IHttpContextAccessor httpContextAccessor) : BaseService(httpContextAccessor), IExpenseService
     {
         public async Task<Result<ExpenseModel>> GetByIdAsync(Guid id)
         {
             if (id.Equals(Guid.Empty))
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<ExpenseModel>.Failure(errors);
+                return Result<ExpenseModel>.Failure(ErrorCodes.InvalidId);
             }
 
             var expense = await expenseRepository.GetByIdAsync(id);
 
             if (expense == null)
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<ExpenseModel>.Failure(errors);
+                return Result<ExpenseModel>.Failure(ErrorCodes.ExpenseNotFound);
             }
 
             return Result<ExpenseModel>.Success(expense.ToModel());
@@ -62,14 +49,10 @@ namespace ZenMoney.Application.Services
             if (request == null) ArgumentNullException.ThrowIfNull(request);
 
             request.UserId = GetUserId();
-            var validationResult = createExpenseValidator.Validate(request);
 
-            if (!validationResult.IsValid)
-            {
-                var errors = ErrorHelper.GetErrors(validationResult);
-
-                return Result<ExpenseModel>.Failure(errors);
-            }
+            var validationError = await ValidateCreateAsync(request);
+            if (validationError.HasValue)
+                return Result<ExpenseModel>.Failure(validationError.Value);
 
             var expense = new Expense();
             expense.CreatedAt = DateTimeOffset.UtcNow;
@@ -94,14 +77,10 @@ namespace ZenMoney.Application.Services
             if (request == null) ArgumentNullException.ThrowIfNull(request);
 
             request.UserId = GetUserId();
-            var validationResult = updateExpenseValidator.Validate(request);
 
-            if (!validationResult.IsValid)
-            {
-                var errors = ErrorHelper.GetErrors(validationResult);
-
-                return Result<ExpenseModel>.Failure(errors);
-            }
+            var validationError = await ValidateUpdateAsync(request);
+            if (validationError.HasValue)
+                return Result<ExpenseModel>.Failure(validationError.Value);
 
             var expense = await expenseRepository.GetByIdAsync(request.Id);
             expense.UpdatedAt = DateTimeOffset.UtcNow;
@@ -124,9 +103,7 @@ namespace ZenMoney.Application.Services
 
             if (id.Equals(Guid.Empty) || expense == null)
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<ExpenseModel>.Failure(errors);
+                return Result<ExpenseModel>.Failure(ErrorCodes.ExpenseNotFound);
             }
 
             expenseRepository.Delete(expense);
@@ -134,5 +111,78 @@ namespace ZenMoney.Application.Services
 
             return Result<ExpenseModel>.Success(expense.ToModel());
         }
+
+        #region Private Validation Methods
+
+        private async Task<ErrorCodes?> ValidateCreateAsync(CreateExpenseRequest request)
+        {
+            var commonError = await ValidateExpenseCommonFields(request);
+            if (commonError.HasValue)
+                return commonError;
+
+            return null;
+        }
+
+        private async Task<ErrorCodes?> ValidateUpdateAsync(UpdateExpenseRequest request)
+        {
+            if (request.Id == Guid.Empty)
+                return ErrorCodes.InvalidId;
+
+            var exists = await expenseRepository.ExistsAsync(x => x.Id == request.Id);
+            if (!exists)
+                return ErrorCodes.ExpenseNotFound;
+
+            var commonError = await ValidateExpenseCommonFields(request);
+            if (commonError.HasValue)
+                return commonError;
+
+            return null;
+        }
+
+        private async Task<ErrorCodes?> ValidateExpenseCommonFields(CreateExpenseRequest request)
+        {
+            if (request.Type == default)
+                return ErrorCodes.ExpenseTypeEmpty;
+
+            var typeIsValid = request.Type == ExpenseTypeEnum.Fixed || request.Type == ExpenseTypeEnum.Variable;
+            if (!typeIsValid)
+                return ErrorCodes.ExpenseTypeInvalid;
+
+            if (request.Date == default)
+                return ErrorCodes.ExpenseDateEmpty;
+
+            if (request.Date == DateOnly.MinValue)
+                return ErrorCodes.ExpenseDateInvalid;
+
+            if (string.IsNullOrWhiteSpace(request.Description))
+                return ErrorCodes.ExpenseDescriptionEmpty;
+
+            if (request.Description.Length > 100)
+                return ErrorCodes.ExpenseDescriptionTooLong;
+
+            if (request.Amount == default)
+                return ErrorCodes.ExpenseAmountEmpty;
+
+            if (request.Amount == decimal.MinValue)
+                return ErrorCodes.ExpenseAmountInvalid;
+
+            if (request.CategoryId == Guid.Empty)
+                return ErrorCodes.ExpenseCategoryIdEmpty;
+
+            var categoryExists = await categoryRepository.ExistsAsync(x => x.Id == request.CategoryId);
+            if (!categoryExists)
+                return ErrorCodes.ExpenseCategoryNotFound;
+
+            if (request.PaymentMethodId == Guid.Empty)
+                return ErrorCodes.ExpensePaymentMethodIdEmpty;
+
+            var paymentMethodExists = await paymentMethodRepository.ExistsAsync(x => x.Id == request.PaymentMethodId);
+            if (!paymentMethodExists)
+                return ErrorCodes.ExpensePaymentMethodNotFound;
+
+            return null;
+        }
+
+        #endregion
     }
 }

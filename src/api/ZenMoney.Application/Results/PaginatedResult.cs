@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ZenMoney.Application.Extensions;
+using ZenMoney.Core.Enums;
 
 namespace ZenMoney.Application.Results
 {
     public class PaginatedResult<T> : Result<T>
     {
-        private PaginatedResult(T data, List<Error> errors, int totalCount)
-            : base(data, errors) 
+        private PaginatedResult(T data, Error error, int totalCount)
+            : base(data, error)
         {
             TotalCount = totalCount;
         }
@@ -21,9 +18,9 @@ namespace ZenMoney.Application.Results
             return new PaginatedResult<T>(data, null, totalCount);
         }
 
-        public static PaginatedResult<T> Failure(List<Error> errors, int totalCount)
+        public static PaginatedResult<T> Failure(ErrorCodes error, int totalCount = 0)
         {
-            return new PaginatedResult<T>(default, errors, totalCount);
+            return new PaginatedResult<T>(default, error.ToError(), totalCount);
         }
     }
 }

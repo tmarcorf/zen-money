@@ -1,10 +1,10 @@
 # ============================================================
-# ZenMoney API — .NET 8 Backend
+# ZenMoney API — .NET 10 Backend
 # Multi-stage build: SDK → ASP.NET Runtime (lightweight)
 # ============================================================
 
 # ---- Build Stage ----
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Copy only project files first for layer caching (restore)
@@ -28,9 +28,9 @@ RUN dotnet publish ZenMoney.API/ZenMoney.API.csproj \
     -p:PublishTrimmed=false
 
 # ---- Runtime Stage ----
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 
-# Install curl for health checks (already available in aspnet:8.0, but explicit)
+# Install curl for health checks (already available in aspnet:10.0, but explicit)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
@@ -45,7 +45,7 @@ COPY --from=build /app .
 ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-# Non-root user (built into aspnet:8.0 image, uid 1654)
+# Non-root user (built into aspnet:10.0 image, uid 1654)
 RUN chown -R app:app /app
 USER app
 

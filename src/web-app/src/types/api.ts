@@ -7,7 +7,7 @@ export interface ApiResponse<T> {
   code: string;
   data: T;
   isSuccess: boolean;
-  errors: ErrorDetail[];
+  error: ErrorDetail | null;
   totalCount: number;
   timestamp: string;
 }

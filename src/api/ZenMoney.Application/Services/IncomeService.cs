@@ -1,40 +1,32 @@
-﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using ZenMoney.Application.Extensions;
-using ZenMoney.Application.Helpers;
 using ZenMoney.Application.Interfaces;
 using ZenMoney.Application.Models.Income;
 using ZenMoney.Application.Requests.Income;
 using ZenMoney.Application.Results;
 using ZenMoney.Core.Entities;
+using ZenMoney.Core.Enums;
 using ZenMoney.Core.Interfaces;
 using ZenMoney.Core.Search;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZenMoney.Application.Services
 {
     public class IncomeService(
         IIncomeRepository incomeRepository,
-        IValidator<CreateIncomeRequest> createIncomeValidator,
-        IValidator<UpdateIncomeRequest> updateIncomeValidator,
         IHttpContextAccessor httpContextAccessor) : BaseService(httpContextAccessor), IIncomeService
     {
         public async Task<Result<IncomeModel>> GetByIdAsync(Guid id)
         {
             if (id.Equals(Guid.Empty))
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<IncomeModel>.Failure(errors);
+                return Result<IncomeModel>.Failure(ErrorCodes.InvalidId);
             }
 
             var income = await incomeRepository.GetByIdAsync(id);
 
             if (income == null)
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<IncomeModel>.Failure(errors);
+                return Result<IncomeModel>.Failure(ErrorCodes.IncomeNotFound);
             }
 
             return Result<IncomeModel>.Success(income.ToModel());
@@ -55,14 +47,10 @@ namespace ZenMoney.Application.Services
             if (request == null) ArgumentNullException.ThrowIfNull(request);
 
             request.UserId = GetUserId();
-            var validationResult = createIncomeValidator.Validate(request);
 
-            if (!validationResult.IsValid)
-            {
-                var errors = ErrorHelper.GetErrors(validationResult);
-
-                return Result<IncomeModel>.Failure(errors);
-            }
+            var validationError = await ValidateCreateAsync(request);
+            if (validationError.HasValue)
+                return Result<IncomeModel>.Failure(validationError.Value);
 
             var income = new Income();
             income.CreatedAt = DateTimeOffset.UtcNow;
@@ -84,14 +72,10 @@ namespace ZenMoney.Application.Services
             if (request == null) ArgumentNullException.ThrowIfNull(request);
 
             request.UserId = GetUserId();
-            var validationResult = updateIncomeValidator.Validate(request);
 
-            if (!validationResult.IsValid)
-            {
-                var errors = ErrorHelper.GetErrors(validationResult);
-
-                return Result<IncomeModel>.Failure(errors);
-            }
+            var validationError = await ValidateUpdateAsync(request);
+            if (validationError.HasValue)
+                return Result<IncomeModel>.Failure(validationError.Value);
 
             var income = await incomeRepository.GetByIdAsync(request.Id);
             income.UpdatedAt = DateTimeOffset.UtcNow;
@@ -111,9 +95,7 @@ namespace ZenMoney.Application.Services
 
             if (id.Equals(Guid.Empty) || income == null)
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<IncomeModel>.Failure(errors);
+                return Result<IncomeModel>.Failure(ErrorCodes.IncomeNotFound);
             }
 
             incomeRepository.Delete(income);
@@ -121,5 +103,57 @@ namespace ZenMoney.Application.Services
 
             return Result<IncomeModel>.Success(income.ToModel());
         }
+
+        #region Private Validation Methods
+
+        private Task<ErrorCodes?> ValidateCreateAsync(CreateIncomeRequest request)
+        {
+            return Task.FromResult(ValidateIncomeCommonFields(request));
+        }
+
+        private async Task<ErrorCodes?> ValidateUpdateAsync(UpdateIncomeRequest request)
+        {
+            if (request.Id == Guid.Empty)
+                return ErrorCodes.InvalidId;
+
+            var exists = await incomeRepository.ExistsAsync(x => x.Id == request.Id);
+            if (!exists)
+                return ErrorCodes.IncomeNotFound;
+
+            var commonError = ValidateIncomeCommonFields(request);
+            if (commonError.HasValue)
+                return commonError;
+
+            return null;
+        }
+
+        private static ErrorCodes? ValidateIncomeCommonFields(CreateIncomeRequest request)
+        {
+            if (request.Type == default)
+                return ErrorCodes.IncomeTypeEmpty;
+
+            var typeIsValid = request.Type == IncomeTypeEnum.Fixed || request.Type == IncomeTypeEnum.Variable;
+            if (!typeIsValid)
+                return ErrorCodes.IncomeTypeInvalid;
+
+            if (request.Date == DateOnly.MinValue)
+                return ErrorCodes.IncomeDateInvalid;
+
+            if (string.IsNullOrWhiteSpace(request.Description))
+                return ErrorCodes.IncomeDescriptionEmpty;
+
+            if (request.Description.Length < 3)
+                return ErrorCodes.IncomeDescriptionTooShort;
+
+            if (request.Description.Length > 100)
+                return ErrorCodes.IncomeDescriptionTooLong;
+
+            if (request.Amount == decimal.Zero)
+                return ErrorCodes.IncomeAmountEmpty;
+
+            return null;
+        }
+
+        #endregion
     }
 }

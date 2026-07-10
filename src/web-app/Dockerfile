@@ -21,7 +21,7 @@ RUN npm ci --ignore-scripts
 COPY . .
 
 # Build the app; VITE_API_URL is injected at build time
-ARG VITE_API_URL=http://localhost:7109
+ARG VITE_API_URL=
 ENV VITE_API_URL=${VITE_API_URL}
 
 RUN npm run build

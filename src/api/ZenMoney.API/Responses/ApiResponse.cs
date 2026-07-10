@@ -1,5 +1,7 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
+using ZenMoney.Application.Extensions;
 using ZenMoney.Application.Results;
+using ZenMoney.Core.Enums;
 
 namespace ZenMoney.API.Responses
 {
@@ -14,8 +16,8 @@ namespace ZenMoney.API.Responses
         [JsonPropertyName("isSuccess")]
         public bool IsSuccess { get; private set; }
 
-        [JsonPropertyName("errors")]
-        public List<Error> Errors { get; private set; }
+        [JsonPropertyName("error")]
+        public Error? Error { get; private set; }
 
         [JsonPropertyName("totalCount")]
         public int TotalCount { get; set; }
@@ -23,12 +25,12 @@ namespace ZenMoney.API.Responses
         [JsonPropertyName("timestamp")]
         public DateTimeOffset Timestamp => DateTimeOffset.UtcNow;
 
-        private ApiResponse(string code, T data, List<Error> errors, int totalCount = 0)
+        private ApiResponse(string code, T data, Error? error, int totalCount = 0)
         {
             Code = code;
             Data = data;
-            IsSuccess = errors == null || errors.Count == 0;
-            Errors = errors;
+            IsSuccess = error == null;
+            Error = error;
             TotalCount = totalCount;
         }
 
@@ -37,9 +39,14 @@ namespace ZenMoney.API.Responses
             return new ApiResponse<T>(code, data, null, totalCount);
         }
 
-        public static ApiResponse<T> Failure(List<Error> errors, string code = "400", int totalCount = 0)
+        public static ApiResponse<T> Failure(Error error, string code = "400", int totalCount = 0)
         {
-            return new ApiResponse<T>(code, default, errors, totalCount);
+            return new ApiResponse<T>(code, default!, error, totalCount);
+        }
+
+        public static ApiResponse<T> Failure(ErrorCodes errorCode, string code = "400", int totalCount = 0)
+        {
+            return new ApiResponse<T>(code, default!, errorCode.ToError(), totalCount);
         }
     }
 }

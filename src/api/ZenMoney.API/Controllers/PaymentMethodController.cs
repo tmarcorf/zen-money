@@ -25,7 +25,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<PaymentMethodModel>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<PaymentMethodModel>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<PaymentMethodModel>.Success(result.Data));
@@ -39,7 +39,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<List<PaymentMethodModel>>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<List<PaymentMethodModel>>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<List<PaymentMethodModel>>.Success(result.Data, totalCount: result.TotalCount));
@@ -53,7 +53,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<List<PaymentMethodModel>>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<List<PaymentMethodModel>>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<List<PaymentMethodModel>>.Success(result.Data));
@@ -67,7 +67,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(ApiResponse<PaymentMethodModel>.Failure(result.Errors));
+                return BadRequest(ApiResponse<PaymentMethodModel>.Failure(result.Error));
             }
 
             return Ok(ApiResponse<PaymentMethodModel>.Success(result.Data));
@@ -81,7 +81,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(ApiResponse<PaymentMethodModel>.Failure(result.Errors));
+                return BadRequest(ApiResponse<PaymentMethodModel>.Failure(result.Error));
             }
 
             return Ok(ApiResponse<PaymentMethodModel>.Success(result.Data));
@@ -95,7 +95,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<PaymentMethodModel>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<PaymentMethodModel>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<PaymentMethodModel>.Success(result.Data));

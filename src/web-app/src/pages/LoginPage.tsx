@@ -43,7 +43,7 @@ export default function LoginPage() {
         toast.success("Login realizado com sucesso!");
         navigate("/dashboards");
       } else {
-        toast.error(response.errors[0].message);
+        toast.error(response.error?.message || "Falha no login");
       }
     } catch (err: any) {
       toast.error(err.message || "Falha no login");

@@ -1,6 +1,6 @@
 # ============================================================
 # ZenMoney — Docker Compose
-# PostgreSQL 16 + .NET 8 API + React/Vite Frontend
+# PostgreSQL 16 + .NET 10 API + React/Vite Frontend
 # ============================================================
 #
 # Usage:
@@ -37,7 +37,7 @@ services:
       retries: 5
     # Security: run as the built-in postgres user (already non-root in alpine image)
 
-  # ---- .NET 8 Backend API ----
+  # ---- .NET 10 Backend API ----
   api:
     build:
       context: ./src/api

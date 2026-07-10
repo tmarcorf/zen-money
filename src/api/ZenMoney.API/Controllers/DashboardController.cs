@@ -23,7 +23,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<IncomesAndExpensesModel>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<IncomesAndExpensesModel>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<IncomesAndExpensesModel>.Success(result.Data));
@@ -37,7 +37,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<List<ExpensesByCategoryModel>>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<List<ExpensesByCategoryModel>>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<List<ExpensesByCategoryModel>>.Success(result.Data));
@@ -51,7 +51,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<List<ExpensesByPaymentMethodModel>>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<List<ExpensesByPaymentMethodModel>>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<List<ExpensesByPaymentMethodModel>>.Success(result.Data));

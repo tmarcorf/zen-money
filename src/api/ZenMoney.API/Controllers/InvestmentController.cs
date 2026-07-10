@@ -21,7 +21,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<InvestmentModel>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<InvestmentModel>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<InvestmentModel>.Success(result.Data));
@@ -35,7 +35,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<List<InvestmentModel>>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<List<InvestmentModel>>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<List<InvestmentModel>>.Success(result.Data, totalCount: result.TotalCount));
@@ -49,7 +49,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(ApiResponse<InvestmentModel>.Failure(result.Errors));
+                return BadRequest(ApiResponse<InvestmentModel>.Failure(result.Error));
             }
 
             return Ok(ApiResponse<InvestmentModel>.Success(result.Data));
@@ -63,7 +63,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(ApiResponse<InvestmentModel>.Failure(result.Errors));
+                return BadRequest(ApiResponse<InvestmentModel>.Failure(result.Error));
             }
 
             return Ok(ApiResponse<InvestmentModel>.Success(result.Data));
@@ -77,7 +77,7 @@ namespace ZenMoney.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound(ApiResponse<InvestmentModel>.Failure(result.Errors, "404"));
+                return NotFound(ApiResponse<InvestmentModel>.Failure(result.Error, "404"));
             }
 
             return Ok(ApiResponse<InvestmentModel>.Success(result.Data));

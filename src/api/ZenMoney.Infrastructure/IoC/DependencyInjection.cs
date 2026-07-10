@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+﻿
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ZenMoney.Application.Interfaces;
 using ZenMoney.Application.Services;
-using ZenMoney.Application.Validators.User;
+
 using ZenMoney.Core.Entities;
 using ZenMoney.Core.Interfaces;
 using ZenMoney.Infrastructure.Data;
@@ -40,7 +40,6 @@ namespace ZenMoney.Infrastructure.IoC
                 options.Password.RequireNonAlphanumeric = true;
             });
 
-            services.AddValidatorsFromAssembly(typeof(CreateUserValidator).Assembly);
 
             // services goes here
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));

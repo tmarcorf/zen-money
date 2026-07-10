@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         toast.success("Conta criada com sucesso! Faça login para continuar.");
         return response.data;
       } else {
-        throw new Error(response.errors?.[0]?.message || "Falha ao criar conta");
+        throw new Error(response.error?.message || "Falha ao criar conta");
       }
     } finally {
       setLoading(false);

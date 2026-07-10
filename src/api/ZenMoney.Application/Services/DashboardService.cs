@@ -1,15 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ZenMoney.Application.Helpers;
+using Microsoft.AspNetCore.Http;
 using ZenMoney.Application.Interfaces;
-using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Models.Dashboard;
 using ZenMoney.Application.Results;
 using ZenMoney.Core.Dashboard;
+using ZenMoney.Core.Enums;
 using ZenMoney.Core.Interfaces;
 
 namespace ZenMoney.Application.Services
@@ -23,9 +17,7 @@ namespace ZenMoney.Application.Services
         {
             if (!AreMonthAndYearValid(month, year))
             {
-                var error = ErrorHelper.GetInvalidParameterError($"{nameof(month)}/{nameof(year)}", $"{month}/{year}");
-
-                return Result<IncomesAndExpensesModel>.Failure(error);
+                return Result<IncomesAndExpensesModel>.Failure(ErrorCodes.InvalidMonthOrYear);
             }
 
             var userId = GetUserId();
@@ -48,9 +40,7 @@ namespace ZenMoney.Application.Services
         {
             if (!AreMonthAndYearValid(month, year))
             {
-                var error = ErrorHelper.GetInvalidParameterError($"{nameof(month)}/{nameof(year)}", $"{month}/{year}");
-
-                return Result<List<ExpensesByCategoryModel>>.Failure(error);
+                return Result<List<ExpensesByCategoryModel>>.Failure(ErrorCodes.InvalidMonthOrYear);
             }
 
             var userId = GetUserId();
@@ -63,9 +53,7 @@ namespace ZenMoney.Application.Services
         {
             if (!AreMonthAndYearValid(month, year))
             {
-                var error = ErrorHelper.GetInvalidParameterError($"{nameof(month)}/{nameof(year)}", $"{month}/{year}");
-
-                return Result<List<ExpensesByPaymentMethodModel>>.Failure(error);
+                return Result<List<ExpensesByPaymentMethodModel>>.Failure(ErrorCodes.InvalidMonthOrYear);
             }
 
             var userId = GetUserId();
@@ -74,7 +62,7 @@ namespace ZenMoney.Application.Services
             return Result<List<ExpensesByPaymentMethodModel>>.Success(expensesByCategoryByMonth);
         }
 
-        private bool AreMonthAndYearValid(int month, int year)
+        private static bool AreMonthAndYearValid(int month, int year)
         {
             return month >= 1 && month <= 12 && year >= 1;
         }

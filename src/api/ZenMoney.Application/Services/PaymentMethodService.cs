@@ -1,14 +1,11 @@
-﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens.Experimental;
 using ZenMoney.Application.Extensions;
-using ZenMoney.Application.Helpers;
 using ZenMoney.Application.Interfaces;
-using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Models.PaymentMethod;
 using ZenMoney.Application.Requests.PaymentMethod;
 using ZenMoney.Application.Results;
 using ZenMoney.Core.Entities;
+using ZenMoney.Core.Enums;
 using ZenMoney.Core.Interfaces;
 using ZenMoney.Core.Search;
 
@@ -16,27 +13,20 @@ namespace ZenMoney.Application.Services
 {
     public class PaymentMethodService(
         IPaymentMethodRepository paymentMethodRepository,
-        IValidator<CreatePaymentMethodRequest> createPaymentMethodValidator,
-        IValidator<UpdatePaymentMethodRequest> updatePaymentMethodValidator,
-        IValidator<PaymentMethod> deletePaymentMethodValidator,
         IHttpContextAccessor httpContextAcessor) : BaseService(httpContextAcessor), IPaymentMethodService
     {
         public async Task<Result<PaymentMethodModel>> GetByIdAsync(Guid id)
         {
             if (id.Equals(Guid.Empty))
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<PaymentMethodModel>.Failure(errors);
+                return Result<PaymentMethodModel>.Failure(ErrorCodes.InvalidId);
             }
 
             var paymentMethod = await paymentMethodRepository.GetByIdAsync(id);
 
             if (paymentMethod == null)
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<PaymentMethodModel>.Failure(errors);
+                return Result<PaymentMethodModel>.Failure(ErrorCodes.PaymentMethodNotFound);
             }
 
             return Result<PaymentMethodModel>.Success(paymentMethod.ToModel());
@@ -66,14 +56,10 @@ namespace ZenMoney.Application.Services
             ArgumentNullException.ThrowIfNull(request);
 
             request.UserId = GetUserId();
-            var validationResult = createPaymentMethodValidator.Validate(request);
 
-            if (!validationResult.IsValid)
-            {
-                var errors = ErrorHelper.GetErrors(validationResult);
-
-                return Result<PaymentMethodModel>.Failure(errors);
-            }
+            var validationError = await ValidateCreateAsync(request);
+            if (validationError.HasValue)
+                return Result<PaymentMethodModel>.Failure(validationError.Value);
 
             var paymentMethod = request.ToEntity();
             paymentMethod.Id = Guid.NewGuid();
@@ -90,14 +76,9 @@ namespace ZenMoney.Application.Services
         {
             ArgumentNullException.ThrowIfNull(request);
 
-            var validationResult = updatePaymentMethodValidator.Validate(request);
-
-            if (!validationResult.IsValid)
-            {
-                var errors = ErrorHelper.GetErrors(validationResult);
-
-                return Result<PaymentMethodModel>.Failure(errors);
-            }
+            var validationError = await ValidateUpdateAsync(request);
+            if (validationError.HasValue)
+                return Result<PaymentMethodModel>.Failure(validationError.Value);
 
             var paymentMethod = await paymentMethodRepository.GetByIdAsync(request.Id);
             paymentMethod.UpdatedAt = DateTimeOffset.UtcNow;
@@ -112,33 +93,79 @@ namespace ZenMoney.Application.Services
         {
             if (id.Equals(Guid.Empty))
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<PaymentMethodModel>.Failure(errors);
+                return Result<PaymentMethodModel>.Failure(ErrorCodes.InvalidId);
             }
 
             var paymentMethod = await paymentMethodRepository.GetByIdAsync(id);
 
             if (paymentMethod == null)
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<PaymentMethodModel>.Failure(errors);
+                return Result<PaymentMethodModel>.Failure(ErrorCodes.PaymentMethodNotFound);
             }
 
-            var validationResult = deletePaymentMethodValidator.Validate(paymentMethod);
-
-            if(!validationResult.IsValid)
-            {
-                var errors = ErrorHelper.GetErrors(validationResult);
-
-                return Result<PaymentMethodModel>.Failure(errors);
-            }
+            var validationError = await ValidateDeleteAsync(paymentMethod);
+            if (validationError.HasValue)
+                return Result<PaymentMethodModel>.Failure(validationError.Value);
 
             paymentMethodRepository.Delete(paymentMethod);
             await paymentMethodRepository.SaveChangesAsync();
 
             return Result<PaymentMethodModel>.Success(paymentMethod.ToModel());
         }
+
+        #region Private Validation Methods
+
+        private async Task<ErrorCodes?> ValidateCreateAsync(CreatePaymentMethodRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Description))
+                return ErrorCodes.PaymentMethodDescriptionEmpty;
+
+            if (request.Description.Length > 50)
+                return ErrorCodes.PaymentMethodDescriptionTooLong;
+
+            var exists = await paymentMethodRepository.ExistsAsync(p =>
+                p.UserId == request.UserId && p.Description == request.Description);
+
+            if (exists)
+                return ErrorCodes.PaymentMethodAlreadyExists;
+
+            return null;
+        }
+
+        private async Task<ErrorCodes?> ValidateUpdateAsync(UpdatePaymentMethodRequest request)
+        {
+            if (request.Id == Guid.Empty)
+                return ErrorCodes.InvalidId;
+
+            var entityExists = await paymentMethodRepository.ExistsAsync(x => x.Id == request.Id);
+            if (!entityExists)
+                return ErrorCodes.PaymentMethodNotFound;
+
+            if (string.IsNullOrWhiteSpace(request.Description))
+                return ErrorCodes.PaymentMethodDescriptionEmpty;
+
+            if (request.Description.Length > 50)
+                return ErrorCodes.PaymentMethodDescriptionTooLong;
+
+            var duplicateExists = await paymentMethodRepository.ExistsAsync(p =>
+                p.Id != request.Id && p.UserId == request.UserId && p.Description == request.Description);
+
+            if (duplicateExists)
+                return ErrorCodes.PaymentMethodAlreadyExists;
+
+            return null;
+        }
+
+        private async Task<ErrorCodes?> ValidateDeleteAsync(PaymentMethod paymentMethod)
+        {
+            var isBeingUsed = await paymentMethodRepository.IsBeingUsed(paymentMethod.Id, paymentMethod.UserId);
+
+            if (isBeingUsed)
+                return ErrorCodes.PaymentMethodInUse;
+
+            return null;
+        }
+
+        #endregion
     }
 }

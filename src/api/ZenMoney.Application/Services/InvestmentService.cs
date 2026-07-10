@@ -1,12 +1,11 @@
-using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using ZenMoney.Application.Extensions;
-using ZenMoney.Application.Helpers;
 using ZenMoney.Application.Interfaces;
 using ZenMoney.Application.Models.Investment;
 using ZenMoney.Application.Requests.Investment;
 using ZenMoney.Application.Results;
 using ZenMoney.Core.Entities;
+using ZenMoney.Core.Enums;
 using ZenMoney.Core.Interfaces;
 using ZenMoney.Core.Search;
 
@@ -14,26 +13,20 @@ namespace ZenMoney.Application.Services
 {
     public class InvestmentService(
         IInvestmentRepository investmentRepository,
-        IValidator<CreateInvestmentRequest> createInvestmentValidator,
-        IValidator<UpdateInvestmentRequest> updateInvestmentValidator,
         IHttpContextAccessor httpContextAccessor) : BaseService(httpContextAccessor), IInvestmentService
     {
         public async Task<Result<InvestmentModel>> GetByIdAsync(Guid id)
         {
             if (id.Equals(Guid.Empty))
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<InvestmentModel>.Failure(errors);
+                return Result<InvestmentModel>.Failure(ErrorCodes.InvalidId);
             }
 
             var investment = await investmentRepository.GetByIdAsync(id);
 
             if (investment == null)
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<InvestmentModel>.Failure(errors);
+                return Result<InvestmentModel>.Failure(ErrorCodes.InvestmentNotFound);
             }
 
             return Result<InvestmentModel>.Success(investment.ToModel());
@@ -54,14 +47,10 @@ namespace ZenMoney.Application.Services
             if (request == null) ArgumentNullException.ThrowIfNull(request);
 
             request.UserId = GetUserId();
-            var validationResult = createInvestmentValidator.Validate(request);
 
-            if (!validationResult.IsValid)
-            {
-                var errors = ErrorHelper.GetErrors(validationResult);
-
-                return Result<InvestmentModel>.Failure(errors);
-            }
+            var validationError = await ValidateCreateAsync(request);
+            if (validationError.HasValue)
+                return Result<InvestmentModel>.Failure(validationError.Value);
 
             var investment = new Investment();
             investment.CreatedAt = DateTimeOffset.UtcNow;
@@ -85,14 +74,10 @@ namespace ZenMoney.Application.Services
             ArgumentNullException.ThrowIfNull(request);
 
             request.UserId = GetUserId();
-            var validationResult = updateInvestmentValidator.Validate(request);
 
-            if (!validationResult.IsValid)
-            {
-                var errors = ErrorHelper.GetErrors(validationResult);
-
-                return Result<InvestmentModel>.Failure(errors);
-            }
+            var validationError = await ValidateUpdateAsync(request);
+            if (validationError.HasValue)
+                return Result<InvestmentModel>.Failure(validationError.Value);
 
             var investment = await investmentRepository.GetByIdAsync(request.Id);
             investment.UpdatedAt = DateTimeOffset.UtcNow;
@@ -114,9 +99,7 @@ namespace ZenMoney.Application.Services
 
             if (id.Equals(Guid.Empty) || investment == null)
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<InvestmentModel>.Failure(errors);
+                return Result<InvestmentModel>.Failure(ErrorCodes.InvestmentNotFound);
             }
 
             investmentRepository.Delete(investment);
@@ -124,5 +107,62 @@ namespace ZenMoney.Application.Services
 
             return Result<InvestmentModel>.Success(investment.ToModel());
         }
+
+        #region Private Validation Methods
+
+        private Task<ErrorCodes?> ValidateCreateAsync(CreateInvestmentRequest request)
+        {
+            return Task.FromResult(ValidateInvestmentCommonFields(request));
+        }
+
+        private async Task<ErrorCodes?> ValidateUpdateAsync(UpdateInvestmentRequest request)
+        {
+            if (request.Id == Guid.Empty)
+                return ErrorCodes.InvalidId;
+
+            var exists = await investmentRepository.ExistsAsync(x => x.Id == request.Id);
+            if (!exists)
+                return ErrorCodes.InvestmentNotFound;
+
+            var commonError = ValidateInvestmentCommonFields(request);
+            if (commonError.HasValue)
+                return commonError;
+
+            return null;
+        }
+
+        private static ErrorCodes? ValidateInvestmentCommonFields(CreateInvestmentRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Name))
+                return ErrorCodes.InvestmentNameEmpty;
+
+            if (request.Name.Length < 3)
+                return ErrorCodes.InvestmentNameTooShort;
+
+            if (request.Name.Length > 100)
+                return ErrorCodes.InvestmentNameTooLong;
+
+            if (string.IsNullOrWhiteSpace(request.Type))
+                return ErrorCodes.InvestmentTypeEmpty;
+
+            if (request.Type.Length > 50)
+                return ErrorCodes.InvestmentTypeTooLong;
+
+            if (request.InvestedAmount <= decimal.Zero)
+                return ErrorCodes.InvestmentAmountInvalid;
+
+            if (request.CurrentValue < decimal.Zero)
+                return ErrorCodes.InvestmentCurrentValueNegative;
+
+            if (request.Date == DateOnly.MinValue)
+                return ErrorCodes.InvestmentDateInvalid;
+
+            if (!string.IsNullOrEmpty(request.Notes) && request.Notes.Length > 500)
+                return ErrorCodes.InvestmentNotesTooLong;
+
+            return null;
+        }
+
+        #endregion
     }
 }

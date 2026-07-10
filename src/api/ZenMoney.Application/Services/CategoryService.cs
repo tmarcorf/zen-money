@@ -1,12 +1,11 @@
-﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using ZenMoney.Application.Extensions;
-using ZenMoney.Application.Helpers;
 using ZenMoney.Application.Interfaces;
 using ZenMoney.Application.Models.Category;
 using ZenMoney.Application.Requests.Category;
 using ZenMoney.Application.Results;
 using ZenMoney.Core.Entities;
+using ZenMoney.Core.Enums;
 using ZenMoney.Core.Interfaces;
 using ZenMoney.Core.Search;
 
@@ -14,27 +13,20 @@ namespace ZenMoney.Application.Services
 {
     public class CategoryService(
         ICategoryRepository categoryRepository,
-        IValidator<CreateCategoryRequest> createCategoryValidator,
-        IValidator<UpdateCategoryRequest> updateCategoryValidator,
-        IValidator<Category> deleteCategoryValidator,
         IHttpContextAccessor httpContextAcessor) : BaseService(httpContextAcessor), ICategoryService
     {
         public async Task<Result<CategoryModel>> GetByIdAsync(Guid id)
         {
             if (id.Equals(Guid.Empty))
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<CategoryModel>.Failure(errors);
+                return Result<CategoryModel>.Failure(ErrorCodes.InvalidId);
             }
 
             var category = await categoryRepository.GetByIdAsync(id);
 
             if (category == null)
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<CategoryModel>.Failure(errors);
+                return Result<CategoryModel>.Failure(ErrorCodes.CategoryNotFound);
             }
 
             return Result<CategoryModel>.Success(category.ToModel());
@@ -64,14 +56,10 @@ namespace ZenMoney.Application.Services
             if (request == null) ArgumentNullException.ThrowIfNull(request);
 
             request.UserId = GetUserId();
-            var validationResult = createCategoryValidator.Validate(request);
 
-            if (!validationResult.IsValid)
-            {
-                var errors = ErrorHelper.GetErrors(validationResult);
-
-                return Result<CategoryModel>.Failure(errors);
-            }
+            var validationError = await ValidateCreateAsync(request);
+            if (validationError.HasValue)
+                return Result<CategoryModel>.Failure(validationError.Value);
 
             var category = new Category();
             category.Id = Guid.NewGuid();
@@ -91,14 +79,10 @@ namespace ZenMoney.Application.Services
             if (request == null) ArgumentNullException.ThrowIfNull(request);
 
             request.UserId = GetUserId();
-            var validationResult = updateCategoryValidator.Validate(request);
 
-            if (!validationResult.IsValid)
-            {
-                var errors = ErrorHelper.GetErrors(validationResult);
-
-                return Result<CategoryModel>.Failure(errors);
-            }
+            var validationError = await ValidateUpdateAsync(request);
+            if (validationError.HasValue)
+                return Result<CategoryModel>.Failure(validationError.Value);
 
             var category = await categoryRepository.GetByIdAsync(request.Id);
             category.Name = request.Name;
@@ -113,28 +97,19 @@ namespace ZenMoney.Application.Services
         {
             if (id.Equals(Guid.Empty))
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<CategoryModel>.Failure(errors);
+                return Result<CategoryModel>.Failure(ErrorCodes.InvalidId);
             }
 
             var category = await categoryRepository.GetByIdAsync(id);
 
             if (category == null)
             {
-                var errors = ErrorHelper.GetInvalidParameterError(nameof(id), id.ToString());
-
-                return Result<CategoryModel>.Failure(errors);
+                return Result<CategoryModel>.Failure(ErrorCodes.CategoryNotFound);
             }
 
-            var validationResult = deleteCategoryValidator.Validate(category);
-
-            if (!validationResult.IsValid)
-            {
-                var errors = ErrorHelper.GetErrors(validationResult);
-
-                return Result<CategoryModel>.Failure(errors);
-            }
+            var validationError = await ValidateDeleteAsync(category);
+            if (validationError.HasValue)
+                return Result<CategoryModel>.Failure(validationError.Value);
 
             categoryRepository.Delete(category);
             await categoryRepository.SaveChangesAsync();
@@ -142,6 +117,59 @@ namespace ZenMoney.Application.Services
             return Result<CategoryModel>.Success(category.ToModel());
         }
 
-        
+        #region Private Validation Methods
+
+        private async Task<ErrorCodes?> ValidateCreateAsync(CreateCategoryRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Name))
+                return ErrorCodes.CategoryNameEmpty;
+
+            if (request.Name.Length > 50)
+                return ErrorCodes.CategoryNameTooLong;
+
+            var exists = await categoryRepository.ExistsAsync(c =>
+                c.UserId == request.UserId && c.Name == request.Name);
+
+            if (exists)
+                return ErrorCodes.CategoryAlreadyExists;
+
+            return null;
+        }
+
+        private async Task<ErrorCodes?> ValidateUpdateAsync(UpdateCategoryRequest request)
+        {
+            if (request.Id == Guid.Empty)
+                return ErrorCodes.InvalidId;
+
+            var entityExists = await categoryRepository.ExistsAsync(x => x.Id == request.Id);
+            if (!entityExists)
+                return ErrorCodes.CategoryNotFound;
+
+            if (string.IsNullOrWhiteSpace(request.Name))
+                return ErrorCodes.CategoryNameEmpty;
+
+            if (request.Name.Length > 50)
+                return ErrorCodes.CategoryNameTooLong;
+
+            var duplicateExists = await categoryRepository.ExistsAsync(c =>
+                c.Id != request.Id && c.UserId == request.UserId && c.Name == request.Name);
+
+            if (duplicateExists)
+                return ErrorCodes.CategoryAlreadyExists;
+
+            return null;
+        }
+
+        private async Task<ErrorCodes?> ValidateDeleteAsync(Category category)
+        {
+            var isBeingUsed = await categoryRepository.IsBeingUsed(category.Id, category.UserId);
+
+            if (isBeingUsed)
+                return ErrorCodes.CategoryInUse;
+
+            return null;
+        }
+
+        #endregion
     }
 }

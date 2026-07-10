@@ -18,6 +18,10 @@ namespace ZenMoney.Infrastructure.IoC
             })
             .AddJwtBearer(options =>
             {
+                // Preserve legacy inbound claim type mapping so that JWT "sub"
+                // is mapped to ClaimTypes.NameIdentifier (used by /api/users/me).
+                options.MapInboundClaims = false;
+
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
